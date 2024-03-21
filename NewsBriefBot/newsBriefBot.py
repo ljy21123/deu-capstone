@@ -12,7 +12,7 @@ from openai import OpenAI # pip install openai
 from article import Article
 
 
-client = OpenAI(api_key="")
+client = OpenAI(api_key="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")
 logger = None
 
 def setup_logger(name, log_file, level=logging.INFO):
