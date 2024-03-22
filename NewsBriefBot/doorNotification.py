@@ -18,6 +18,7 @@ from bs4 import BeautifulSoup
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.service import Service
 import json
+import os
 
 import logging
 
@@ -164,7 +165,8 @@ class DoorNotification:
 
 
     def run_door_crawling(self):
-        self.setup_logger("doorNotification", "doorNotification.log")  # Sub logger 설정
+        log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
+        self.setup_logger("doorNotification", os.path.join(log_dir, "doorNotification.log")) # logger 설정
         self.logger = logging.getLogger("doorNotification")
         self.logger.info('도어 크롤링 시작')
 

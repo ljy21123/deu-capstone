@@ -14,6 +14,7 @@ import queue
 import logging
 from datetime import datetime, time, timedelta
 from time import sleep
+import os
 
 import naverNews
 import newsBriefBot
@@ -91,7 +92,13 @@ def print_queue():
 
 
 if __name__ == "__main__":
-    setup_logger("system", "systemStarter.log") # logger 설정
+    log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
+
+    # 경로가 존재하지 않으면 생성
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    setup_logger("system", os.path.join(log_dir, "systemStarter.log")) # logger 설정
     logger = logging.getLogger("system")
     logger.info('시스템 시작')
     
