@@ -22,6 +22,7 @@ import os
 
 import doorDAO
 import logging
+import kakao.kakaoMsg
 
 class DoorNotification:
 
@@ -29,6 +30,7 @@ class DoorNotification:
         self.driver = None       
         self.logger = None 
         self.dao = None
+        self.kakao = kakao.kakaoMsg.KakaoMsg() 
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -306,6 +308,7 @@ class DoorNotification:
         self.dao = doorDAO.DoorDAO()
         self.dao.connect()
         users = self.dao.select_notify_users()
+
         if users:
             for i in users:
                 self.run_door_crawling(i["id"], i["door_id"], i["door_pw"])
