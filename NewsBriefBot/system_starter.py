@@ -68,8 +68,7 @@ def run_door_notification():
     current_time = datetime.now()
 
     # 현재 시간이 6 ~ 22 사이가 아니라면
-    # if current_time.time() > time(22, 0) or current_time.time() < time(6, 0):
-    if False:
+    if current_time.time() > time(22, 0) or current_time.time() < time(6, 0):
         logger.info('Door: 22시 이후이기 때문에 6시까지 대기')
        # 목표 시간
         target_time = (current_time + timedelta(days=1)).replace(hour=6, minute=0, second=0)
@@ -80,7 +79,7 @@ def run_door_notification():
     else:
         door = doorNotification.DoorNotification()
         logger.info('도어 알림 동작 시작')
-        door_notification_thread = threading.Thread(target=door.run_door_crawling())
+        door_notification_thread = threading.Thread(target=door.start())
         door_notification_thread.start()
         logger.info('도어 알림 동작 완료 대기 전환')
         # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
@@ -106,6 +105,6 @@ if __name__ == "__main__":
     # run_news_briefbot()
 
     # 일정 시간마다 호출
-    # threading.Thread(target=run_naver_news_parsing).start()
-    # threading.Thread(target=print_queue).start()
+    threading.Thread(target=run_naver_news_parsing).start()
+    threading.Thread(target=print_queue).start()
     threading.Thread(target=run_door_notification).start()

@@ -20,14 +20,15 @@ from selenium.webdriver.chrome.service import Service
 import json
 import os
 
+import doorDAO
 import logging
-
 
 class DoorNotification:
 
     def __init__(self):
         self.driver = None       
         self.logger = None 
+        self.dao = None
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -78,20 +79,14 @@ class DoorNotification:
         table_items.append(table_title)
         table_items.append(table_numbers)
         return table_items
+    
+    def get_json(self, id):
+        data = self.dao.select_door_announcement(id)
 
-
-    # DB에서 json을 받아온다
-    def get_json(self) -> dict:
-        json_data = {}
-        # 파일에서 JSON 데이터를 읽어온다고 가정
-        try:
-            with open("NewsBriefBot/temp.json", "r", encoding="utf-8") as temp_txt:
-                # 파일에서 JSON 데이터를 읽어와 딕셔너리로 변환한다
-                json_data = json.load(temp_txt)
-        except json.JSONDecodeError:
-            self.logger.warning("파일이 비어있어 빈 dict를 반환합니다.")
-
-        return json_data
+        if data["door_announcement_info"]:
+            return json.loads(data['door_announcement_info'])
+        else:
+            return None
 
 
     # 유저의 정보가 아예 없는경우 json생성
@@ -164,59 +159,33 @@ class DoorNotification:
         
 
 
-    def run_door_crawling(self):
-        log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
-        self.setup_logger("doorNotification", os.path.join(log_dir, "doorNotification.log")) # logger 설정
-        self.logger = logging.getLogger("doorNotification")
-        self.logger.info('도어 크롤링 시작')
-
+    def run_door_crawling(self, id, door_id, door_pw):
+        
         # 옵션 설정
         chrome_options = Options()
         chrome_options.add_argument("--headless")  # headless 모드 설정
         chrome_options.add_argument("--log-level=3") # 로그 제거
-        # chrome_options.add_argument("--no-sandbox")
-        # chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
 
         # 크롬 브라우저를 실행하고 WebDriver 객체 생성
-        service = Service(executable_path='/root/spring_boot/chrome/chromedriver-linux64/chromedriver')
+        service = Service(executable_path='/root/deu-capstone/chrome/chromedriver-linux64/chromedriver')
 
-        # driver = webdriver.Chrome(service=service, options=chrome_options)
-        self.driver = webdriver.Chrome(options=chrome_options)
+        self.driver = webdriver.Chrome(service=service, options=chrome_options)
+        # self.driver = webdriver.Chrome(options=chrome_options)
 
         self.logger.info('door 접속')
         # 웹 페이지로 이동
         login_url = "https://door.deu.ac.kr/sso/login.aspx"
         self.driver.get(login_url)
 
-        # 아이디와 비밀번호
-        id = ""
-        pw = ""
-        try:
-            # 파일을 읽기 모드로 열기
-            with open('NewsBriefBot\passwd.txt', 'r') as idfile:
-                # 파일에서 첫 번째 줄을 읽어서 비밀번호로 설정
-                id = idfile.readline().strip()
-                pw = idfile.readline().strip()
+        # 아이디 입력
+        id_input = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/form/div[2]/div[1]/div/table/tbody/tr[1]/td[2]/input')))
+        id_input.send_keys(door_id)
 
-        except FileNotFoundError:
-            self.logger.error("파일을 찾을 수 없습니다.")
-        except PermissionError:
-            self.logger.error("파일을 읽을 권한이 없습니다.")
-        except Exception as e:
-            self.logger.error("파일을 읽는 중 오류가 발생했습니다:", e)
-
-        # 계정정보 존재 유무 확인
-        if len(id) != 0 and len(pw) != 0:
-            # 아이디 입력
-            id_input = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/form/div[2]/div[1]/div/table/tbody/tr[1]/td[2]/input')))
-            id_input.send_keys(id)
-
-            # 비밀번호 입력
-            pw_input = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/form/div[2]/div[1]/div/table/tbody/tr[2]/td/input')))
-            pw_input.send_keys(pw)
-        else:
-            self.logger.error('아이디와 비밀번호 데이터가 없습니다.')
-            return
+        # 비밀번호 입력
+        pw_input = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/form/div[2]/div[1]/div/table/tbody/tr[2]/td/input')))
+        pw_input.send_keys(door_pw)
 
         self.logger.info('로그인 시도')
         try:
@@ -270,15 +239,15 @@ class DoorNotification:
             
             # json 관련 처리
             self.logger.info("공지 json파일 요청")
-            json_data = self.get_json()
-
+            json_data = self.get_json(id)
+            
             # DB에서 json을 받아와 처리
             # json데이터가 존재하는지 확인
             if json_data:
                 self.logger.info("공지 json파일이 존재")
                 # json_data에 이번 학기 정보가 존재하는지 확인
                 if not semester in json_data:
-                    self.logger.info(id+"의 학기 정보를 새로 만든는 중")
+                    self.logger.info(id+"의 학기 정보를 새로 만드는 중")
                     json_data = self.make_json(semester, lecture_names)
             else:
                 self.logger.info(id+"의 학기 Json을 새로 만든는 중")
@@ -325,10 +294,25 @@ class DoorNotification:
             self.logger.error("오류가 발생했습니다:%s", e)
             return 
         
-        with open("NewsBriefBot/temp.json","w",encoding="utf-8") as temp_txt:
-            temp_txt.write(json.dumps(json_data))    
+        self.dao.update_door_announcement(id, json.dumps(json_data))
         self.logger.info('도어 크롤링 수행완료 대기전환')
 
+    def start(self):
+        log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
+        self.setup_logger("doorNotification", os.path.join(log_dir, "doorNotification.log")) # logger 설정
+        self.logger = logging.getLogger("doorNotification")
+        self.logger.info('도어 크롤링 시작')
+
+        self.dao = doorDAO.DoorDAO()
+        self.dao.connect()
+        users = self.dao.select_notify_users()
+        if users:
+            for i in users:
+                self.run_door_crawling(i["id"], i["door_id"], i["door_pw"])
+        else:
+            self.logger.warning("도어 알림을 신청한 유저가 없습니다.")
+        self.dao.disconnect()
+        
 
 if __name__ == "__main__":
     a = DoorNotification()

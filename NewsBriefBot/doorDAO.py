@@ -61,8 +61,8 @@ class DoorDAO:
     def select_door_announcement(self, id):
         try:
             cursor = self.conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM DoorAnnouncements WHERE id = %s", (id,))
-            door_announcement = cursor.fetchall()
+            cursor.execute("SELECT door_announcement_info FROM DoorAnnouncements WHERE id = %s", (id,))
+            door_announcement = cursor.fetchone()
             cursor.close()
             return door_announcement
         except mysql.connector.Error as err:
