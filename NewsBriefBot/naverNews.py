@@ -13,7 +13,6 @@ import threading
 import queue
 import logging
 
-import newsBriefBot
 from article import Article
 
 
@@ -37,13 +36,15 @@ def make_url(category, subcategory, date) -> str:
     # 검색할 날짜 20240101 형식
     temp_date = datetime.now()
     search_date = temp_date.strftime("%Y%m%d")
-    search_date = 20240313
+    search_date = 20240314
     # 검색할 분류
-    category = 105 # IT/과학
+    category = 100 # 정치
+    # category = 105 # IT/과학
     #category = 103 # 생활/문화
     # 검색할 세부 분류
+    subcategory = 264 # 대통령실
     #subcategory = 731 # 모바일
-    subcategory = 227 # 통신/뉴미디어
+    # subcategory = 227 # 통신/뉴미디어
     #subcategory = 243 # 책
     
     url = "https://news.naver.com/breakingnews/section/" + str(category) + "/" + str(subcategory) + "?date=" + str(search_date)
@@ -90,14 +91,15 @@ def print_news(url) -> Article:
     
     # 날짜 파싱
     news_dates = html.find_all('div', class_='media_end_head_info_datestamp_bunch')
-
     date_text = ''
+    update_date_text = None
     if len(news_dates) == 2:
-        date = news_dates[0].find('span').get_text(strip=True)
-        modify_date = news_dates[1].find('span').get_text(strip=True)
-        date_text = '작성일 ' + date + ' 수정일 ' + modify_date
+        date_text = news_dates[0].find('span').get_text(strip=True)
+        update_date_text = news_dates[1].find('span').get_text(strip=True)
+        # date_text = '작성일 ' + date + ' 수정일 ' + modify_date
     else:
-        date_text = '작성일 ' + news_dates[0].find('span').get_text(strip=True)
+        # date_text = '작성일 ' + news_dates[0].find('span').get_text(strip=True)
+        date_text = news_dates[0].find('span').get_text(strip=True)
 
     # 신문사 파싱
     # 정규 표현식을 사용하여 office 객체 추출
@@ -126,7 +128,7 @@ def print_news(url) -> Article:
     # else:
     #     print("img 태그가 존재하지 않습니다.")
 
-    return Article(url, news_title, img_url, date_text, content, office_json)
+    return Article(url, news_title, img_url, date_text, update_date_text, content, office_json)
 
 
 def start_crawling(global_task_queue: queue.Queue, queue_event: threading.Event):
@@ -152,6 +154,8 @@ def start_crawling(global_task_queue: queue.Queue, queue_event: threading.Event)
         global_task_queue.put(news)
         # 대기중인 브리핑 봇을 깨움
         queue_event.set()
+
+    print(news_list[4])
 
     logger.info('파싱 완료!')
 

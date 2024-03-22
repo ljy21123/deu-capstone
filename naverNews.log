@@ -1,0 +1,84 @@
+2024-03-22 21:36:18,062 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:36:18,062 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:36:18,062 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/105/227?date=20240313 링크 생성 완료
+2024-03-22 21:36:18,062 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:36:18,259 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:36:18,259 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:36:29,701 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:37:00,387 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:37:00,387 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:37:00,387 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/105/227?date=20240313 링크 생성 완료
+2024-03-22 21:37:00,388 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:37:00,567 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:37:00,567 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:37:07,920 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:37:39,664 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:37:39,665 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:37:39,665 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/105/227?date=20240313 링크 생성 완료
+2024-03-22 21:37:39,665 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:37:39,844 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:37:39,844 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:37:47,231 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:38:23,817 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:38:23,817 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:38:23,817 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/105/227?date=20240313 링크 생성 완료
+2024-03-22 21:38:23,817 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:38:23,987 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:38:23,988 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:38:31,106 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:38:58,936 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:38:58,936 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:38:58,936 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/105/227?date=20240313 링크 생성 완료
+2024-03-22 21:38:58,937 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:38:59,110 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:38:59,110 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:39:06,299 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:39:51,396 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:39:51,396 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:39:51,396 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/105/227?date=20240317 링크 생성 완료
+2024-03-22 21:39:51,396 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:39:51,581 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:39:51,581 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:40:01,699 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:41:40,590 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:41:40,590 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:41:40,591 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/105/227?date=20240317 링크 생성 완료
+2024-03-22 21:41:40,591 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:41:40,772 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:41:40,773 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:41:48,296 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:44:05,812 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:44:05,813 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:44:05,813 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/100/264?date=20240314 링크 생성 완료
+2024-03-22 21:44:05,813 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:44:05,992 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:44:05,992 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:44:15,662 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:44:50,049 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:44:50,049 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:44:50,049 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/100/264?date=20240314 링크 생성 완료
+2024-03-22 21:44:50,049 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:44:50,237 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:44:50,238 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:44:57,097 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:45:33,052 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:45:33,052 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:45:33,052 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/100/264?date=20240314 링크 생성 완료
+2024-03-22 21:45:33,052 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:45:33,231 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:45:33,231 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:45:40,100 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:46:10,897 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:46:10,898 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:46:10,898 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/100/264?date=20240314 링크 생성 완료
+2024-03-22 21:46:10,898 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:46:11,062 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:46:11,062 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:46:17,739 - INFO - naverNews.py - 파싱 완료!
+2024-03-22 21:46:41,656 - INFO - naverNews.py - 네이버 뉴스 크롤링 시작
+2024-03-22 21:46:41,657 - INFO - naverNews.py - 분야에 맞는 URL 생성
+2024-03-22 21:46:41,657 - INFO - naverNews.py - https://news.naver.com/breakingnews/section/100/264?date=20240314 링크 생성 완료
+2024-03-22 21:46:41,657 - INFO - naverNews.py - 해당 분야의 뉴스 목록 가져오는중...
+2024-03-22 21:46:41,839 - INFO - naverNews.py - 뉴스 목록 가져오기 완료!
+2024-03-22 21:46:41,839 - INFO - naverNews.py - 뉴스 내용 파싱 시작
+2024-03-22 21:46:48,665 - INFO - naverNews.py - 파싱 완료!

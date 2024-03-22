@@ -94,9 +94,9 @@ if __name__ == "__main__":
     logger.info('시스템 시작')
 
     # 가동시켜 놓으면 queue가 비어있으면 자동 대기상태로 들어감
-    run_news_briefbot()
+    # run_news_briefbot()
 
     # 일정 시간마다 호출
     threading.Thread(target=run_naver_news_parsing).start()
-    threading.Thread(target=print_queue).start()
-    threading.Thread(target=run_door_notification).start()
+    # threading.Thread(target=print_queue).start()
+    # threading.Thread(target=run_door_notification).start()

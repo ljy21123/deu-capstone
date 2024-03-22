@@ -2,10 +2,11 @@
 # 작성자: 양시현
 # 수정 이력: 
 # - 2024-02-04: 초기버전 생성
+# - 2024-02-05: 수정날짜 분리
 
 
 class Article:
-    def __init__ (self, url, title, img_url, date, content, newspaper):
+    def __init__ (self, url, title, img_url, date, update_date, content, newspaper):
         # 뉴스 주소
         self.url = url
         # 뉴스 이미지 주소
@@ -14,6 +15,8 @@ class Article:
         self.title = title
         # 뉴스 작성일
         self.date = date
+        # 뉴스 수정일
+        self.update_date = update_date
         # 뉴스 본문
         self.content = content
         # 뉴스 작성사
@@ -21,4 +24,7 @@ class Article:
 
     # 객체 출력시 출력 형태
     def __str__(self):
-        return f"주소: {self.url}, \n제목: {self.title}, \n날짜: {self.date}, \n신문사: {self.newspaper} \n이미지 주소: {self.img_url}"
+        return f"주소: {self.url}, \n제목: {self.title}, \n날짜: {self.date}, \n수정날짜: {self.update_date}, \n신문사: {self.newspaper} \n이미지 주소: {self.img_url}"
+    
+    def get_update_date(self):
+        return self.update_date
