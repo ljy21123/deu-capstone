@@ -51,7 +51,7 @@ class DoorDAO:
     def select_notify_users(self):
         try:
             cursor = self.conn.cursor(dictionary=True)
-            cursor.execute("SELECT id, door_id, door_pw FROM UserInfo WHERE door_alert = True")
+            cursor.execute("SELECT id, door_id, door_pw, name FROM UserInfo WHERE door_alert = True")
             door_announcement = cursor.fetchall()
             cursor.close()
             return door_announcement

@@ -30,9 +30,8 @@ class DoorNotification:
         self.driver = None       
         self.logger = None 
         self.dao = None
-        self.kakao = kakao.kakaoMsg.KakaoMsg() 
-        self.kakao.sendMessageToKakao()
-
+        self.kakao = kakao.kakaoMsg.KakaoMsg()
+        
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
         handler = logging.FileHandler(log_file, encoding='utf-8')
@@ -86,14 +85,16 @@ class DoorNotification:
     def get_json(self, id):
         data = self.dao.select_door_announcement(id)
 
-        if data["door_announcement_info"]:
+        if data == None:
+            return None
+        elif data["door_announcement_info"]:
             return json.loads(data['door_announcement_info'])
         else:
             return None
 
 
     # 유저의 정보가 아예 없는경우 json생성
-    def make_json(self, semester:str, lecture_names:list) -> dict:
+    def make_json(self, semester:str, lecture_names:list, id) -> dict:
         # 강의학기, 강의 이름 목록
         # 학기 항목 추가
         data = {
@@ -112,11 +113,11 @@ class DoorNotification:
                 }
             }
             data[semester].update(temp)
-
+        self.dao.insert_door_announcement(id, json.dumps(data))
         return data
 
     # 파싱 데이터와 json데이터를 비교하여 달라진게 있으면 알림을 보냄
-    def compare_and_notify_changes(self, lecture_notice_list:list, semester:str, lecture:str, menu:str, json_data:dict):
+    def compare_and_notify_changes(self, lecture_notice_list:list, semester:str, lecture:str, menu:str, name:str, json_data:dict):
         if len(lecture_notice_list[0]) == 0:
             return json_data
         
@@ -126,7 +127,8 @@ class DoorNotification:
 
             for i in range(1, new_notify_count + 1):
                 # 알림 처리로직 추가
-                print(menu,": \"", lecture_notice_list[0][-i], "\"알림보냄")
+                # print(menu,": \"", lecture_notice_list[0][-i], "\"알림보냄")
+                self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][-i]}\"가 공지되었습니다.", name)
                 json_data[semester][lecture][menu] += 1
         elif menu == "공지":
             # 공지에는 공지번호 말고도 "알림"이라는 것이 존재하기 때문에 따로 처리가 필요하다
@@ -139,7 +141,8 @@ class DoorNotification:
             if alarm_count > json_data[semester][lecture]["알림"]:
                 for i in range(alarm_count - json_data[semester][lecture]["알림"]):
                     # 알림 처리로직 추가
-                    print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
+                    # print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
+                    self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][-i]}\"가 공지되었습니다.", name)
                     json_data[semester][lecture]["알림"] += 1
             
             # 보내지 않은 공지를 보낸다
@@ -147,7 +150,8 @@ class DoorNotification:
             if notify_count > 0:
                 for i in range(alarm_count, alarm_count + notify_count):
                     # 알림 처리로직 추가
-                    print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
+                    # print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
+                    self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][-i]}\"가 공지되었습니다.", name)
                     json_data[semester][lecture][menu] += 1
 
         else:
@@ -155,14 +159,15 @@ class DoorNotification:
             if new_notify_count > 0:
                 for i in range(new_notify_count):
                     # 알림 처리로직 추가
-                    print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
+                    # print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
+                    self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][-i]}\"가 공지되었습니다.", name)
                     json_data[semester][lecture][menu] += 1
     
         return json_data
         
 
 
-    def run_door_crawling(self, id, door_id, door_pw):
+    def run_door_crawling(self, id, door_id, door_pw, name):
         
         # 옵션 설정
         chrome_options = Options()
@@ -254,7 +259,7 @@ class DoorNotification:
                     json_data = self.make_json(semester, lecture_names)
             else:
                 self.logger.info(id+"의 학기 Json을 새로 만든는 중")
-                json_data = self.make_json(semester, lecture_names)
+                json_data = self.make_json(semester, lecture_names, id)
             
             # 크롤링할 주소와 그 주소에 존재하는 테이블의 제목 위치
             urls = [
@@ -279,7 +284,7 @@ class DoorNotification:
                     menu = url[2]
                     # 강의실에서 방문할 링크, 강의실 번호, 제목의 위치를 보내 파싱한다.
                     lecture_notice_list = self.table_parsing(url[0], lecture_room_numbers[i-2], url[1])
-                    json_data = self.compare_and_notify_changes(lecture_notice_list, semester, lecture_names[i-2], menu, json_data)
+                    json_data = self.compare_and_notify_changes(lecture_notice_list, semester, lecture_names[i-2], menu, name, json_data)
                 #     # 공지 개수가 1개 이상이라면 목록을 출력
                 #     if len(lecture_notice_list[0]) > 0:
                 #         found = True
@@ -312,7 +317,7 @@ class DoorNotification:
 
         if users:
             for i in users:
-                self.run_door_crawling(i["id"], i["door_id"], i["door_pw"])
+                self.run_door_crawling(i["id"], i["door_id"], i["door_pw"], i["name"])
         else:
             self.logger.warning("도어 알림을 신청한 유저가 없습니다.")
         self.dao.disconnect()
