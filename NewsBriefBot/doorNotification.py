@@ -31,6 +31,7 @@ class DoorNotification:
         self.logger = None 
         self.dao = None
         self.kakao = kakao.kakaoMsg.KakaoMsg() 
+        self.kakao.sendMessageToKakao()
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')

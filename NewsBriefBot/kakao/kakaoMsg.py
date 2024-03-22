@@ -28,8 +28,8 @@ class KakaoMsg:
         self.logger.setLevel(level)
         self.logger.addHandler(handler)
 
-    def refresh(existing_token:json):
-        kakao_path = os.path.join(os.path.dirname(__file__), 'kakao')
+    def refresh(self, existing_token:json):
+        kakao_path = os.path.dirname(__file__)
         files_path = os.path.join(kakao_path, "files")
         root_token_path = os.path.join(files_path, "root_token.json")
         rest_api_key = '11aa535784ec16106ad1f8e387d551ff'
@@ -61,7 +61,7 @@ class KakaoMsg:
         return response.json()
 
     def main(self):
-        kakao_path = os.path.join(os.path.dirname(__file__), 'kakao')
+        kakao_path = os.path.dirname(__file__)
         files_path = os.path.join(kakao_path, "files")
         root_token_path = os.path.join(files_path, "root_token.json")
         friend_list_path = os.path.join(files_path, "friend_list.json")
@@ -121,7 +121,7 @@ class KakaoMsg:
 
         return tokens, friend_list
 
-    def sendMsg(msg:str, uuid:str, access_token:str):
+    def sendMsg(self, msg:str, uuid:str, access_token:str):
         # 헤더 생성
         headers={"Authorization" : "Bearer " + access_token}
         # 전송할 url
@@ -144,7 +144,7 @@ class KakaoMsg:
         # 코드
         return response.status_code
     
-    def sendMessageToKakao(self, msg="", name=""):
+    def sendMessageToKakao(self, msg="ㅁㄴㅇㄹ", name="이준영"):
         token, friend_list = self.main() # 메세지를 전송할 준비
         
         found = False
