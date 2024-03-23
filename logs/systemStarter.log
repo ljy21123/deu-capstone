@@ -3,3 +3,9 @@
 2024-03-23 03:00:34,593 - INFO - system_starter.py - 도어 알림 동작 시작
 2024-03-23 03:30:38,478 - INFO - system_starter.py - 시스템 시작
 2024-03-23 03:30:38,480 - INFO - system_starter.py - 도어 알림 동작 시작
+2024-03-23 15:15:09,352 - INFO - system_starter.py - 시스템 시작
+2024-03-23 15:15:09,353 - INFO - system_starter.py - 네이버 뉴스 크롤링 수행시작
+2024-03-23 15:16:43,438 - INFO - system_starter.py - 시스템 시작
+2024-03-23 15:25:42,429 - INFO - system_starter.py - 시스템 시작
+2024-03-23 15:25:42,444 - INFO - system_starter.py - 뉴스 브리핑 봇 동작 시작
+2024-03-23 15:25:42,445 - INFO - system_starter.py - 네이버 뉴스 크롤링 수행시작

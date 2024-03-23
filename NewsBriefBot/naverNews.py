@@ -155,8 +155,6 @@ def start_crawling(global_task_queue: queue.Queue, queue_event: threading.Event)
         # 대기중인 브리핑 봇을 깨움
         queue_event.set()
 
-    print(news_list[4])
-
     logger.info('파싱 완료!')
 
 
