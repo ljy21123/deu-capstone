@@ -26,7 +26,7 @@ class System_starter:
         self.logger = None # 로거
         self.newsBot = None
         self.door = None
-        self.naverNes = None
+        self.naverNews = None
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -54,8 +54,10 @@ class System_starter:
 
     # naverNews.py를 실행하는 함수
     def run_naver_news_parsing(self):
+        if not self.naverNews:
+            self.naverNews = naverNews.NaverNews()
         self.logger.info('네이버 뉴스 크롤링 수행시작')
-        naver_news_thread = threading.Thread(target=naverNews.start_crawling, args=(self.global_task_queue, self.gueue_event))
+        naver_news_thread = threading.Thread(target=self.naverNews.start_crawling, args=(self.global_task_queue, self.gueue_event))
         naver_news_thread.start()
 
         # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
@@ -86,7 +88,7 @@ class System_starter:
             threading.Timer(600, self.run_door_notification).start()
         
     def print_queue(self):
-        print(self.global_task_queue.qsize())
+        print("현재 큐의 사이즈:", self.global_task_queue.qsize())
         threading.Timer(20, self.print_queue).start()
 
 if __name__ == "__main__":

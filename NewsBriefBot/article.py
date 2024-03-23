@@ -7,7 +7,7 @@
 
 
 class Article:
-    def __init__ (self, url, title, img_url, date, update_date, original_news, newspaper):
+    def __init__ (self, url, title, img_url, date, update_date, original_news, newspaper, category):
         # 뉴스 주소
         self.url = url
         # 뉴스 이미지 주소
@@ -25,7 +25,7 @@ class Article:
         # 뉴스 작성사
         self.newspaper = newspaper
         # 카테고리
-        self.category = None
+        self.category = category
 
     # 객체 출력시 출력 형태
     def __str__(self):

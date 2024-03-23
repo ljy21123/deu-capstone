@@ -11,11 +11,13 @@ import os
 from openai import OpenAI # pip install openai
 
 from article import Article
+import naverNewsDAO
 
 class NewsBriefBot:
 	def __init__(self) -> None:
 		self.client = OpenAI(api_key="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")
 		self.logger = None
+		self.dao = naverNewsDAO.NaverNewsDAO()
 
 	def setup_logger(self, name, log_file, level=logging.INFO):
 		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -31,7 +33,7 @@ class NewsBriefBot:
 		# 어시던트 생성
 		news_assistant = self.client.beta.assistants.create(
 			name="NewsBriefBot",
-			instructions="You're a news briefing assistant. Please answer in Korean. Please provide an objective summary of the news without including any personal opinions or emotional expressions. Please summarize the contents of the news in less than three lines.",
+			instructions="You're a news briefing assistant. Please answer in Korean. Please summarize the contents of the news in less than three lines.",
 			model="gpt-3.5-turbo-1106",
 		)
 
@@ -84,7 +86,7 @@ class NewsBriefBot:
 		"""
 		GPT에게 전달할 뉴스 형식을 생성합니다.
 		"""
-		formatted_text = f"제목: {news.title}\n본문: {news.content}"
+		formatted_text = f"제목: {news.title}\n본문: {news.original_news}"
 		return formatted_text
 
 
@@ -107,8 +109,13 @@ class NewsBriefBot:
 				news: Article = global_task_queue.get()
 				self.logger.info('큐에서 작업 획득 완료 요청 수행')
 				temp = self.brief(ids, self.formatting_news(news))    
+				news.setSummarizedNews(temp)
+				self.dao.connect()
+				self.dao.insert_news(news)
+				self.dao.disconnect()
 				self.logger.info('요약 요청 완료')
 				self.logger.info("제목:"+news.title+"\n"+temp)
 			else:
 				self.logger.info('대기중인 작업이 없어 대기로 전환')
 				queue_event.clear() # 대기상태로 전환
+				time.sleep(5)

@@ -3,7 +3,7 @@
 # 수정 이력: 
 # - 2024-03-23: 초기버전 생성
 
-# import mysql.connector
+import mysql.connector
 import os
 import logging
 
@@ -20,6 +20,15 @@ class NaverNewsDAO:
         self.setup_logger("naverNewsDAO", os.path.join(log_dir, "naverNewsDAO.log")) # logger 설정
         self.logger = logging.getLogger("system")
     
+    def setup_logger(self, name, log_file, level=logging.INFO):
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
+        handler = logging.FileHandler(log_file, encoding='utf-8')
+        handler.setFormatter(formatter)
+
+        self.logger = logging.getLogger(name)
+        self.logger.setLevel(level)
+        self.logger.addHandler(handler)
+        
     def connect(self):
         try:
             self.conn = mysql.connector.connect(
@@ -40,6 +49,38 @@ class NaverNewsDAO:
         else:
             self.logger.warning("MySQL DB와 연결이 이미 닫혔습니다.")
 
+    def select_news(self):
+        query = """
+        SELECT original 
+        FROM NaverNews
+        WHERE DATE(created_at) = CURDATE();
+        """
+        try:
+            cursor = self.conn.cursor(dictionary=True)
+            cursor.execute(query)
+            door_announcement = cursor.fetchall()
+            cursor.close()
+            return door_announcement
+        except mysql.connector.Error as err:
+            self.logger.error(f"NaverNews 뉴스 원본 조회 오류: {err}")
+    
+    def is_url_exists(self, url):
+        query = """
+        SELECT news_url 
+        FROM NaverNews
+        WHERE news_url = %s;
+        """
+        args = (url,)  # 튜플로 전달하기 위해 괄호 추가
+        try:
+            cursor = self.conn.cursor(dictionary=True)
+            cursor.execute(query, args)
+            door_announcement = cursor.fetchall()
+            cursor.close()
+            return bool(door_announcement)  # 결과값이 있으면 True, 없으면 False 반환
+        except mysql.connector.Error as err:
+            self.logger.error(f"NaverNews 주소 조회 오류: {err}")
+            return False  # 에러가 발생한 경우에도 False 반환
+
     def insert_news(self, news:article.Article):
         query = """
         INSERT INTO NaverNews (news_url, title, summary, original, image_url, publisher, created_at, updated_at, category)
@@ -55,21 +96,6 @@ class NaverNewsDAO:
         except mysql.connector.Error as err:
             self.logger.error(f"NaverNews 삽입 오류: {err}")
         
-    def select_news(self):
-        query = """
-        SELECT original 
-        FROM NaverNews
-        WHERE DATE(created_at) = CURDATE();
-        """
-        try:
-            cursor = self.conn.cursor(dictionary=True)
-            cursor.execute(query)
-            door_announcement = cursor.fetchone()
-            cursor.close()
-            return door_announcement
-        except mysql.connector.Error as err:
-            self.logger.error(f"NaverNews 조회 오류: {err}")
-
     def delete_news(self, id):
         try:
             cursor = self.conn.cursor()
