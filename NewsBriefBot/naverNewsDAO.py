@@ -53,7 +53,7 @@ class NaverNewsDAO:
         query = """
         SELECT original 
         FROM NaverNews
-        WHERE DATE(created_at) = CURDATE();
+        WHERE DATE(created_at) BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND CURDATE()
         """
         try:
             cursor = self.conn.cursor(dictionary=True)

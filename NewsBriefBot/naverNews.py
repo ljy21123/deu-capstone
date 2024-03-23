@@ -105,7 +105,8 @@ class NaverNews:
             update_time_str = update_date_parts[-1]  # 시간 부분
             if '오후' in date_text:
                 u_hour, u_minute = map(int, update_time_str.split(':'))
-                u_hour += 12
+                if u_hour != 12:  # 오후 12시는 그대로 유지
+                    u_hour += 12
                 update_time_str = f"{u_hour:02d}:{u_minute:02d}"
             # 시간 문자열을 datetime 객체로 변환
             update_date = datetime.strptime(f"{update_date_parts[0]} {update_time_str}", '%Y.%m.%d. %H:%M')
@@ -117,7 +118,8 @@ class NaverNews:
         time_str = date_parts[-1]  # 시간 부분
         if '오후' in date_text:
             hour, minute = map(int, time_str.split(':'))
-            hour += 12
+            if hour != 12:  # 오후 12시는 그대로 유지
+                hour += 12
             time_str = f"{hour:02d}:{minute:02d}"
         # 시간 문자열을 datetime 객체로 변환
         date = datetime.strptime(f"{date_parts[0]} {time_str}", '%Y.%m.%d. %H:%M')
