@@ -1,6 +1,0 @@
-<%-- any content can be specified here e.g.: --%>
-<%@ page pageEncoding="UTF-8" %>
-
-페이지 상단에 들어갈 문구 (/WEB-INF/jspf/header.jspf)
-
-<hr>

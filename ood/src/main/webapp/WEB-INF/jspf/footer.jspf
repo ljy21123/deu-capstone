@@ -1,5 +1,0 @@
-<%-- any content can be specified here e.g.: --%>
-<%@ page pageEncoding="UTF-8" %>
-
-<hr><!-- comment -->
-페이지 하단에 들어갈 문구 (/WEB-INF/jspf/footer.jspf)
