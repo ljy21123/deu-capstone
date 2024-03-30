@@ -6,30 +6,23 @@
 
 package com.example.infoweb.dto;
 
-import com.example.infoweb.entity.User;
+import com.example.infoweb.entity.UserInfo;
+import lombok.AllArgsConstructor;
+import lombok.ToString;
 
+@ToString           // 데이터를 잘 받았는지 확인할 toString() 자동화
+@AllArgsConstructor // 전송받은 제목과 내용을 필드에 저장하는 생성자 자동화
 public class UserForm {
 
-    private String userid;
-    private String password;
+    private String id;
+    private String pw;
+    private String door_id;
+    private String door_pw;
+    private Boolean door_alert = false;
+    private String name;
 
-    // 전송받은 제목과 내용을 필드에 저장하는 생성자
-    public UserForm(String userid, String password) {
-        this.userid = userid;
-        this.password = password;
-    }
-
-    // 데이터를 잘 받았는지 확인할 toString() 메서드
-    @Override
-    public String toString() {
-        return "UserForm{" +
-                "userid='" + userid + '\'' +
-                ", password='" + password + '\'' +
-                '}';
-    }
-
-    public User toEntity() {
-        return new User(null, userid, password);
+    public UserInfo toEntity() {
+        return new UserInfo(id, pw, door_id, door_pw, door_alert, name);
     }
 
 }
