@@ -22,9 +22,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
-    @GetMapping("/users/signupTest")
+    @GetMapping("/users/signup_test")
     public String newUserForm() {
-        return "/users/signupTest";
+        return "/users/signup_test";
     }
 
     @PostMapping("/users/create")
