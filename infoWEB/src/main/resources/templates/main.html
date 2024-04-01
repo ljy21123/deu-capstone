@@ -9,7 +9,11 @@
       layout:decorate="~{layouts/default_layout}">
 
     <div layout:fragment="content">
-        <h1>임시</h1>
+        <h1>메인 페이지</h1>
+        <br>
+        <p>로그인 정보: <span th:text="${loginInfo} ?: '정보 없음'"></span></p>
+        <br>
+        <a href="/users/login" class="btn btn-secondary">로그인/회원가입</a>
     </div>
 
 </html>
