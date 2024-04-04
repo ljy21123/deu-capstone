@@ -1,5 +1,10 @@
 <!doctype html>
-<html lang="en" data-bs-theme="auto">
+<html lang="en" data-bs-theme="auto"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/default_layout}">
+
+<div layout:fragment="content">
   <head><script src="../assets/js/color-modes.js"></script>
 
     <meta charset="utf-8">
@@ -227,7 +232,11 @@
           </a>
         </div>
         <div class="col-auto d-none d-lg-block">
-          <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+          <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false">
+            <title>Placeholder</title>
+            <image href="https://image.utoimage.com/preview/cp872722/2022/12/202212008462_500.jpg" width="100%" height="100%"/>
+          </svg>
+
         </div>
       </div>
     </div>
@@ -459,4 +468,5 @@
 <script src="../assets/dist/js/bootstrap.bundle.min.js"></script>
 
     </body>
+</div>
 </html>

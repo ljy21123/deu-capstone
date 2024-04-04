@@ -179,8 +179,8 @@ class DoorNotification:
         # 크롬 브라우저를 실행하고 WebDriver 객체 생성
         service = Service(executable_path='/root/deu-capstone/chrome/chromedriver-linux64/chromedriver')
 
-        self.driver = webdriver.Chrome(service=service, options=chrome_options)
-        # self.driver = webdriver.Chrome(options=chrome_options)
+        # self.driver = webdriver.Chrome(service=service, options=chrome_options)
+        self.driver = webdriver.Chrome(options=chrome_options)
 
         self.logger.info('door 접속')
         # 웹 페이지로 이동
@@ -275,7 +275,7 @@ class DoorNotification:
             for i in range(2, lecture_count + 2):
                 # print()
                 # print(lecture_names[i-2])
-
+                self.logger.info('파싱 주소: {}'.format(url[0]))
                 # 강의 공지가 1개라도 있는지 확인하기 위한 변수
                 # found = False
                 # 강의실 1개 마다 urls에 들어있는 모든 링크를 방문한다
@@ -317,6 +317,7 @@ class DoorNotification:
 
         if users:
             for i in users:
+                self.logger.info("{} 파싱중".format(i["name"]))
                 self.run_door_crawling(i["id"], i["door_id"], i["door_pw"], i["name"])
         else:
             self.logger.warning("도어 알림을 신청한 유저가 없습니다.")

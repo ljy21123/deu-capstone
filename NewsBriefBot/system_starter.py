@@ -107,5 +107,5 @@ if __name__ == "__main__":
 
     # 일정 시간마다 호출
     threading.Thread(target=systemStart.run_naver_news_parsing).start()
-    threading.Thread(target=systemStart.print_queue).start()
+    # threading.Thread(target=systemStart.print_queue).start()
     threading.Thread(target=systemStart.run_door_notification).start()

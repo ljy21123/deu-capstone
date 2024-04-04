@@ -23,6 +23,12 @@ public class UserController {
     @Autowired  // 의존성 주입
     private UserRepository userRepository;
 
+    // 템플릿 테스트
+    @GetMapping("/index")
+    public String testForm() {
+        return "/blog/index";
+    }
+
     @GetMapping("/users/signup")
     public String newUserForm() {
         return "/users/signup";
