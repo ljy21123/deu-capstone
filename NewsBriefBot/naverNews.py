@@ -156,12 +156,10 @@ class NaverNews:
         self.logger = logging.getLogger("naverNews")
         self.logger.info('네이버 뉴스 크롤링 시작')
 
-        self.logger.info('분야 URL 생성')
         category_urls = self.make_url()
-        self.logger.info('링크 생성 완료')
+        self.logger.info('분야별 링크 생성 완료')
         self.dao.connect()
         for i in range(len(category_urls[0])):
-            self.logger.info(f'{category_urls[1][i]}파싱 시작')
             news_urls = self.articles_crawler(category_urls[0][i])
             for url in news_urls:
                 # 뉴스 객체 반환
@@ -171,7 +169,7 @@ class NaverNews:
                 # 대기중인 브리핑 봇을 깨움
                 queue_event.set()
 
-            self.logger.info('파싱 완료!')
+            self.logger.info(f'{category_urls[1][i]} 파싱 완료!')
 
         self.dao.disconnect()
         self.logger.info('대기전환')
