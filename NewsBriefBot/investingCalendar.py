@@ -32,14 +32,8 @@ class InvestingCalendar:
         self.logger.setLevel(level)
         self.logger.addHandler(handler)
 
-        # 콘솔에도 로그 출력
-        console = logging.StreamHandler()
-        console.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
-        console.setFormatter(formatter)
-        logging.getLogger('').addHandler(console)
-
     def runCrawling(self):
+        self.logger.info('이벤트 파싱 시작')
         url = 'https://kr.investing.com/economic-calendar/'
         # 페이지 가져오기
         original_html = requests.get(url, headers=self.headers)
@@ -57,7 +51,6 @@ class InvestingCalendar:
             url = 'https://kr.investing.com/'+tdList[3].find('a').get('href')
             # 시간
             date = datetime.strptime(i.get('data-event-datetime'), "%Y/%m/%d %H:%M:%S")
-            print(date)
             # 나라
             country = i.span.get('title')
             # 중요성
@@ -72,11 +65,14 @@ class InvestingCalendar:
             previous = tdList[6].text
             
             eventList.append(investingInfoBody.InvestingInfoBody(url, date, country, importance, eventDescription, forecast, actual, previous))
+        
+        self.logger.info('이벤트 크롤링 완료')
 
         self.dao.connect()
         for event in eventList:
-            self.dao.insertEvent(event)
+            if not self.dao.isUrlExists(event.url):
+                self.dao.insertEvent(event)
         self.dao.disconnect() 
-            
+
 a = InvestingCalendar()
 a.runCrawling()

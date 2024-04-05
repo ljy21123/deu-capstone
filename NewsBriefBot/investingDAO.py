@@ -64,6 +64,23 @@ class InvestingDAO:
         except mysql.connector.Error as err:
             self.logger.error(f"FinvizMap  뉴스 원본 조회 오류: {err}")
     
+    def isUrlExists(self, url):
+        query = """
+        SELECT url 
+        FROM InvestingRealTimeEvents
+        WHERE url = %s;
+        """
+        args = (url,)  # 튜플로 전달하기 위해 괄호 추가
+        try:
+            cursor = self.conn.cursor(dictionary=True)
+            cursor.execute(query, args)
+            door_announcement = cursor.fetchall()
+            cursor.close()
+            return bool(door_announcement)  # 결과값이 있으면 True, 없으면 False 반환
+        except mysql.connector.Error as err:
+            self.logger.error(f"InvestingRealTimeEvents 주소 조회 오류: {err}")
+            return False  # 에러가 발생한 경우에도 False 반환
+        
     def insertEvent(self, event:InvestingInfoBody):
         query = """
         INSERT INTO InvestingRealTimeEvents (url, event_time, country, importance, event_description, actual, forecast, previous)

@@ -68,9 +68,10 @@ class NaverNews:
         for i in temp:
             if not self.dao.is_url_exists(i):
                 urls.append(i)
-                self.logger.info(f'{i}URL이 존재하지 않습니다.')
-            else:
-                self.logger.info(f'{i}URL이 존재합니다.')
+                # self.logger.info(f'{i}URL이 존재하지 않습니다.')
+            # else:
+                # self.logger.info(f'{i}URL이 존재합니다.')
+                
 
         return urls
 

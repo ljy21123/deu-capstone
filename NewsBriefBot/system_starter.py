@@ -20,6 +20,7 @@ import newsBriefBot
 import doorNotification
 import naverRealTimeNews
 import finvizMap
+import investingCalendar
 
 class System_starter:
     def __init__(self) -> None:
@@ -31,6 +32,7 @@ class System_starter:
         self.naverNews = None
         self.naverRelaTimeNews = None
         self.finvizMap = None
+        self.investingCalendar = None
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -110,6 +112,15 @@ class System_starter:
         # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
         threading.Timer(600, self.naverRelaTimeNews).start()
             
+    # investingCalendar.py를 실행하는 함수
+    def runInvestingCalendar(self):
+        if not self.investingCalendar:
+            self.investingCalendar = investingCalendar.InvestingCalendar()
+        self.logger.info('실시간 이벤트 크롤러 시작')
+        investingCalendarThread = threading.Thread(target=self.investingCalendar.runCrawling)
+        investingCalendarThread.start()
+        # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
+        threading.Timer(600, self.runInvestingCalendar).start()
 
     def print_queue(self):
         print("현재 큐의 사이즈:", self.global_task_queue.qsize())
@@ -135,3 +146,4 @@ if __name__ == "__main__":
     threading.Thread(target=systemStart.run_door_notification).start()
     threading.Thread(target=systemStart.runNaverRealTimeNews).start()
     threading.Thread(target=systemStart.runFinvizMap).start()
+    threading.Thread(target=systemStart.runInvestingCalendar).start()
