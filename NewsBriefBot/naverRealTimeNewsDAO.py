@@ -90,7 +90,7 @@ class NaverRealTimeNewsDAO:
             cursor.execute(query, (news.title, news.url, news.img_url, news.newspaper, news.date, news.category))
             self.conn.commit()
             cursor.close()
-            self.logger.info("새로운 실시간 뉴스가 추가되었습니다.")
+            self.logger.info(f"{news.url}: 새로운 실시간 뉴스가 추가되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"NaverRealTimeNews 삽입 오류: {err}")
         

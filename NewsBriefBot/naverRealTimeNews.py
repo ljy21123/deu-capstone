@@ -94,12 +94,12 @@ class NaverRealTimeNews:
 
         # DB에 저장된 URL인지 판단 후 저장되어 있다면 무시하고 없다면 저장
         for i in range(len(urls)):
-            if not self.dao.isUrlExists(i):
-                self.logger.debug(f'{urls[i]}URL이 존재하지 않습니다.')
+            if not self.dao.isUrlExists(urls[i]):
+                # self.logger.info(f'{urls[i]}URL이 존재하지 않습니다.')
                 date = self.getDate(urls[i])
                 realTimeNewsList.append(naverRealTimeNewsBody.NaverRealTimeNewsBody(urls[i], titles[i], imgURLs[i], date, publishers[i], category))
-            else:
-                self.logger.debug(f'{i}URL이 존재합니다.')
+            # else:
+            #     self.logger.info(f'{urls[i]}URL이 존재합니다.')
 
         return realTimeNewsList
 
@@ -119,8 +119,7 @@ class NaverRealTimeNews:
             newsList = self.realTimeNewsCrawler(category_urls[0][i], category_urls[1][i])
             for news in newsList:
                 self.dao.insertNews(news)
-
-        self.logger.info('파싱 완료!')
+                
         self.dao.disconnect()
         self.logger.info('대기전환')
 
