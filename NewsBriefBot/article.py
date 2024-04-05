@@ -29,7 +29,7 @@ class Article:
 
     # 객체 출력시 출력 형태
     def __str__(self):
-        return f"주소: {self.url}, \n제목: {self.title}, \n날짜: {self.date}, \n수정날짜: {self.update_date}, \n신문사: {self.newspaper} \n이미지 주소: {self.img_url} \n분야: {self.category}"
+        return f"주소: {self.url}, \n제목: {self.title}, \n날짜: {self.date} \n수정날짜: {self.update_date}, \n신문사: {self.newspaper} \n이미지 주소: {self.img_url} \n분야: {self.category}"
     
     def setSummarizedNews(self, summarized_news):
         self.summarized_news = summarized_news

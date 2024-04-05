@@ -1,15 +1,15 @@
-# 뉴스 저장을 위한 DAO 
+# 네이버 실시간 뉴스 저장을 위한 DAO 
 # 작성자: 양시현
 # 수정 이력: 
-# - 2024-03-23: 초기버전 생성
+# - 2024-04-06: 초기버전 생성
 
 import mysql.connector
 import os
 import logging
 
-import article
+from naverRealTimeNewsBody import NaverRealTimeNewsBody
 
-class NaverNewsDAO:
+class NaverRealTimeNewsDAO:
     def __init__(self, host="127.0.0.1", user="root", password="1234", database="capstone") -> None:
         self.host = host
         self.user = user
@@ -17,9 +17,9 @@ class NaverNewsDAO:
         self.database = database
         self.conn = None
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
-        self.setup_logger("naverNewsDAO", os.path.join(log_dir, "naverNewsDAO.log")) # logger 설정
+        self.setupLogger("NaverRealTimeNewsDAO", os.path.join(log_dir, "NaverRealTimeNewsDAO.log")) # logger 설정
     
-    def setup_logger(self, name, log_file, level=logging.INFO):
+    def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
         handler = logging.FileHandler(log_file, encoding='utf-8')
         handler.setFormatter(formatter)
@@ -48,10 +48,10 @@ class NaverNewsDAO:
         else:
             self.logger.warning("MySQL DB와 연결이 이미 닫혔습니다.")
 
-    def select_news(self):
+    def selectNews(self):
         query = """
-        SELECT original 
-        FROM NaverNews
+        SELECT title
+        FROM NaverRealTimeNews
         WHERE DATE(created_at) BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND CURDATE()
         """
         try:
@@ -61,12 +61,12 @@ class NaverNewsDAO:
             cursor.close()
             return door_announcement
         except mysql.connector.Error as err:
-            self.logger.error(f"NaverNews 뉴스 원본 조회 오류: {err}")
+            self.logger.error(f"NaverRealTimeNews 뉴스 원본 조회 오류: {err}")
     
-    def is_url_exists(self, url):
+    def isUrlExists(self, url):
         query = """
         SELECT news_url 
-        FROM NaverNews
+        FROM NaverRealTimeNews
         WHERE news_url = %s;
         """
         args = (url,)  # 튜플로 전달하기 위해 괄호 추가
@@ -77,31 +77,30 @@ class NaverNewsDAO:
             cursor.close()
             return bool(door_announcement)  # 결과값이 있으면 True, 없으면 False 반환
         except mysql.connector.Error as err:
-            self.logger.error(f"NaverNews 주소 조회 오류: {err}")
+            self.logger.error(f"NaverRealTimeNews 주소 조회 오류: {err}")
             return False  # 에러가 발생한 경우에도 False 반환
 
-    def insert_news(self, news:article.Article):
+    def insertNews(self, news:NaverRealTimeNewsBody):
         query = """
-        INSERT INTO NaverNews (news_url, title, summary, original, image_url, publisher, created_at, updated_at, category)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO NaverRealTimeNews (title, news_url, image_url, publisher, created_at, category)
+        VALUES (%s, %s, %s, %s, %s, %s)
         """
-        args = (news.url, news.title, news.summarized_news, news.original_news, news.img_url, news.newspaper, news.date, news.update_date, news.category)
         try:
             cursor = self.conn.cursor()
-            cursor.execute(query, args)
+            cursor.execute(query, (news.title, news.url, news.img_url, news.newspaper, news.date, news.category))
             self.conn.commit()
             cursor.close()
-            self.logger.info("새로운 뉴스가 추가되었습니다.")
+            self.logger.info("새로운 실시간 뉴스가 추가되었습니다.")
         except mysql.connector.Error as err:
-            self.logger.error(f"NaverNews 삽입 오류: {err}")
+            self.logger.error(f"NaverRealTimeNews 삽입 오류: {err}")
         
-    def delete_news(self, id):
+    def deleteNews(self, id):
         try:
             cursor = self.conn.cursor()
-            cursor.execute("DELETE FROM NaverNews WHERE id = %s", (id,))
+            cursor.execute("DELETE FROM NaverRealTimeNews WHERE id = %s", (id,))
             self.conn.commit()
             cursor.close()
-            self.logger.info("NaverNews가 제거되었습니다.")
+            self.logger.info("NaverRealTimeNews 제거되었습니다.")
         except mysql.connector.Error as err:
-            self.logger.error(f"NaverNews 삭제 오류: {err}")
+            self.logger.error(f"NaverRealTimeNews 삭제 오류: {err}")
         

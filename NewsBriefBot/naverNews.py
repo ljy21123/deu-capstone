@@ -171,6 +171,5 @@ class NaverNews:
                 queue_event.set()
 
         self.logger.info('파싱 완료!')
-
         self.dao.disconnect()
         self.logger.info('대기전환')
