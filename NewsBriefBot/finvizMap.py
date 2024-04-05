@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import TimeoutException
 from bs4 import BeautifulSoup
 from selenium.webdriver.chrome.service import Service
 import logging
@@ -36,13 +37,6 @@ class FinvizMap:
         self.logger.setLevel(level)
         self.logger.addHandler(handler)
 
-        # 콘솔에도 로그 출력
-        console = logging.StreamHandler()
-        console.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
-        console.setFormatter(formatter)
-        logging.getLogger('').addHandler(console)
-
     def runCrawling(self):
         # 옵션 설정
         chrome_options = Options()
@@ -61,10 +55,13 @@ class FinvizMap:
             self.logger.info('윈도우 환경입니다.')
             self.driver = webdriver.Chrome(options=chrome_options)
 
-        # 웹 페이지로 이동
-        mapUrl = "https://finviz.com/map.ashx?t=sec"
-        self.driver.get(mapUrl)
-        
+        try:
+            # 웹 페이지로 이동
+            mapUrl = "https://finviz.com/map.ashx?t=sec"
+            self.driver.get(mapUrl)
+        except TimeoutException:
+            self.logger.error('로드시간이 너무 깁니다.')
+
         # 이미지 생성을 위한 버튼 클릭 후 대기
         try:
             mapButt = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#root > div.border-finviz-blue-gray.bg-\[\#363a46\].text-\[\#94a3b8\].shadow.mb-0\.5.flex.h-10.items-center > div.flex.px-2 > button:nth-child(2)')))
@@ -83,7 +80,4 @@ class FinvizMap:
         self.dao.connect()  
         self.dao.insertNews(BeautifulSoup(img_tag, 'html.parser').img.get('src'))
         self.dao.disconnect()
-
-if __name__ == "__main__":
-    a = FinvizMap()
-    print(a.runCrawling())
+        self.logger.info("S&P 500 Map 생성완료")
