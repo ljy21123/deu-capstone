@@ -160,7 +160,7 @@ class DoorNotification:
                 for i in range(new_notify_count):
                     # 알림 처리로직 추가
                     # print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
-                    self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][-i]}\"가 공지되었습니다.", name)
+                    self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][i]}\"가 공지되었습니다.", name)
                     json_data[semester][lecture][menu] += 1
     
         return json_data
