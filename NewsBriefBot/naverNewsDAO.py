@@ -16,6 +16,7 @@ class NaverNewsDAO:
         self.password = password
         self.database = database
         self.conn = None
+        self.logger = None
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setup_logger("naverNewsDAO", os.path.join(log_dir, "naverNewsDAO.log")) # logger 설정
     
@@ -101,7 +102,7 @@ class NaverNewsDAO:
             cursor.execute("DELETE FROM NaverNews WHERE id = %s", (id,))
             self.conn.commit()
             cursor.close()
-            self.logger.info("NaverNews가 제거되었습니다.")
+            self.logger.info(f"{id} 제거되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"NaverNews 삭제 오류: {err}")
         

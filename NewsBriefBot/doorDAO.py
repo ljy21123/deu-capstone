@@ -14,6 +14,7 @@ class DoorDAO:
         self.password = password
         self.database = database
         self.conn = None
+        self.logger = None
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setup_logger("doorDAO", os.path.join(log_dir, "DoorDAO.log")) # logger 설정
         self.logger = logging.getLogger("system")
@@ -96,6 +97,6 @@ class DoorDAO:
             cursor.execute("DELETE FROM DoorAnnouncements WHERE id = %s", (id,))
             self.conn.commit()
             cursor.close()
-            self.logger.info("Door 알림 유저 정보가 제거되었습니다.")
+            self.logger.info(f"{id} Door 알림 유저 정보가 제거되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"DoorAnnouncements 삭제 오류: {err}")

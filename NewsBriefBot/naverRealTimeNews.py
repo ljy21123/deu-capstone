@@ -27,14 +27,7 @@ class NaverRealTimeNews:
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
         self.logger.addHandler(handler)
-
-        # 콘솔에도 로그 출력
-        console = logging.StreamHandler()
-        console.setLevel(logging.INFO)
-        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
-        console.setFormatter(formatter)
-        logging.getLogger('').addHandler(console)
-
+        
     def makeUrl(self) -> list:
         """
         네이버 뉴스의 카테고리는 
