@@ -46,8 +46,6 @@ class NaverRealTimeNews:
         # 정치 경제 사회 생활/문화 IT/과학 세계
         category = ["정치", "경제", "사회", "생활/문화", "세계", "IT/과학"]
         category_num = [100, 101, 102, 103, 104, 105]
-        category = ["정치"]
-        category_num = [100]
         urls = []
         news_category_urls = []
         for i in category_num:
@@ -119,7 +117,7 @@ class NaverRealTimeNews:
             newsList = self.realTimeNewsCrawler(category_urls[0][i], category_urls[1][i])
             for news in newsList:
                 self.dao.insertNews(news)
-                
+
         self.dao.disconnect()
         self.logger.info('대기전환')
 
