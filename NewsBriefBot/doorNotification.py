@@ -178,12 +178,13 @@ class DoorNotification:
         chrome_options.add_argument("--disable-dev-shm-usage")
 
         # 크롬 브라우저를 실행하고 WebDriver 객체 생성
-        # 리눅스용
-        service = Service(executable_path='/root/chrome/chromedriver-linux64/chromedriver')
-        self.driver = webdriver.Chrome(service=service, options=chrome_options)
-
-        # 윈도우용
-        # self.driver = webdriver.Chrome(options=chrome_options)
+        if os.name == 'posix':  # 리눅스용
+            self.logger.info('리눅스 환경입니다.')
+            service = Service(executable_path='/root/chrome/chromedriver-linux64/chromedriver')
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+        elif os.name == 'nt':  # 윈도우용
+            self.logger.info('윈도우 환경입니다.')
+            self.driver = webdriver.Chrome(options=chrome_options)
 
         # 웹 페이지로 이동
         login_url = "https://door.deu.ac.kr/sso/login.aspx"
