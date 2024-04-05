@@ -1,11 +1,7 @@
 # finviz map 이미지 파싱용
 # 작성자: 양시현
 # 수정 이력: 
-# - 2024-03-17: 초기버전 생성
-# - 2024-03-18: 코드 최적화, 강의 공지 번호를 가져오도록 수정
-# - 2024-03-20: 아무 공지가 없더라도 강의명은 출력되도록 수정
-# - 2024-03-20: 콘솔 출력이 아닌 로그 파일로 기록하도록 수정
-# - 2024-03-22: 클래스로 변경, json처리 함수 추가
+# - 2024-04-06: 초기버전 생성
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -68,20 +64,23 @@ class FinvizMap:
         # 웹 페이지로 이동
         mapUrl = "https://finviz.com/map.ashx?t=sec"
         self.driver.get(mapUrl)
-
+        
+        # 이미지 생성을 위한 버튼 클릭 후 대기
         try:
             mapButt = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '#root > div.border-finviz-blue-gray.bg-\[\#363a46\].text-\[\#94a3b8\].shadow.mb-0\.5.flex.h-10.items-center > div.flex.px-2 > button:nth-child(2)')))
             mapButt.click()
         except:
             self.logger.error("버튼 로딩에 실패하였습니다.")
 
+        # 버튼을 클릭한 후 이미지가 로딩 될 때까지 대기
         try:
             img_element = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, "//img[@alt='S&P 500 Map']")))
             img_tag = img_element.get_attribute('outerHTML')
         except:
             self.logger.error("이미지 로딩에 실패하였습니다.")
 
-        self.dao.connect()
+        # DB에 저장
+        self.dao.connect()  
         self.dao.insertNews(BeautifulSoup(img_tag, 'html.parser').img.get('src'))
         self.dao.disconnect()
 
