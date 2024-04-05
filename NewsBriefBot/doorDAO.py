@@ -60,13 +60,13 @@ class DoorDAO:
 
     def select_door_announcement(self, id):
         try:
-            cursor = self.conn.cursor(dictionary=True)
+            cursor = self.conn.cursor(dictionary=True, buffered=True)
             cursor.execute("SELECT door_announcement_info FROM DoorAnnouncements WHERE id = %s", (id,))
             door_announcement = cursor.fetchone()
             cursor.close()
             return door_announcement
         except mysql.connector.Error as err:
-            self.logger.error(f"DoorAnnouncements 조회 오류: {err}")
+            self.logger.error(f"{id} DoorAnnouncements 조회 오류: {err}")
         
     def insert_door_announcement(self, id, door_announcement_info):
         try:
@@ -77,7 +77,7 @@ class DoorDAO:
             cursor.close()
             self.logger.info("새로운 유저 정보가 추가되었습니다.")
         except mysql.connector.Error as err:
-            self.logger.error(f"DoorAnnouncements 삽입 오류: {err}")
+            self.logger.error(f"{id} DoorAnnouncements 삽입 오류: {err}")
 
     def update_door_announcement(self, id, door_announcement_info):
         try:

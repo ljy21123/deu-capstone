@@ -124,10 +124,8 @@ class DoorNotification:
         if menu == "과제":
             # 파싱한 공지의 개수 - 알림을 보내 공지 개수
             new_notify_count = len(lecture_notice_list[0]) - json_data[semester][lecture][menu]
-
             for i in range(1, new_notify_count + 1):
                 # 알림 처리로직 추가
-                # print(menu,": \"", lecture_notice_list[0][-i], "\"알림보냄")
                 self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][-i]}\"가 공지되었습니다.", name)
                 json_data[semester][lecture][menu] += 1
         elif menu == "공지":
@@ -141,7 +139,6 @@ class DoorNotification:
             if alarm_count > json_data[semester][lecture]["알림"]:
                 for i in range(alarm_count - json_data[semester][lecture]["알림"]):
                     # 알림 처리로직 추가
-                    # print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
                     self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][-i]}\"가 공지되었습니다.", name)
                     json_data[semester][lecture]["알림"] += 1
             
@@ -150,16 +147,20 @@ class DoorNotification:
             if notify_count > 0:
                 for i in range(alarm_count, alarm_count + notify_count):
                     # 알림 처리로직 추가
-                    # print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
                     self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][-i]}\"가 공지되었습니다.", name)
                     json_data[semester][lecture][menu] += 1
 
         else:
+            # 10이 넘어가는 경우 예외 처리
             new_notify_count = int(lecture_notice_list[1][0]) - json_data[semester][lecture][menu]
+
+            if new_notify_count > 10:
+                new_notify_count = 10
+                json_data[semester][lecture][menu] += int(lecture_notice_list[1][0]) - 10
+
             if new_notify_count > 0:
                 for i in range(new_notify_count):
                     # 알림 처리로직 추가
-                    # print(menu,": \"", lecture_notice_list[0][i], "\"알림보냄")
                     self.kakao.sendMessageToKakao(f"{lecture}({menu}): \"{lecture_notice_list[0][i]}\"가 공지되었습니다.", name)
                     json_data[semester][lecture][menu] += 1
     
@@ -177,12 +178,13 @@ class DoorNotification:
         chrome_options.add_argument("--disable-dev-shm-usage")
 
         # 크롬 브라우저를 실행하고 WebDriver 객체 생성
-        service = Service(executable_path='/root/deu-capstone/chrome/chromedriver-linux64/chromedriver')
+        # 리눅스용
+        service = Service(executable_path='/root/chrome/chromedriver-linux64/chromedriver')
+        self.driver = webdriver.Chrome(service=service, options=chrome_options)
 
-        # self.driver = webdriver.Chrome(service=service, options=chrome_options)
-        self.driver = webdriver.Chrome(options=chrome_options)
+        # 윈도우용
+        # self.driver = webdriver.Chrome(options=chrome_options)
 
-        self.logger.info('door 접속')
         # 웹 페이지로 이동
         login_url = "https://door.deu.ac.kr/sso/login.aspx"
         self.driver.get(login_url)
@@ -195,26 +197,24 @@ class DoorNotification:
         pw_input = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.XPATH, '/html/body/form/div[2]/div[1]/div/table/tbody/tr[2]/td/input')))
         pw_input.send_keys(door_pw)
 
-        self.logger.info('로그인 시도')
         try:
             # 로그인 버튼 클릭
             login_button = WebDriverWait(self.driver, 5).until(EC.presence_of_element_located((By.XPATH, '/html/body/form/div[2]/div[1]/div/table/tbody/tr[1]/td[3]/a')))
             login_button.click()
             
         except TimeoutException:
-            self.logger.error('로그인 버튼을 찾을 수 없거나 클릭할 수 없습니다.')
+            self.logger.error(f'{name}: 로그인 버튼을 찾을 수 없거나 클릭할 수 없습니다.')
             return
         except Exception as e:
-            self.logger.error("로그인 도중 오류가 발생했습니다:", e)
+            self.logger.error(f'{name}: 로그인 도중 오류가 발생했습니다:', e)
             return
         
-        self.logger.info('로그인 완료')
+        self.logger.info(f'{name}: 로그인 완료')
 
         try:
-            self.logger.info('강의실 목록으로 이동')
             # 강의실로 이동
             self.driver.get('http://door.deu.ac.kr/MyPage')
-            self.logger.info('강의 목록 파싱')
+            self.logger.info(f'{name}: 강의 목록 파싱')
 
             # 강의 목록을 가져옴
             lecture_list_selector = "#wrap > div.subpageCon > div:nth-child(3) > div:nth-child(3) > table"
@@ -240,25 +240,23 @@ class DoorNotification:
                     lecture_name = row.find_all('td')[2].text.strip()  # 세 번째 열이 강의 이름
                     lecture_names.append(lecture_name)
                 lecture_count = len(lecture_names)
-                self.logger.info("수강중인 강의 개수: {}".format(lecture_count))
             else:
-                self.logger.info("강의목록이 비어있습니다.")
+                self.logger.warning(f'{name}: 강의목록이 비어있습니다.')
                 return
-            
+
             # json 관련 처리
-            self.logger.info("공지 json파일 요청")
             json_data = self.get_json(id)
             
             # DB에서 json을 받아와 처리
             # json데이터가 존재하는지 확인
             if json_data:
-                self.logger.info("공지 json파일이 존재")
+                self.logger.info(f'{name}: 공지 json파일이 존재')
                 # json_data에 이번 학기 정보가 존재하는지 확인
                 if not semester in json_data:
-                    self.logger.info(id+"의 학기 정보를 새로 만드는 중")
+                    self.logger.info(f'{name}: 의 학기 정보를 새로 만드는 중')
                     json_data = self.make_json(semester, lecture_names)
             else:
-                self.logger.info(id+"의 학기 Json을 새로 만든는 중")
+                self.logger.info(f'{name}: 의 학기 Json을 새로 만드는 중')
                 json_data = self.make_json(semester, lecture_names, id)
             
             # 크롤링할 주소와 그 주소에 존재하는 테이블의 제목 위치
@@ -270,31 +268,18 @@ class DoorNotification:
                 ["http://door.deu.ac.kr/BBS/Board/List/CourseReference?cNo=", 2, "강의자료"]
             ]
 
-            self.logger.info('각 강의별 공지 파싱 시작')
+            self.logger.info(f'{name}: 공지 파싱 시작')
             # 새로운 공지 확인 시작
-            for i in range(2, lecture_count + 2):
-                # print()
-                # print(lecture_names[i-2])
-                self.logger.info('파싱 주소: {}'.format(url[0]))
-                # 강의 공지가 1개라도 있는지 확인하기 위한 변수
-                # found = False
+            for i in range(lecture_count):
                 # 강의실 1개 마다 urls에 들어있는 모든 링크를 방문한다
                 for url in urls:
                     # 메뉴 이름 저장
                     menu = url[2]
                     # 강의실에서 방문할 링크, 강의실 번호, 제목의 위치를 보내 파싱한다.
-                    lecture_notice_list = self.table_parsing(url[0], lecture_room_numbers[i-2], url[1])
-                    json_data = self.compare_and_notify_changes(lecture_notice_list, semester, lecture_names[i-2], menu, name, json_data)
-                #     # 공지 개수가 1개 이상이라면 목록을 출력
-                #     if len(lecture_notice_list[0]) > 0:
-                #         found = True
-                #         # 공지 개수 출력
-                #         print(url[2])
-                #         print(lecture_notice_list)
+                    lecture_notice_list = self.table_parsing(url[0], lecture_room_numbers[i], url[1])
+                    json_data = self.compare_and_notify_changes(lecture_notice_list, semester, lecture_names[i], menu, name, json_data)
 
-                # if not found:
-                #     print("공지가 없습니다!")
-            self.logger.info('공지 파싱 종료')
+            self.logger.info(f'{name}: 공지 파싱 종료')
         except TimeoutException:
             self.logger.error("요소를 찾을 수 없거나 연결 시간이 초과되었습니다.")
             return 
@@ -303,7 +288,6 @@ class DoorNotification:
             return 
         
         self.dao.update_door_announcement(id, json.dumps(json_data))
-        self.logger.info('도어 크롤링 수행완료 대기전환')
 
     def start(self):
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
@@ -317,10 +301,9 @@ class DoorNotification:
 
         if users:
             for i in users:
-                self.logger.info("{} 파싱중".format(i["name"]))
                 self.run_door_crawling(i["id"], i["door_id"], i["door_pw"], i["name"])
         else:
-            self.logger.warning("도어 알림을 신청한 유저가 없습니다.")
+            self.logger.info("도어 알림을 신청한 유저가 없습니다.")
         self.dao.disconnect()
         
 
