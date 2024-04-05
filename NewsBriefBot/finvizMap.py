@@ -24,11 +24,11 @@ class FinvizMap:
         self.logger = None
         self.headers = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102"
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
-        self.setup_logger("FinvizMap", os.path.join(log_dir, "FinvizMap.log")) # logger 설정
+        self.setupLogger("FinvizMap", os.path.join(log_dir, "FinvizMap.log")) # logger 설정
         self.logger = logging.getLogger("FinvizMap")
         self.logger.info('FinvizMap 파싱시작')
         
-    def setup_logger(self, name, log_file, level=logging.INFO):
+    def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
         handler = logging.FileHandler(log_file, encoding='utf-8')
         handler.setFormatter(formatter)
