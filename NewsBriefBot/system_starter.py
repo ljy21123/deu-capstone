@@ -18,6 +18,7 @@ import os
 import naverNews
 import newsBriefBot
 import doorNotification
+import naverRealTimeNews
 
 class System_starter:
     def __init__(self) -> None:
@@ -27,6 +28,7 @@ class System_starter:
         self.newsBot = None
         self.door = None
         self.naverNews = None
+        self.naverRelaTimeNews = None
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -56,10 +58,9 @@ class System_starter:
     def run_naver_news_parsing(self):
         if not self.naverNews:
             self.naverNews = naverNews.NaverNews()
-        self.logger.info('네이버 뉴스 크롤링 수행시작')
+        self.logger.info('네이버 뉴스 크롤러 시작')
         naver_news_thread = threading.Thread(target=self.naverNews.start_crawling, args=(self.global_task_queue, self.gueue_event))
         naver_news_thread.start()
-
         # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
         threading.Timer(600, self.run_naver_news_parsing).start()
 
@@ -87,6 +88,16 @@ class System_starter:
             # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
             threading.Timer(600, self.run_door_notification).start()
         
+    # naverRealTimeNews.py를 실행하는 함수
+    def runNaverRealTimeNews(self):
+        if not self.naverRelaTimeNews:
+            self.naverRelaTimeNews = naverRealTimeNews.NaverRealTimeNews()
+            self.logger.info('네이버 실시간 뉴스 크롤러 시작')
+            naverRelaTimeNewsThread = threading.Thread(target=self.naverRelaTimeNews.startCrawling)
+            naverRelaTimeNewsThread.start()
+            # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
+            threading.Timer(600, self.naverRelaTimeNews).start()
+
     def print_queue(self):
         print("현재 큐의 사이즈:", self.global_task_queue.qsize())
         threading.Timer(20, self.print_queue).start()
@@ -109,3 +120,4 @@ if __name__ == "__main__":
     threading.Thread(target=systemStart.run_naver_news_parsing).start()
     # threading.Thread(target=systemStart.print_queue).start()
     threading.Thread(target=systemStart.run_door_notification).start()
+    threading.Thread(target=systemStart.runNaverRealTimeNews).start()
