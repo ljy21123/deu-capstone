@@ -78,7 +78,7 @@ class FinvizMapDAO:
         except mysql.connector.Error as err:
             self.logger.error(f"NaverNews 삽입 오류: {err}")
         
-    def deleteNews(self, id):
+    def deleteMap(self, id):
         try:
             cursor = self.conn.cursor()
             cursor.execute("DELETE FROM FinvizMap  WHERE id = %s", (id,))

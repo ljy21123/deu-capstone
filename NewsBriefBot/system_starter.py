@@ -19,6 +19,7 @@ import naverNews
 import newsBriefBot
 import doorNotification
 import naverRealTimeNews
+import finvizMap
 
 class System_starter:
     def __init__(self) -> None:
@@ -29,6 +30,7 @@ class System_starter:
         self.door = None
         self.naverNews = None
         self.naverRelaTimeNews = None
+        self.finvizMap = None
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -92,11 +94,22 @@ class System_starter:
     def runNaverRealTimeNews(self):
         if not self.naverRelaTimeNews:
             self.naverRelaTimeNews = naverRealTimeNews.NaverRealTimeNews()
-            self.logger.info('네이버 실시간 뉴스 크롤러 시작')
-            naverRelaTimeNewsThread = threading.Thread(target=self.naverRelaTimeNews.startCrawling)
-            naverRelaTimeNewsThread.start()
-            # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
-            threading.Timer(600, self.naverRelaTimeNews).start()
+        self.logger.info('네이버 실시간 뉴스 크롤러 시작')
+        naverRelaTimeNewsThread = threading.Thread(target=self.naverRelaTimeNews.startCrawling)
+        naverRelaTimeNewsThread.start()
+        # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
+        threading.Timer(600, self.naverRelaTimeNews).start()
+
+    # finvizMap.py를 실행하는 함수
+    def runFinvizMap(self):
+        if not self.finvizMap:
+            self.finvizMap = finvizMap.FinvizMap()
+        self.logger.info('S&P 500 Map 생성시작')
+        finvizMapThread = threading.Thread(target=self.finvizMap.runCrawling)
+        finvizMapThread.start()
+        # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
+        threading.Timer(600, self.naverRelaTimeNews).start()
+            
 
     def print_queue(self):
         print("현재 큐의 사이즈:", self.global_task_queue.qsize())
@@ -121,3 +134,4 @@ if __name__ == "__main__":
     # threading.Thread(target=systemStart.print_queue).start()
     threading.Thread(target=systemStart.run_door_notification).start()
     threading.Thread(target=systemStart.runNaverRealTimeNews).start()
+    threading.Thread(target=systemStart.runFinvizMap).start()
