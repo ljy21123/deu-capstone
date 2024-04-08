@@ -31,7 +31,7 @@ public class UserInfo {
     @Column(length = 20)
     private String door_pw;
 
-    @Column
+    @Column(nullable = false)
     private Boolean door_alert = false;
 
     @Column(length = 10)

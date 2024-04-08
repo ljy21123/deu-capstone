@@ -24,25 +24,32 @@ public class NaverNews {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
-    private String newsUrl;
+    @Column(nullable = false, unique = true, length = 255)
+    private String news_url;
 
+    @Column(nullable = false, length = 100)
     private String title;
 
     @Lob
+    @Column(nullable = false)
     private String summary;
 
     @Lob
+    @Column(nullable = false)
     private String original;
 
-    private String imageUrl;
+    @Column(length = 255)
+    private String image_url;
 
+    @Column(nullable = false, length = 50)
     private String publisher;
 
-    private LocalDateTime createdAt;
+    @Column(nullable = false)
+    private LocalDateTime created_at;
 
-    private LocalDateTime updatedAt;
+    private LocalDateTime updated_at;
 
+    @Column(nullable = false, length = 50)
     private String category;
 
 }

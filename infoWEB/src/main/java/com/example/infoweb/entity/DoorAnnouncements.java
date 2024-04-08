@@ -26,10 +26,11 @@ public class DoorAnnouncements {
 
     @Convert(converter = JsonToMapConverter.class)
     @Column(columnDefinition = "JSON")
-    private Map<String, Object> doorAnnouncementInfo;
+    private Map<String, Object> door_announcement_info;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @OneToOne(fetch = FetchType.LAZY)
+    @MapsId                     // UserInfo의 id를 DoorAnnouncements의 id로 매핑합니다.
+    @JoinColumn(name = "id")    // UserInfo와 동일한 id를 사용합니다.
     private UserInfo userInfo;
 
 }

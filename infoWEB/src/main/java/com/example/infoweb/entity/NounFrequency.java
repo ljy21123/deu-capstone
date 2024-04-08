@@ -7,10 +7,7 @@
 
 package com.example.infoweb.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -27,8 +24,13 @@ public class NounFrequency {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDate date;
+
+    @Column(nullable = false, length = 50)
     private String noun;
-    private int frequency;
+
+    @Column(nullable = false)
+    private Integer frequency;
 
 }
