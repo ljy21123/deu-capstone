@@ -9,10 +9,14 @@ package com.example.infoweb.dto;
 
 import com.example.infoweb.entity.UserInfo;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Getter
+@Setter
 @ToString           // 데이터를 잘 받았는지 확인할 toString() 자동화
 @AllArgsConstructor // 전송받은 제목과 내용을 필드에 저장하는 생성자 자동화
 public class UserForm {

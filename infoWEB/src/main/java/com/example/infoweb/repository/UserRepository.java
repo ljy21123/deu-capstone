@@ -4,7 +4,6 @@
  *
  *   또한 사용자 아이디를 기반으로 사용자 정보를 조회하는 기능을 추가로 제공합니다.
  *   findByid 메소드를 통해 특정 ID를 가진 UserInfo 엔티티를 조회할 수 있습니다.
- *   조회 결과는 Optional 객체로 반환되어, 결과가 존재하지 않을 경우를 안전하게 처리할 수 있습니다.
  *
  *   작성자: 이준영
  *
@@ -22,5 +21,4 @@ public interface UserRepository extends CrudRepository<UserInfo, String> {
     // 사용자 아이디로 UserInfo 엔티티를 조회하는 메소드
     // 조회 결과가 없을 수 있으므로, Optional로 감싸서 반환
     Optional<UserInfo> findByid(String id);
-
 }

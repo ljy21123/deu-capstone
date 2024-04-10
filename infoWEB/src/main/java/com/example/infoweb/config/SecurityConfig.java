@@ -50,7 +50,9 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/main", true)      // 성공 시 main으로
                         .permitAll()                                                    // 로그인 페이지에 대한 접근 허용
                 )
-                .logout(withDefaults());                                                // 로그아웃은 기본설정으로 (/logout으로 인증해제)
+                .logout(logout -> logout                                                // 로그아웃은 기본설정으로 (/logout으로 인증해제)
+                        .logoutSuccessUrl("/main")                                      // 로그아웃 성공 시 "/main"으로 리다이렉트
+                        .permitAll());
 
         return http.build();
 

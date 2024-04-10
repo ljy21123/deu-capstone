@@ -13,7 +13,13 @@
         <br>
         <h5>로그인 정보: <span th:text="${loginInfo} ?: '정보 없음'"></span></h5>
         <br>
-        <a href="/users/login" class="btn btn-secondary">로그인/회원가입</a>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div th:if="${loginInfo == null}"><a href="/users/login" class="btn btn-secondary">로그인/회원가입</a></div>
+            <div th:unless="${loginInfo == null}"><a href="/logout" class="btn btn-secondary">로그아웃</a></div>
+            <a href="/users/mypage" class="btn btn-secondary">마이페이지</a>
+        </div>
+
         <br>
         <br>
 
