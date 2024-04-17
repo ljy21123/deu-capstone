@@ -26,7 +26,7 @@ class FinvizMap:
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setupLogger("FinvizMap", os.path.join(log_dir, "FinvizMap.log")) # logger 설정
         self.logger = logging.getLogger("FinvizMap")
-        self.logger.info('FinvizMap 파싱시작')
+        self.logger.debug('FinvizMap 파싱시작')
         
     def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -80,4 +80,4 @@ class FinvizMap:
         self.dao.connect()  
         self.dao.insertNews(BeautifulSoup(img_tag, 'html.parser').img.get('src'))
         self.dao.disconnect()
-        self.logger.info("S&P 500 Map 생성완료")
+        self.logger.debug("S&P 500 Map 생성완료")

@@ -37,7 +37,7 @@ class DoorDAO:
                 host = self.host,
                 database = self.database
             )
-            self.logger.info("MySQL DB에 연결되었습니다.")
+            self.logger.debug("MySQL DB에 연결되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"MySQL DB 연결 중 오류 발생:{err}")
             raise
@@ -45,7 +45,7 @@ class DoorDAO:
     def disconnect(self):
         if self.conn:
             self.conn.close()
-            self.logger.info("MySQL DB와 연결이 해제되었습니다.")
+            self.logger.debug("MySQL DB와 연결이 해제되었습니다.")
         else:
             self.logger.warning("MySQL DB와 연결이 이미 닫혔습니다.")
 
@@ -76,7 +76,7 @@ class DoorDAO:
                            (id, door_announcement_info))
             self.conn.commit()
             cursor.close()
-            self.logger.info("새로운 유저 정보가 추가되었습니다.")
+            self.logger.debug("새로운 유저 정보가 추가되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"{id} DoorAnnouncements 삽입 오류: {err}")
 
@@ -87,7 +87,7 @@ class DoorDAO:
                            (door_announcement_info, id))
             self.conn.commit()
             cursor.close()
-            self.logger.info("DoorAnnouncements 공지 알림 기록이 업데이트되었습니다.")
+            self.logger.debug("DoorAnnouncements 공지 알림 기록이 업데이트되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"DoorAnnouncements 업데이트 오류: {err}")
 
@@ -97,6 +97,6 @@ class DoorDAO:
             cursor.execute("DELETE FROM DoorAnnouncements WHERE id = %s", (id,))
             self.conn.commit()
             cursor.close()
-            self.logger.info(f"{id} Door 알림 유저 정보가 제거되었습니다.")
+            self.logger.debug(f"{id} Door 알림 유저 정보가 제거되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"DoorAnnouncements 삭제 오류: {err}")

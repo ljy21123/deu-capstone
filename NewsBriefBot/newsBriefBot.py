@@ -65,10 +65,10 @@ class NewsBriefBot:
 			)
 			if run.status == "completed":
 				# print(run)
-				self.logger.info('정상적으로 요약값을 받았습니다.')
+				self.logger.debug('정상적으로 요약값을 받았습니다.')
 				break
 			elif run.status == "failed":    
-				self.logger.info('요청횟수를 모두 사용하여 대기합니다.')
+				self.logger.debug('요청횟수를 모두 사용하여 대기합니다.')
 				time.sleep(60)
 				run = self.client.beta.threads.runs.create(
 					thread_id=ids['thread_id'],
@@ -94,7 +94,7 @@ class NewsBriefBot:
 		log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
 		self.setup_logger("newsBriefBot", os.path.join(log_dir, "newsBriefBot.log")) # logger 설정
 		self.logger = logging.getLogger("newsBriefBot")
-		self.logger.info('브리핑 봇 시작')
+		self.logger.debug('브리핑 봇 시작')
 
 		# 최초 1번만 어시던트 생성 후 어시던트 및 쓰레드 id 반환
 		#ids = create_assistant()
@@ -105,16 +105,16 @@ class NewsBriefBot:
 			queue_event.wait() # 이벤트 대기
 
 			if not global_task_queue.empty():
-				self.logger.info('뉴스 요약 수행')
+				self.logger.debug('뉴스 요약 수행')
 				news: Article = global_task_queue.get()
-				self.logger.info('큐에서 작업 획득 완료 요청 수행')
+				self.logger.debug('큐에서 작업 획득 완료 요청 수행')
 				temp = self.brief(ids, self.formatting_news(news))    
 				news.setSummarizedNews(temp)
 				self.dao.connect()
 				self.dao.insert_news(news)
 				self.dao.disconnect()
-				self.logger.info('요약 요청 완료')
-				self.logger.info("제목:"+news.title+"\n"+temp)
+				self.logger.debug('요약 요청 완료')
+				# self.logger.debug("제목:"+news.title+"\n"+temp)
 			else:
 				self.logger.info('대기중인 작업이 없어 대기로 전환')
 				queue_event.clear() # 대기상태로 전환

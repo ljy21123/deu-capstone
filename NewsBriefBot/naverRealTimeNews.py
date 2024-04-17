@@ -98,21 +98,21 @@ class NaverRealTimeNews:
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setupLogger("naverRealTimeNews", os.path.join(log_dir, "naverRealTimeNews.log"))  # Sub logger 설정
         self.logger = logging.getLogger("naverRealTimeNews")
-        self.logger.info('네이버 실시간 뉴스 크롤링 시작')
+        self.logger.debug('네이버 실시간 뉴스 크롤링 시작')
 
         category_urls = self.makeUrl()
-        self.logger.info('링크 생성 완료')
+        self.logger.debug('링크 생성 완료')
         
         self.dao.connect()
         # 실시간 뉴스 파싱 시작
         for i in range(len(category_urls[0])):
-            self.logger.info(f'{category_urls[1][i]}의 실시간 뉴스 파싱 시작')
+            self.logger.debug(f'{category_urls[1][i]}의 실시간 뉴스 파싱 시작')
             newsList = self.realTimeNewsCrawler(category_urls[0][i], category_urls[1][i])
             for news in newsList:
                 self.dao.insertNews(news)
 
         self.dao.disconnect()
-        self.logger.info('대기전환')
+        self.logger.info('네이버 실시간 뉴스 크롤러 대기전환')
 
 
 if __name__ == "__main__":

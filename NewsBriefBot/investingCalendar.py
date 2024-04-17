@@ -21,7 +21,7 @@ class InvestingCalendar:
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setupLogger("InvestingCalendar", os.path.join(log_dir, "InvestingCalendar.log")) # logger 설정
         self.logger = logging.getLogger("InvestingCalendar")
-        self.logger.info('InvestingCalendar 파싱시작')
+        self.logger.debug('InvestingCalendar 파싱시작')
         
     def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -33,7 +33,7 @@ class InvestingCalendar:
         self.logger.addHandler(handler)
 
     def runCrawling(self):
-        self.logger.info('이벤트 파싱 시작')
+        self.logger.debug('이벤트 파싱 시작')
         url = 'https://kr.investing.com/economic-calendar/'
         # 페이지 가져오기
         original_html = requests.get(url, headers=self.headers)

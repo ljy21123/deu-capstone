@@ -37,7 +37,7 @@ class NaverRealTimeNewsDAO:
                 host = self.host,
                 database = self.database
             )
-            self.logger.info("MySQL DB에 연결되었습니다.")
+            self.logger.debug("MySQL DB에 연결되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"MySQL DB 연결 중 오류 발생:{err}")
             raise
@@ -45,7 +45,7 @@ class NaverRealTimeNewsDAO:
     def disconnect(self):
         if self.conn:
             self.conn.close()
-            self.logger.info("MySQL DB와 연결이 해제되었습니다.")
+            self.logger.debug("MySQL DB와 연결이 해제되었습니다.")
         else:
             self.logger.warning("MySQL DB와 연결이 이미 닫혔습니다.")
 
@@ -91,7 +91,7 @@ class NaverRealTimeNewsDAO:
             cursor.execute(query, (news.title, news.url, news.img_url, news.newspaper, news.date, news.category))
             self.conn.commit()
             cursor.close()
-            self.logger.info(f"{news.url}: 새로운 실시간 뉴스가 추가되었습니다.")
+            self.logger.debug(f"{news.url}: 새로운 실시간 뉴스가 추가되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"NaverRealTimeNews 삽입 오류: {err}")
         
@@ -101,7 +101,7 @@ class NaverRealTimeNewsDAO:
             cursor.execute("DELETE FROM NaverRealTimeNews WHERE id = %s", (id,))
             self.conn.commit()
             cursor.close()
-            self.logger.info(f"{id} 제거되었습니다.")
+            self.logger.debug(f"{id} 제거되었습니다.")
         except mysql.connector.Error as err:
             self.logger.error(f"NaverRealTimeNews 삭제 오류: {err}")
         

@@ -2,6 +2,7 @@
 # 작성자: 양시현
 # 수정 이력: 
 # - 2024-03-23: 초기버전 생성
+# - 2024-04-17: 배경 투명하게 변경, 이미지 크기 변경, 워드클라우드 모양 추가
 
 from collections import Counter
 from konlpy.tag import Okt
@@ -11,6 +12,11 @@ import naverNewsDAO
 import logging
 import os
 from datetime import datetime
+import numpy as np
+from PIL import Image
+
+IMG_W = 1920
+IMG_H = 1080
 
 class NounFrequencyAnalyzer:
     def __init__(self) -> None:
@@ -20,6 +26,7 @@ class NounFrequencyAnalyzer:
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setup_logger("nounFrequencyAnalyzer", os.path.join(log_dir, "nounFrequencyAnalyzer.log")) # logger 설정
         self.logger = logging.getLogger("system")
+        self.stopwords = set(['것', '명', '감', '중', '몇', '곳', '데', '등', '기', '및', '조'])  # 불용어 목록
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -37,7 +44,8 @@ class NounFrequencyAnalyzer:
         for news in news_data:
             temp = news['original']
             nouns = self.okt.nouns(temp)
-            self.nouns_list.extend(nouns)
+            filtered_nouns = [noun for noun in nouns if noun not in self.stopwords]  # 불용어 제거
+            self.nouns_list.extend(filtered_nouns)
     
     def calculate_noun_frequency(self):
         noun_freq = {}
@@ -52,21 +60,32 @@ class NounFrequencyAnalyzer:
 
 if __name__ == "__main__":
     images_dir = os.path.join(os.path.dirname(__file__), '..', 'images')
+    mask_path = os.path.join(images_dir, 'mask.png')  # 마스크 이미지 경로
     font_file_path = os.path.join(os.path.dirname(__file__), 'font', 'malgun.ttf')
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     image_filename = f"wordcloud_{current_time}.png"
     noun = NounFrequencyAnalyzer()
     noun.extract_nouns()
     noun_frequencies = noun.calculate_noun_frequency()
+
+    # 마스크 이미지 로드 및 변환
+    mask_image = np.array(Image.open(mask_path).resize((IMG_W, IMG_H)))
+
     wordcloud = WordCloud(font_path=font_file_path,
-                      background_color='white',width=1920, height=1080).generate_from_frequencies(dict(noun_frequencies))
+                      background_color=None,
+                      mode='RGBA',
+                      width=IMG_W, height=IMG_H,
+                      max_words=400,
+                      mask=mask_image).generate_from_frequencies(dict(noun_frequencies))
+    
     
     # 그림 그리기
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(25, 14))
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis('off')
 
     # 그림 저장
-    plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight')
+    plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png')
+    # plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png', transparent=True)
     
 

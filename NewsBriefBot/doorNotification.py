@@ -210,12 +210,12 @@ class DoorNotification:
             self.logger.error(f'{name}: 로그인 도중 오류가 발생했습니다:', e)
             return
         
-        self.logger.info(f'{name}: 로그인 완료')
+        self.logger.debug(f'{name}: 로그인 완료')
 
         try:
             # 강의실로 이동
             self.driver.get('http://door.deu.ac.kr/MyPage')
-            self.logger.info(f'{name}: 강의 목록 파싱')
+            self.logger.debug(f'{name}: 강의 목록 파싱')
 
             # 강의 목록을 가져옴
             lecture_list_selector = "#wrap > div.subpageCon > div:nth-child(3) > div:nth-child(3) > table"
@@ -251,13 +251,13 @@ class DoorNotification:
             # DB에서 json을 받아와 처리
             # json데이터가 존재하는지 확인
             if json_data:
-                self.logger.info(f'{name}: 공지 json파일이 존재')
+                self.logger.debug(f'{name}: 공지 json파일이 존재')
                 # json_data에 이번 학기 정보가 존재하는지 확인
                 if not semester in json_data:
-                    self.logger.info(f'{name}: 의 학기 정보를 새로 만드는 중')
+                    self.logger.debug(f'{name}: 의 학기 정보를 새로 만드는 중')
                     json_data = self.make_json(semester, lecture_names)
             else:
-                self.logger.info(f'{name}: 의 학기 Json을 새로 만드는 중')
+                self.logger.debug(f'{name}: 의 학기 Json을 새로 만드는 중')
                 json_data = self.make_json(semester, lecture_names, id)
             
             # 크롤링할 주소와 그 주소에 존재하는 테이블의 제목 위치
@@ -269,7 +269,7 @@ class DoorNotification:
                 ["http://door.deu.ac.kr/BBS/Board/List/CourseReference?cNo=", 2, "강의자료"]
             ]
 
-            self.logger.info(f'{name}: 공지 파싱 시작')
+            self.logger.debug(f'{name}: 공지 파싱 시작')
             # 새로운 공지 확인 시작
             for i in range(lecture_count):
                 # 강의실 1개 마다 urls에 들어있는 모든 링크를 방문한다
@@ -280,7 +280,7 @@ class DoorNotification:
                     lecture_notice_list = self.table_parsing(url[0], lecture_room_numbers[i], url[1])
                     json_data = self.compare_and_notify_changes(lecture_notice_list, semester, lecture_names[i], menu, name, json_data)
 
-            self.logger.info(f'{name}: 공지 파싱 종료')
+            self.logger.debug(f'{name}: 공지 파싱 종료')
         except TimeoutException:
             self.logger.error("요소를 찾을 수 없거나 연결 시간이 초과되었습니다.")
             return 
@@ -294,7 +294,7 @@ class DoorNotification:
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setup_logger("doorNotification", os.path.join(log_dir, "doorNotification.log")) # logger 설정
         self.logger = logging.getLogger("doorNotification")
-        self.logger.info('도어 크롤링 시작')
+        self.logger.debug('도어 크롤링 시작')
 
         self.dao = doorDAO.DoorDAO()
         self.dao.connect()
@@ -304,8 +304,9 @@ class DoorNotification:
             for i in users:
                 self.run_door_crawling(i["id"], i["door_id"], i["door_pw"], i["name"])
         else:
-            self.logger.info("도어 알림을 신청한 유저가 없습니다.")
+            self.logger.debug("도어 알림을 신청한 유저가 없습니다.")
         self.dao.disconnect()
+        self.logger.info('도어 크롤링 종료')
         
 
 if __name__ == "__main__":
