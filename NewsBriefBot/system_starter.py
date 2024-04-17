@@ -34,7 +34,7 @@ class System_starter:
         self.finvizMap = None
         self.investingCalendar = None
 
-    def setup_logger(self, name, log_file, level=logging.INFO):
+    def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
         handler = logging.FileHandler(log_file, encoding='utf-8')
         handler.setFormatter(formatter)
@@ -51,7 +51,7 @@ class System_starter:
         logging.getLogger('').addHandler(console)
 
     # newsbriefbot.py를 실행하는 함수
-    def run_news_briefbot(self):
+    def runNewsBriefbot(self):
         if not self.newsBot:
             self.newsBot = newsBriefBot.NewsBriefBot()
         news_briefbot_thread = threading.Thread(target=self.newsBot.run_brief, args=(self.global_task_queue, self.gueue_event))
@@ -59,17 +59,17 @@ class System_starter:
         self.logger.info('뉴스 브리핑 봇 동작 시작')
 
     # naverNews.py를 실행하는 함수
-    def run_naver_news_parsing(self):
+    def runNaverNewsParsing(self):
         if not self.naverNews:
             self.naverNews = naverNews.NaverNews()
         self.logger.info('네이버 뉴스 크롤러 시작')
         naver_news_thread = threading.Thread(target=self.naverNews.start_crawling, args=(self.global_task_queue, self.gueue_event))
         naver_news_thread.start()
         # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
-        threading.Timer(600, self.run_naver_news_parsing).start()
+        threading.Timer(600, self.runNaverNewsParsing).start()
 
     # doorNotification.py를 실행하는 함수
-    def run_door_notification(self):
+    def runDoorNotification(self):
         if not self.door:
             self.door = doorNotification.DoorNotification()
         # 현재 시간
@@ -83,14 +83,14 @@ class System_starter:
             remaining_time = target_time - current_time
             self.logger.warning(f"{remaining_time.total_seconds()}초 만큼 대기합니다.")
             # 6시까지 대기 후에 run_door_notification 함수 호출
-            threading.Timer(remaining_time.total_seconds(), self.run_door_notification).start()
+            threading.Timer(remaining_time.total_seconds(), self.runDoorNotification).start()
         else:
             self.logger.info('도어 알림 동작 시작')
             door_notification_thread = threading.Thread(target=self.door.start())
             door_notification_thread.start()
             self.logger.info('도어 알림 동작 완료 대기 전환')
             # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
-            threading.Timer(600, self.run_door_notification).start()
+            threading.Timer(600, self.runDoorNotification).start()
         
     # naverRealTimeNews.py를 실행하는 함수
     def runNaverRealTimeNews(self):
@@ -133,17 +133,17 @@ if __name__ == "__main__":
     # 경로가 존재하지 않으면 생성
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
-    systemStart.setup_logger("system", os.path.join(log_dir, "systemStarter.log")) # logger 설정
+    systemStart.setupLogger("system", os.path.join(log_dir, "systemStarter.log")) # logger 설정
     systemStart.logger = logging.getLogger("system")
     systemStart.logger.info('시스템 시작')
     
     # 가동시켜 놓으면 queue가 비어있으면 자동 대기상태로 들어감
-    systemStart.run_news_briefbot()
+    systemStart.runNewsBriefbot()
 
     # 일정 시간마다 호출
-    threading.Thread(target=systemStart.run_naver_news_parsing).start()
+    threading.Thread(target=systemStart.runNaverNewsParsing).start()
     # threading.Thread(target=systemStart.print_queue).start()
-    threading.Thread(target=systemStart.run_door_notification).start()
+    threading.Thread(target=systemStart.runDoorNotification).start()
     threading.Thread(target=systemStart.runNaverRealTimeNews).start()
     threading.Thread(target=systemStart.runFinvizMap).start()
     threading.Thread(target=systemStart.runInvestingCalendar).start()
