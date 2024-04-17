@@ -2,6 +2,7 @@
 # 작성자: 양시현
 # 수정 이력: 
 # - 2024-03-23: 초기버전 생성
+# - 2024-04-17: 빈도수 저장 추가
 
 import mysql.connector
 import os
@@ -106,3 +107,21 @@ class NaverNewsDAO:
         except mysql.connector.Error as err:
             self.logger.error(f"NaverNews 삭제 오류: {err}")
         
+    def insert_frequency(self, date, frequencies, count):
+        for idx, (word, freq) in enumerate(frequencies):
+            if idx >= count:
+                break
+
+            query = """
+            INSERT INTO NounFrequency (date, noun, frequency)
+            VALUES (%s, %s, %s)
+            """
+            args = (date, word, freq)
+            try:
+                cursor = self.conn.cursor()
+                cursor.execute(query, args)
+                self.conn.commit()
+                cursor.close()
+                self.logger.debug("새로운 단어 빈도수가 추가되었습니다.")
+            except mysql.connector.Error as err:
+                self.logger.error(f"NounFrequency 삽입 오류: {err}")

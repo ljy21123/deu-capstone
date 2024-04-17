@@ -14,6 +14,7 @@ import os
 from datetime import datetime
 import numpy as np
 from PIL import Image
+from datetime import datetime
 
 IMG_W = 1920
 IMG_H = 1080
@@ -56,6 +57,16 @@ class NounFrequencyAnalyzer:
                 noun_freq[noun] = 1
         sorted_noun_freq = sorted(noun_freq.items(), key=lambda x: x[1], reverse=True)
         return sorted_noun_freq
+       
+    def save_frequencies(self, frequencies, count):
+        # 현재 날짜와 시간을 가져오기
+        today = datetime.now()
+        # 날짜만 추출
+        date_today = today.date()
+    
+        self.dao.connect()
+        self.dao.insert_frequency(date_today, frequencies, count)
+        self.dao.disconnect()
 
 
 if __name__ == "__main__":
@@ -67,7 +78,8 @@ if __name__ == "__main__":
     noun = NounFrequencyAnalyzer()
     noun.extract_nouns()
     noun_frequencies = noun.calculate_noun_frequency()
-
+    noun.save_frequencies(noun_frequencies, 10) # 10개 만큼 (단어, 빈도) 저장
+    
     # 마스크 이미지 로드 및 변환
     mask_image = np.array(Image.open(mask_path).resize((IMG_W, IMG_H)))
 
