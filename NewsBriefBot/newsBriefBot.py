@@ -19,7 +19,7 @@ class NewsBriefBot:
 		self.logger = None
 		self.dao = naverNewsDAO.NaverNewsDAO()
 
-	def setup_logger(self, name, log_file, level=logging.INFO):
+	def setup_logger(self, name, log_file, level=logging.DEBUG):
 		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
 		handler = logging.FileHandler(log_file, encoding='utf-8')
 		handler.setFormatter(formatter)
@@ -33,8 +33,9 @@ class NewsBriefBot:
 		# 어시던트 생성
 		news_assistant = self.client.beta.assistants.create(
 			name="NewsBriefBot",
-			instructions="You're a news briefing assistant. Please answer in Korean. Please summarize the contents of the news in less than three lines.",
+			instructions="You're a news briefing robot. Please answer in Korean. Please summarize the contents",
 			model="gpt-3.5-turbo-1106",
+			max_tokens=150
 		)
 
 		# 쓰레드 생성
@@ -114,7 +115,7 @@ class NewsBriefBot:
 				self.dao.insert_news(news)
 				self.dao.disconnect()
 				self.logger.debug('요약 요청 완료')
-				# self.logger.debug("제목:"+news.title+"\n"+temp)
+				self.logger.debug("제목:"+news.title+"\n"+temp)
 			else:
 				self.logger.info('대기중인 작업이 없어 대기로 전환')
 				queue_event.clear() # 대기상태로 전환
