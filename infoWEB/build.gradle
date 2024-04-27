@@ -28,6 +28,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
     implementation 'org.hibernate.orm:hibernate-core:6.1.2.Final'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+
 }
 
 tasks.named('test') {
