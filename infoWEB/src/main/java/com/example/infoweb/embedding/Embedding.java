@@ -124,7 +124,7 @@ public class Embedding {
 
             // 요청 헤더 설정
             httpPost.setHeader("Content-Type", "application/json");
-            httpPost.setHeader("Authorization", "Bearer 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");
+            httpPost.setHeader("Authorization", "Bearer sk-proj-propxBMet8z6ua5j8YFQT3BlbkFJtl9p7jje1o1tcAAjhzH9");
 
             // 요청 바디 설정
             StringEntity entity = new StringEntity(requestData);
