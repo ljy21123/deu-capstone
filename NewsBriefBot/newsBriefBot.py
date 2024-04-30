@@ -3,6 +3,8 @@
 # 수정 이력: 
 # - 2024-02-04: 초기버전 생성
 # - 2024-03-23: 클래스로 리팩토링
+# - 2024-04-30: embeddings 추가, apiKey 변수 추가
+
 import queue
 import threading
 import time
@@ -12,14 +14,16 @@ from openai import OpenAI # pip install openai
 
 from article import Article
 import naverNewsDAO
+import embeddings 
 
 class NewsBriefBot:
 	def __init__(self) -> None:
-		self.client = OpenAI(api_key="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")
+		self.apiKey = "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"
+		self.client = OpenAI(api_key=self.apiKey)
 		self.logger = None
 		self.dao = naverNewsDAO.NaverNewsDAO()
 
-	def setup_logger(self, name, log_file, level=logging.DEBUG):
+	def setupLogger(self, name, log_file, level=logging.DEBUG):
 		formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
 		handler = logging.FileHandler(log_file, encoding='utf-8')
 		handler.setFormatter(formatter)
@@ -29,7 +33,7 @@ class NewsBriefBot:
 		self.logger.addHandler(handler)
 
 
-	def create_assistant(self) -> dict:
+	def createAssistant(self) -> dict:
 		# 어시던트 생성
 		news_assistant = self.client.beta.assistants.create(
 			name="NewsBriefBot",
@@ -83,7 +87,7 @@ class NewsBriefBot:
 		return thread_message.data[0].content[0].text.value
 
 
-	def formatting_news(self, news:Article) -> str:
+	def formattingNews(self, news:Article) -> str:
 		"""
 		GPT에게 전달할 뉴스 형식을 생성합니다.
 		"""
@@ -91,15 +95,17 @@ class NewsBriefBot:
 		return formatted_text
 
 
-	def run_brief(self, global_task_queue: queue.Queue, queue_event: threading.Event):
+	def runBrief(self, global_task_queue: queue.Queue, queue_event: threading.Event):
 		log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
-		self.setup_logger("newsBriefBot", os.path.join(log_dir, "newsBriefBot.log")) # logger 설정
+		self.setupLogger("newsBriefBot", os.path.join(log_dir, "newsBriefBot.log")) # logger 설정
 		self.logger = logging.getLogger("newsBriefBot")
 		self.logger.debug('브리핑 봇 시작')
 
 		# 최초 1번만 어시던트 생성 후 어시던트 및 쓰레드 id 반환
-		#ids = create_assistant()
+		#ids = createAssistant()
 		ids = {'assistant_id': 'asst_CesgxDFMa4nyggTsNIFrZc3Y', 'thread_id': 'thread_cp8Be80FVGHSCoVgMGGatigM'}
+		# 임베딩 모델 생성
+		embeddingModel = embeddings.Embedding(self.apiKey)
 
 		while True:
 			# 메시지 실행
@@ -109,13 +115,16 @@ class NewsBriefBot:
 				self.logger.debug('뉴스 요약 수행')
 				news: Article = global_task_queue.get()
 				self.logger.debug('큐에서 작업 획득 완료 요청 수행')
-				temp = self.brief(ids, self.formatting_news(news))    
-				news.setSummarizedNews(temp)
+				# 뉴스 요약
+				SummarizedNews = self.brief(ids, self.formattingNews(news))    
+				news.setSummarizedNews(SummarizedNews)
+				# 임베딩 생성
+				news.setEmbedding(embeddingModel.getEmbedding(news.title))
 				self.dao.connect()
 				self.dao.insert_news(news)
 				self.dao.disconnect()
 				self.logger.debug('요약 요청 완료')
-				self.logger.debug("제목:"+news.title+"\n"+temp)
+				self.logger.debug("제목:"+news.title+"\n"+SummarizedNews)
 			else:
 				self.logger.info('대기중인 작업이 없어 대기로 전환')
 				queue_event.clear() # 대기상태로 전환

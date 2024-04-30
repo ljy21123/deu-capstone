@@ -54,7 +54,7 @@ class System_starter:
     def runNewsBriefbot(self):
         if not self.newsBot:
             self.newsBot = newsBriefBot.NewsBriefBot()
-        news_briefbot_thread = threading.Thread(target=self.newsBot.run_brief, args=(self.global_task_queue, self.gueue_event))
+        news_briefbot_thread = threading.Thread(target=self.newsBot.runBrief, args=(self.global_task_queue, self.gueue_event))
         news_briefbot_thread.start()
         self.logger.info('뉴스 브리핑 봇 동작 시작')
 

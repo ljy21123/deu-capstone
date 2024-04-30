@@ -4,7 +4,8 @@
 # - 2024-02-04: 초기버전 생성
 # - 2024-03-05: 수정날짜 분리
 # - 2024-03-23: 콘텐츠 원본 추가, 카테고리 추가
-
+# - 2024-03-24: 요약 뉴스 Setter 추가
+# - 2024-04-30: 임베딩 속성 추가
 
 class Article:
     def __init__ (self, url, title, img_url, date, update_date, original_news, newspaper, category):
@@ -26,6 +27,8 @@ class Article:
         self.newspaper = newspaper
         # 카테고리
         self.category = category
+        # 임베딩
+        self.embedding = None
 
     # 객체 출력시 출력 형태
     def __str__(self):
@@ -33,3 +36,6 @@ class Article:
     
     def setSummarizedNews(self, summarized_news):
         self.summarized_news = summarized_news
+
+    def setEmbedding(self, embedding):
+        self.embedding = embedding

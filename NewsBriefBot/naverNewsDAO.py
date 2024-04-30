@@ -84,10 +84,10 @@ class NaverNewsDAO:
 
     def insert_news(self, news:article.Article):
         query = """
-        INSERT INTO NaverNews (news_url, title, summary, original, image_url, publisher, created_at, updated_at, category)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        INSERT INTO NaverNews (news_url, title, summary, original, image_url, publisher, created_at, updated_at, category, embedding)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
-        args = (news.url, news.title, news.summarized_news, news.original_news, news.img_url, news.newspaper, news.date, news.update_date, news.category)
+        args = (news.url, news.title, news.summarized_news, news.original_news, news.img_url, news.newspaper, news.date, news.update_date, news.category, news.embedding)
         try:
             cursor = self.conn.cursor()
             cursor.execute(query, args)
