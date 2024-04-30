@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.util.Scanner;
 
 
-@Component
 @Slf4j
 public class Embedding {
     public double dot(double[] a, double[] b) {
@@ -55,50 +54,6 @@ public class Embedding {
         return (dotProduct / (normVec1 * normVec2));
     }
 
-    /** 테스트 임베딩 파일 로드 */
-    public void temp(double[] temp){
-        try{
-            ClassPathResource resource = new ClassPathResource("my.txt");
-            Scanner scanner = new Scanner(resource.getFile());
-
-            // 파일에서 라인 수와 각 라인의 요소 수를 계산
-            int rows = 0;
-            int columns = 0;
-            while (scanner.hasNextLine()) {
-                String line = scanner.nextLine();
-                rows++;
-                String[] parts = line.split("\\s+"); // 공백을 기준으로 문자열을 나눔
-                columns = Math.max(columns, parts.length);
-            }
-
-            // 파일에서 배열 요소 읽기
-            double[][] array = new double[rows][columns];
-            scanner = new Scanner(resource.getFile()); // scanner를 다시 초기화하여 파일을 처음부터 읽음
-            for (int i = 0; i < rows; i++) {
-                String line = scanner.nextLine();
-                String[] parts = line.split("\\s+"); // 공백을 기준으로 문자열을 나눔
-                for (int j = 0; j < parts.length; j++) {
-                    array[i][j] = Double.parseDouble(parts[j]);
-                }
-            }
-
-            // 배열 출력 (예시)
-//            for (double[] row : array) {
-//                for (double value : row) {
-//                    System.out.print(value + " ");
-//                }
-//                System.out.println();
-//            }
-            scanner.close();
-
-            System.out.println(cosineDistance(temp, array[0]));
-            System.out.println(cosineDistance(temp, array[1]));
-            System.out.println(cosineDistance(temp, array[2]));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     /**
      *      추가 필요
      *      maven
@@ -124,7 +79,7 @@ public class Embedding {
 
             // 요청 헤더 설정
             httpPost.setHeader("Content-Type", "application/json");
-            httpPost.setHeader("Authorization", "Bearer sk-proj-propxBMet8z6ua5j8YFQT3BlbkFJtl9p7jje1o1tcAAjhzH9");
+            httpPost.setHeader("Authorization", "Bearer sk-proj-Lae2ewjpQ3iY5KPYKutuT3BlbkFJJx42Vup9eDs8EG4ORiub");
 
             // 요청 바디 설정
             StringEntity entity = new StringEntity(requestData);

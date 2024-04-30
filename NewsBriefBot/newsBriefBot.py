@@ -111,7 +111,7 @@ class NewsBriefBot:
 				news: Article = global_task_queue.get()
 				news_thread = self.client.beta.threads.create()
 				ids = {'assistant_id': 'asst_3twHpxsoqsCeqUzu4QwJ6SYK', 'thread_id': f'{news_thread.id}'}
-				print(ids)
+				# print(ids)
 				self.logger.debug('큐에서 작업 획득 완료 요청 수행')
 				# 뉴스 요약
 				SummarizedNews = self.brief(ids, self.formattingNews(news))    

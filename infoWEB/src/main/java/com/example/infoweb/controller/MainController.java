@@ -7,6 +7,7 @@
 
 package com.example.infoweb.controller;
 
+import com.example.infoweb.embedding.Embedding;
 import com.example.infoweb.entity.NaverNews;
 import com.example.infoweb.entity.UserInfo;
 import com.example.infoweb.repository.NaverNewsRepository;
@@ -18,8 +19,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,6 +34,44 @@ public class MainController {
     private NaverNewsRepository naverNewsRepository;
     @Autowired
     private UserRepository userRepository;
+
+    @GetMapping("/test")
+    public String test() {
+        return "/test";
+    }
+
+    @PostMapping("/search")
+    public String search(@RequestParam("searchKeyword") String searchKeyword, Model model) {
+        log.info("search keyword: " + searchKeyword);
+        Iterable<NaverNews> items = naverNewsRepository
+                .findByCategory("정치")
+                .stream().limit(10)
+                .collect(Collectors.toList());
+
+        Embedding em = new Embedding();
+        Iterator<NaverNews> iterator = items.iterator();
+        NaverNews news = iterator.next();
+        NaverNews news2 = iterator.next();
+
+        double [] search = em.getEmbedding(searchKeyword);
+        double [] temp = em.getEmbedding("친문계 당선인 20여명, 29일 문재인 사저 방문…당선 인사");
+        double [] temp2 = em.getEmbedding("‘의사’ 안철수 “의정갈등 해결 안 되면 진짜 의료대란…1년 유예, 내년부터”");
+        log.info("검색어{}", search);
+        double tempRe = em.cosineDistance(search, temp);
+        double tempRe2 = em.cosineDistance(search, temp2);
+
+        // 값이 높을수록 유사
+        // 먼저 like 연산으로 제목을 검색 후 개수가 부족하면 임베딩 검색을 수행한다....
+        double result = em.cosineDistance(news.getEmbedding(), search);
+        double result2 = em.cosineDistance(search, news2.getEmbedding());
+        log.info("둘다 여기서 임베딩 {}",tempRe);
+        log.info("둘다 여기서 임베딩2 {}",tempRe2);
+        log.info("검색어와 1번항목: {}", result);
+        log.info("검색어와 2번항목: {}", result2);
+        log.info("{} {}",news.getTitle(), news.getEmbedding());
+        log.info("{} {}",news2.getTitle(), news2.getEmbedding());
+        return "redirect:/test";
+    }
 
     @GetMapping("/main")
     public String newMainForm(@AuthenticationPrincipal User user, @RequestParam(defaultValue = "정치") String category, Model model) {

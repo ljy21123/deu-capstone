@@ -7,10 +7,14 @@
 
 package com.example.infoweb.entity;
 
+import com.example.infoweb.converter.EmbeddingConverter;
+import com.example.infoweb.converter.JsonToMapConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -51,5 +55,9 @@ public class NaverNews {
 
     @Column(nullable = false, length = 50)
     private String category;
+
+    @Convert(converter = EmbeddingConverter.class)
+    @Column(columnDefinition = "JSON")
+    private double[] embedding;
 
 }
