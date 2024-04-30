@@ -139,13 +139,4 @@ public class UserController {
                 });
     }
 
-    @PostMapping("/users/interest")
-    public String myInterest(@AuthenticationPrincipal User user, String checkbox, Model model) {
-
-        log.info("관심 분야 수정 요청");
-
-
-        return "redirect:/main";
-    }
-
 }
