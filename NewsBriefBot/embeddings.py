@@ -7,13 +7,14 @@ import numpy as np
 from numpy.linalg import norm
 from openai import OpenAI
 import json
+import requests
 
 class Embedding:
     def __init__(self, apiKey) -> None:
         self.result = None
-        self.client = OpenAI(api_key=apiKey)
+        self.apiKey = apiKey
 
-    def getEmbedding(self, text="") -> list:
+    def temp(self, text="") -> list:
         model="text-embedding-3-small"
         response = self.client.embeddings.create(
             input = [text], 
@@ -25,6 +26,31 @@ class Embedding:
         # print(jsonEmbedding)
         return jsonEmbedding
     
+    def getEmbedding(self, text):
+        url = "https://api.openai.com/v1/embeddings"
+        requestData = {
+            "input": text,
+            "model": "text-embedding-3-small"
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.apiKey}"
+        }
+
+        # POST 요청 보내기
+        response = requests.post(url, headers=headers, json=requestData)
+
+        # 응답 상태 코드 확인
+        statusCode = response.status_code
+
+        # 응답 내용 확인
+        responseBody = response.json()
+
+        # embedding 추출
+        embeddingNode = responseBody["data"][0]["embedding"]
+
+        return embeddingNode
+        
     # 코사인 거리 계산
     def cosineDist(this, a, b):
         return 1 - np.dot(a,b) / (norm(a)*norm(b))
