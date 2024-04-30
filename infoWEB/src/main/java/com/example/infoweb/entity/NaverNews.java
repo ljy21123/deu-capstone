@@ -57,7 +57,7 @@ public class NaverNews {
     private String category;
 
     @Convert(converter = EmbeddingConverter.class)
-    @Column(columnDefinition = "JSON")
+    @Column(columnDefinition = "JSON", nullable = false)
     private double[] embedding;
 
 }
