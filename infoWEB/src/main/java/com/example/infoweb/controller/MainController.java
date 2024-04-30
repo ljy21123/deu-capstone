@@ -54,18 +54,13 @@ public class MainController {
         NaverNews news2 = iterator.next();
 
         double [] search = em.getEmbedding(searchKeyword);
-        double [] temp = em.getEmbedding("친문계 당선인 20여명, 29일 문재인 사저 방문…당선 인사");
-        double [] temp2 = em.getEmbedding("‘의사’ 안철수 “의정갈등 해결 안 되면 진짜 의료대란…1년 유예, 내년부터”");
         log.info("검색어{}", search);
-        double tempRe = em.cosineDistance(search, temp);
-        double tempRe2 = em.cosineDistance(search, temp2);
+
 
         // 값이 높을수록 유사
         // 먼저 like 연산으로 제목을 검색 후 개수가 부족하면 임베딩 검색을 수행한다....
-        double result = em.cosineDistance(news.getEmbedding(), search);
+        double result = em.cosineDistance(search, news.getEmbedding());
         double result2 = em.cosineDistance(search, news2.getEmbedding());
-        log.info("둘다 여기서 임베딩 {}",tempRe);
-        log.info("둘다 여기서 임베딩2 {}",tempRe2);
         log.info("검색어와 1번항목: {}", result);
         log.info("검색어와 2번항목: {}", result2);
         log.info("{} {}",news.getTitle(), news.getEmbedding());

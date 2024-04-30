@@ -48,8 +48,8 @@ class Embedding:
 
         # embedding 추출
         embeddingNode = responseBody["data"][0]["embedding"]
-
-        return embeddingNode
+        JsonString = json.dumps(embeddingNode)
+        return JsonString
         
     # 코사인 거리 계산
     def cosineDist(this, a, b):

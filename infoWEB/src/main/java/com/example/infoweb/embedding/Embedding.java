@@ -15,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 
@@ -82,7 +83,7 @@ public class Embedding {
             httpPost.setHeader("Authorization", "Bearer sk-proj-Lae2ewjpQ3iY5KPYKutuT3BlbkFJJx42Vup9eDs8EG4ORiub");
 
             // 요청 바디 설정
-            StringEntity entity = new StringEntity(requestData);
+            StringEntity entity = new StringEntity(requestData, StandardCharsets.UTF_8);
             httpPost.setEntity(entity);
 
             // 요청 전송 및 응답 수신
