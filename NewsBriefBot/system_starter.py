@@ -17,7 +17,7 @@ import os
 
 import naverNews
 import newsBriefBot
-import doorNotification
+# import doorNotification
 import naverRealTimeNews
 import finvizMap
 import investingCalendar
@@ -45,7 +45,7 @@ class System_starter:
 
         # 콘솔에도 로그 출력
         console = logging.StreamHandler()
-        console.setLevel(logging.INFO)
+        console.setLevel(logging.DEBUG)
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
         console.setFormatter(formatter)
         logging.getLogger('').addHandler(console)
@@ -142,8 +142,11 @@ if __name__ == "__main__":
 
     # 일정 시간마다 호출
     threading.Thread(target=systemStart.runNaverNewsParsing).start()
-    # threading.Thread(target=systemStart.print_queue).start()
-    threading.Thread(target=systemStart.runDoorNotification).start()
+    threading.Thread(target=systemStart.print_queue).start()
+    
     threading.Thread(target=systemStart.runNaverRealTimeNews).start()
     threading.Thread(target=systemStart.runFinvizMap).start()
     threading.Thread(target=systemStart.runInvestingCalendar).start()
+
+
+    # threading.Thread(target=systemStart.runDoorNotification).start()

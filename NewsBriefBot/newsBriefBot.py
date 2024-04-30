@@ -18,7 +18,7 @@ import embeddings
 
 class NewsBriefBot:
 	def __init__(self) -> None:
-		self.apiKey = "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"
+		self.apiKey = "sk-proj-propxBMet8z6ua5j8YFQT3BlbkFJtl9p7jje1o1tcAAjhzH9"
 		self.client = OpenAI(api_key=self.apiKey)
 		self.logger = None
 		self.dao = naverNewsDAO.NaverNewsDAO()
@@ -37,9 +37,8 @@ class NewsBriefBot:
 		# 어시던트 생성
 		news_assistant = self.client.beta.assistants.create(
 			name="NewsBriefBot",
-			instructions="You're a news briefing robot. Please answer in Korean. Please summarize the contents",
+			instructions="Please summarize this content in 100tokens or less. Please answer in Korean",
 			model="gpt-3.5-turbo-1106",
-			max_tokens=150
 		)
 
 		# 쓰레드 생성
@@ -55,13 +54,13 @@ class NewsBriefBot:
 			role="user",
 			content=msg,
 		)
+		# print(thread_message, end="\n\n")
 
 		# 메시지를 실행
 		run = self.client.beta.threads.runs.create(
 			thread_id=ids['thread_id'],
 			assistant_id=ids['assistant_id'],
 		)
-
 		# 실행한 메시지의 결과가 생성되었는지 반복적으로 확인하며 대기
 		while True:
 			run = self.client.beta.threads.runs.retrieve(
@@ -101,12 +100,8 @@ class NewsBriefBot:
 		self.logger = logging.getLogger("newsBriefBot")
 		self.logger.debug('브리핑 봇 시작')
 
-		# 최초 1번만 어시던트 생성 후 어시던트 및 쓰레드 id 반환
-		#ids = createAssistant()
-		ids = {'assistant_id': 'asst_CesgxDFMa4nyggTsNIFrZc3Y', 'thread_id': 'thread_cp8Be80FVGHSCoVgMGGatigM'}
 		# 임베딩 모델 생성
 		embeddingModel = embeddings.Embedding(self.apiKey)
-
 		while True:
 			# 메시지 실행
 			queue_event.wait() # 이벤트 대기
@@ -114,6 +109,9 @@ class NewsBriefBot:
 			if not global_task_queue.empty():
 				self.logger.debug('뉴스 요약 수행')
 				news: Article = global_task_queue.get()
+				news_thread = self.client.beta.threads.create()
+				ids = {'assistant_id': 'asst_3twHpxsoqsCeqUzu4QwJ6SYK', 'thread_id': f'{news_thread.id}'}
+				print(ids)
 				self.logger.debug('큐에서 작업 획득 완료 요청 수행')
 				# 뉴스 요약
 				SummarizedNews = self.brief(ids, self.formattingNews(news))    
