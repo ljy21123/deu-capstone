@@ -5,7 +5,6 @@
 
 import numpy as np
 from numpy.linalg import norm
-from openai import OpenAI
 import json
 import requests
 

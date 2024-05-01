@@ -63,6 +63,7 @@ class NewsBriefBot:
 		)
 		# 실행한 메시지의 결과가 생성되었는지 반복적으로 확인하며 대기
 		while True:
+			time.sleep(3)
 			run = self.client.beta.threads.runs.retrieve(
 				thread_id=ids['thread_id'],
 				run_id=run.id
@@ -79,8 +80,7 @@ class NewsBriefBot:
 					assistant_id=ids['assistant_id'],
 				)
 			else :
-				time.sleep(20)
-				# print(run)
+				self.logger.debug('처리 중..')
 
 		thread_message = self.client.beta.threads.messages.list(ids['thread_id'],)
 		return thread_message.data[0].content[0].text.value
