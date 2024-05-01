@@ -12,7 +12,6 @@ import com.example.infoweb.entity.UserInfo;
 import com.example.infoweb.entity.UserInterests;
 import com.example.infoweb.repository.UserInterestsRepository;
 import com.example.infoweb.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,13 +19,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.Objects;
 
 @Slf4j  // 로깅 기능을 위한 어노테이션
 @Controller
@@ -94,18 +88,31 @@ public class UserController {
 
         // 로그인 정보 가져오기
         UserInfo userEntity = userRepository.findByid(user.getUsername()).orElse(null);
+        UserInterests userInterests = userInterestsRepository.findById(user.getUsername()).orElse(new UserInterests());
 
         // 정보 업데이트
         if (userEntity != null) {
 
+            // 빈 칸일시 저장 안함
             if (form.getPw() != null && !form.getPw().isEmpty()) {
                 userEntity.setPw(passwordEncoder.encode(form.getPw()));
                 userEntity.setDoor_pw(form.getDoor_pw());
             }
 
+            // 체크박스의 체크 유무에 따라 DB에 저장
+            userInterests.setPolitics(form.getPolitics() != null);
+            userInterests.setEconomy(form.getEconomy() != null);
+            userInterests.setSociety(form.getSociety() != null);
+            userInterests.setLifestyleCulture(form.getLifestyleCulture() != null);
+            userInterests.setIt(form.getIt() != null);
+            userInterests.setWorld(form.getWorld() != null);
+
             // 업데이트 된 엔티티 저장
-            UserInfo saved = userRepository.save(userEntity);
-            log.info("UserInfo 업데이트 DB에 저장 완료");
+            userInterestsRepository.save(userInterests);
+            log.info("관심분야 업데이트 DB에 저장 완료");
+            userRepository.save(userEntity);
+            log.info("비밀번호 업데이트 DB에 저장 완료");
+
         }
 
         return "redirect:/main";

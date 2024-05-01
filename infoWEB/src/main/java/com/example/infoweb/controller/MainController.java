@@ -10,7 +10,9 @@ package com.example.infoweb.controller;
 import com.example.infoweb.embedding.Embedding;
 import com.example.infoweb.entity.NaverNews;
 import com.example.infoweb.entity.UserInfo;
+import com.example.infoweb.entity.UserInterests;
 import com.example.infoweb.repository.NaverNewsRepository;
+import com.example.infoweb.repository.UserInterestsRepository;
 import com.example.infoweb.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,8 @@ public class MainController {
     private NaverNewsRepository naverNewsRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private UserInterestsRepository userInterestsRepository;
 
     @GetMapping("/test")
     public String test() {
@@ -76,11 +80,20 @@ public class MainController {
         *
         * */
 
+        // 로그인 하지 않았을 때
+        UserInterests userInterests = null;
+
         // 로그인되어 있는 유저 정보를 가져옴
         if (user != null) {
             model.addAttribute("loginInfo", user.getUsername());
-            log.info("현재 로그인 정보" + user.getUsername());
+            log.info("현재 로그인 정보 " + user.getUsername());
+
+            // 로그인된 사용자의 관심분야를 가져옴
+            userInterests = userInterestsRepository.findById(Objects.requireNonNull(user).getUsername()).orElse(null);
         }
+
+        model.addAttribute("userInterests", userInterests);
+        log.info("사용자 관심분야 가져오기 완료");
 
         // 카테고리에 따라 필터링된 뉴스 가져오기
         Iterable<NaverNews> filteredNews = naverNewsRepository.findByCategory(category)
@@ -113,6 +126,11 @@ public class MainController {
 
             model.addAttribute("nameInfo", Objects.requireNonNull(userInfo).getName());
             log.info("마이페이지 이름 정보" + userInfo.getName());
+
+            // 관심분야가 true면 체크박스 체크
+            // th:checked="${userInterests.필드명}"은 UserInterests 객체의 해당 필드 값이 true인 경우 체크박스가 자동으로 선택되도록 한다
+            UserInterests userInterests = userInterestsRepository.findById(user.getUsername()).orElse(new UserInterests());
+            model.addAttribute("userInterests", userInterests);
 
         } else {
             return "/users/login";

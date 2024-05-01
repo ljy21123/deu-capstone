@@ -28,6 +28,13 @@ public class UserForm {
     private Boolean door_alert;
     private String name;
 
+    private String politics;
+    private String economy;
+    private String society;
+    private String lifestyleCulture;
+    private String it;
+    private String world;
+
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserInfo toEntity() {
