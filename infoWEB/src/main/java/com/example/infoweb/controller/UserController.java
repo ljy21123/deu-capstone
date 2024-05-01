@@ -9,7 +9,10 @@ package com.example.infoweb.controller;
 
 import com.example.infoweb.dto.UserForm;
 import com.example.infoweb.entity.UserInfo;
+import com.example.infoweb.entity.UserInterests;
+import com.example.infoweb.repository.UserInterestsRepository;
 import com.example.infoweb.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,8 +20,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Objects;
@@ -29,13 +34,9 @@ public class UserController {
 
     @Autowired  // 의존성 주입
     private UserRepository userRepository;
+    @Autowired
+    private UserInterestsRepository userInterestsRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-    // 템플릿 테스트
-    @GetMapping("/index")
-    public String testForm() {
-        return "/blog/index";
-    }
 
     @GetMapping("/users/signup")
     public String newUserForm() {
@@ -59,14 +60,28 @@ public class UserController {
 
         // DTO를 엔티티로 변환
         UserInfo userEntity = form.toEntity();
-        log.info(userEntity.toString());
+        log.info("UserInfo 엔티티 변환 완료");
 
         // 중복 회원 검증
         validateDuplicateMember(userEntity);
 
         // 리포지토리로 엔티티를 DB에 저장
         UserInfo saved = userRepository.save(userEntity);
-        log.info(saved.toString());
+        log.info("UserInfo DB 저장 완료");
+
+        // UserInterests 테이블에도 id 저장
+        UserInterests userInterests = new UserInterests();
+        userInterests.setUserInfo(saved);               // 연관 관계 설정 (UserInterests의 user_id 필드가 UserInfo의 id 필드와 동일한 값을 가지게 함)
+
+        userInterests.setPolitics(true);                // 회원가입시 모든 분야 true
+        userInterests.setEconomy(true);
+        userInterests.setSociety(true);
+        userInterests.setLifestyleCulture(true);
+        userInterests.setIt(true);
+        userInterests.setWorld(true);
+
+        userInterestsRepository.save(userInterests);    // DB에 저장
+        log.info("회원가입시 관심분야 DB 저장 완료");
         
         // 성공적으로 회원가입이 끝나면 로그인 페이지로 리다이렉트
         return "redirect:/users/login";
@@ -90,7 +105,7 @@ public class UserController {
 
             // 업데이트 된 엔티티 저장
             UserInfo saved = userRepository.save(userEntity);
-            log.info(saved.toString());
+            log.info("UserInfo 업데이트 DB에 저장 완료");
         }
 
         return "redirect:/main";
@@ -104,9 +119,12 @@ public class UserController {
 
         // 삭제 대상 가져오기
         UserInfo userEntity = userRepository.findByid(user.getUsername()).orElse(null);
-        log.info(Objects.requireNonNull(userEntity).toString());
+        log.info("UserInfo 삭제 대상 가져오기 완료");
+        UserInterests userInterests = userInterestsRepository.findById(user.getUsername()).orElse(null);
+        log.info("UserInterests 삭제 대상 가져오기 완료");
         
         // 대상 엔티티 삭제
+        userInterestsRepository.delete(userInterests);
         userRepository.delete(userEntity);
 
         return "redirect:/logout";

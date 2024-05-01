@@ -40,7 +40,7 @@ public class UserInterests {
     private Boolean world = false;
 
     @OneToOne
-    @MapsId
+    @MapsId // UserInterests의 user_id 필드가 UserInfo의 id 필드와 동일한 값을 가지게 함
     @JoinColumn(name = "user_id")
     private UserInfo userInfo;
 
