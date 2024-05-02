@@ -160,14 +160,10 @@ class NaverNews:
         category_urls = self.make_url()
         self.logger.debug('분야별 링크 생성 완료')
         self.dao.connect()
-        sd = 0
         for i in range(len(category_urls[0])):
             self.logger.debug(f'{category_urls[1][i]}파싱 시작')
             news_urls = self.articles_crawler(category_urls[0][i])
             for url in news_urls:
-                if sd == 2:
-                    break
-                sd += 1
                 # 뉴스 객체 반환
                 news = self.print_news(url, category_urls[1][i])
                 # 큐에 작업 추가

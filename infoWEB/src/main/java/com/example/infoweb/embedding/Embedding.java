@@ -21,7 +21,7 @@ import java.util.Scanner;
 
 @Slf4j
 public class Embedding {
-    public double dot(double[] a, double[] b) {
+    private double dot(double[] a, double[] b) {
         if (a.length != b.length) {
             return 0.0;
         }

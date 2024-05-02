@@ -17,7 +17,6 @@ import os
 
 import naverNews
 import newsBriefBot
-# import doorNotification
 import naverRealTimeNews
 import finvizMap
 import investingCalendar
