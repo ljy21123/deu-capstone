@@ -20,6 +20,7 @@ import newsBriefBot
 import naverRealTimeNews
 import finvizMap
 import investingCalendar
+import financialjuice
 
 class System_starter:
     def __init__(self) -> None:
@@ -32,6 +33,7 @@ class System_starter:
         self.naverRelaTimeNews = None
         self.finvizMap = None
         self.investingCalendar = None
+        self.financialjuice = None
 
     def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -68,28 +70,28 @@ class System_starter:
         threading.Timer(600, self.runNaverNewsParsing).start()
 
     # doorNotification.py를 실행하는 함수
-    def runDoorNotification(self):
-        if not self.door:
-            self.door = doorNotification.DoorNotification()
-        # 현재 시간
-        current_time = datetime.now()
+    # def runDoorNotification(self):
+    #     if not self.door:
+    #         self.door = doorNotification.DoorNotification()
+    #     # 현재 시간
+    #     current_time = datetime.now()
 
-        # 현재 시간이 6 ~ 22 사이가 아니라면
-        if current_time.time() > time(22, 0) or current_time.time() < time(6, 0):
-            self.logger.info('Door: 22시 이후이기 때문에 6시까지 대기')
-        # 목표 시간
-            target_time = (current_time + timedelta(days=1)).replace(hour=6, minute=0, second=0)
-            remaining_time = target_time - current_time
-            self.logger.warning(f"{remaining_time.total_seconds()}초 만큼 대기합니다.")
-            # 6시까지 대기 후에 run_door_notification 함수 호출
-            threading.Timer(remaining_time.total_seconds(), self.runDoorNotification).start()
-        else:
-            self.logger.info('도어 알림 동작 시작')
-            door_notification_thread = threading.Thread(target=self.door.start())
-            door_notification_thread.start()
-            self.logger.info('도어 알림 동작 완료 대기 전환')
-            # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
-            threading.Timer(600, self.runDoorNotification).start()
+    #     # 현재 시간이 6 ~ 22 사이가 아니라면
+    #     if current_time.time() > time(22, 0) or current_time.time() < time(6, 0):
+    #         self.logger.info('Door: 22시 이후이기 때문에 6시까지 대기')
+    #     # 목표 시간
+    #         target_time = (current_time + timedelta(days=1)).replace(hour=6, minute=0, second=0)
+    #         remaining_time = target_time - current_time
+    #         self.logger.warning(f"{remaining_time.total_seconds()}초 만큼 대기합니다.")
+    #         # 6시까지 대기 후에 run_door_notification 함수 호출
+    #         threading.Timer(remaining_time.total_seconds(), self.runDoorNotification).start()
+    #     else:
+    #         self.logger.info('도어 알림 동작 시작')
+    #         door_notification_thread = threading.Thread(target=self.door.start())
+    #         door_notification_thread.start()
+    #         self.logger.info('도어 알림 동작 완료 대기 전환')
+    #         # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
+    #         threading.Timer(600, self.runDoorNotification).start()
         
     # naverRealTimeNews.py를 실행하는 함수
     def runNaverRealTimeNews(self):
@@ -115,11 +117,21 @@ class System_starter:
     def runInvestingCalendar(self):
         if not self.investingCalendar:
             self.investingCalendar = investingCalendar.InvestingCalendar()
-        self.logger.info('실시간 이벤트 크롤러 시작')
+        self.logger.info('InvestingCalendar 이벤트 크롤러 시작')
         investingCalendarThread = threading.Thread(target=self.investingCalendar.runCrawling)
         investingCalendarThread.start()
         # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
         threading.Timer(600, self.runInvestingCalendar).start()
+
+    # financialjuice.py를 실행하는 함수
+    def runFinancialjuice(self):
+        if not self.financialjuice:
+            self.financialjuice = financialjuice.Financialjuice()
+        self.logger.info('Financialjuice 이벤트 크롤러 시작')
+        financialjuiceThred = threading.Thread(target=self.financialjuice.runCrawling)
+        financialjuiceThred.start()
+        # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
+        threading.Timer(600, self.runFinancialjuice).start()
 
     def print_queue(self):
         print("현재 큐의 사이즈:", self.global_task_queue.qsize())
@@ -141,11 +153,10 @@ if __name__ == "__main__":
 
     # 일정 시간마다 호출
     threading.Thread(target=systemStart.runNaverNewsParsing).start()
-    threading.Thread(target=systemStart.print_queue).start()
-    
-    # threading.Thread(target=systemStart.runNaverRealTimeNews).start()
-    # threading.Thread(target=systemStart.runFinvizMap).start()
-    # threading.Thread(target=systemStart.runInvestingCalendar).start()
-
+    threading.Thread(target=systemStart.print_queue).start()    
+    threading.Thread(target=systemStart.runNaverRealTimeNews).start()
+    threading.Thread(target=systemStart.runFinvizMap).start()
+    threading.Thread(target=systemStart.runInvestingCalendar).start()
+    threading.Thread(target=systemStart.runFinancialjuice).start()
 
     # threading.Thread(target=systemStart.runDoorNotification).start()

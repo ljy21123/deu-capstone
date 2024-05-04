@@ -73,6 +73,3 @@ class InvestingCalendar:
             if not self.dao.isUrlExists(event.url):
                 self.dao.insertEvent(event)
         self.dao.disconnect() 
-
-a = InvestingCalendar()
-a.runCrawling()
