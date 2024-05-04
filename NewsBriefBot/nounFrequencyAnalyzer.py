@@ -68,36 +68,34 @@ class NounFrequencyAnalyzer:
         self.dao.insert_frequency(date_today, frequencies, count)
         self.dao.disconnect()
 
+    def createImage(self):
+        images_dir = os.path.join(os.path.dirname(__file__), '..', 'images')
+        mask_path = os.path.join(images_dir, 'mask.png')  # 마스크 이미지 경로
+        font_file_path = os.path.join(os.path.dirname(__file__), 'font', 'malgun.ttf')
+        current_time = datetime.now().strftime("%Y-%m-%d")
+        image_filename = f"wordcloud_{current_time}.png"
+        self.extract_nouns()
+        noun_frequencies = self.calculate_noun_frequency()
 
-if __name__ == "__main__":
-    images_dir = os.path.join(os.path.dirname(__file__), '..', 'images')
-    mask_path = os.path.join(images_dir, 'mask.png')  # 마스크 이미지 경로
-    font_file_path = os.path.join(os.path.dirname(__file__), 'font', 'malgun.ttf')
-    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    image_filename = f"wordcloud_{current_time}.png"
-    noun = NounFrequencyAnalyzer()
-    noun.extract_nouns()
-    noun_frequencies = noun.calculate_noun_frequency()
-    noun.save_frequencies(noun_frequencies, 10) # 10개 만큼 (단어, 빈도) 저장
-    
-    # 마스크 이미지 로드 및 변환
-    mask_image = np.array(Image.open(mask_path).resize((IMG_W, IMG_H)))
+        self.save_frequencies(noun_frequencies, 10) # 10개 만큼 (단어, 빈도) 저장
+        
+        # 마스크 이미지 로드 및 변환
+        mask_image = np.array(Image.open(mask_path).resize((IMG_W, IMG_H)))
 
-    wordcloud = WordCloud(font_path=font_file_path,
-                      background_color=None,
-                      mode='RGBA',
-                      width=IMG_W, height=IMG_H,
-                      max_words=400,
-                      mask=mask_image).generate_from_frequencies(dict(noun_frequencies))
-    
-    
-    # 그림 그리기
-    plt.figure(figsize=(25, 14))
-    plt.imshow(wordcloud, interpolation='bilinear')
-    plt.axis('off')
+        wordcloud = WordCloud(font_path=font_file_path,
+                              background_color=None,
+                              mode='RGBA',
+                              width=IMG_W, height=IMG_H,
+                              max_words=400,
+                              mask=mask_image).generate_from_frequencies(dict(noun_frequencies))
+        
+        # 그림 그리기
+        plt.figure(figsize=(25, 14))
+        plt.imshow(wordcloud, interpolation='bilinear')
+        plt.axis('off')
 
-    # 그림 저장
-    plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png')
-    # plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png', transparent=True)
+        # 그림 저장
+        plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png')
+        # plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png', transparent=True)
     
 

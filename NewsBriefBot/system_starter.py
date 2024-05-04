@@ -21,6 +21,7 @@ import naverRealTimeNews
 import finvizMap
 import investingCalendar
 import financialjuice
+import nounFrequencyAnalyzer
 
 class System_starter:
     def __init__(self) -> None:
@@ -34,6 +35,7 @@ class System_starter:
         self.finvizMap = None
         self.investingCalendar = None
         self.financialjuice = None
+        self.nounFrequencyAnalyzer = None
 
     def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -132,6 +134,15 @@ class System_starter:
         financialjuiceThred.start()
         # 쓰레드가 종료된 후에 10분 뒤에 다시 실행
         threading.Timer(600, self.runFinancialjuice).start()
+    
+    def runNounFrequencyAnalyzer(self):
+        if not self.nounFrequencyAnalyzer:
+            self.nounFrequencyAnalyzer = nounFrequencyAnalyzer.NounFrequencyAnalyzer()
+        self.logger.info('NounFrequencyAnalyzer 빈도수 계산 수행')
+        nounFrequencyAnalyzerThred = threading.Thread(target=self.nounFrequencyAnalyzer.createImage)
+        nounFrequencyAnalyzerThred.start()
+        # 쓰레드가 종료된 후에 1시간 뒤에 다시 실행
+        threading.Timer(6000, self.runFinancialjuice).start()
 
     def print_queue(self):
         print("현재 큐의 사이즈:", self.global_task_queue.qsize())
@@ -158,5 +169,5 @@ if __name__ == "__main__":
     threading.Thread(target=systemStart.runFinvizMap).start()
     threading.Thread(target=systemStart.runInvestingCalendar).start()
     threading.Thread(target=systemStart.runFinancialjuice).start()
-
+    threading.Thread(target=systemStart.runNounFrequencyAnalyzer).start()
     # threading.Thread(target=systemStart.runDoorNotification).start()
