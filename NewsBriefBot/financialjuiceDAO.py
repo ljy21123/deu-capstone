@@ -53,7 +53,7 @@ class FinancialjuiceDAO:
         query = """
         SELECT event_description 
         FROM FinancialjuiceEvents
-        WHERE date = %s;
+        WHERE event_time = %s;
         """
         args = (news.date,)  # 튜플로 전달하기 위해 괄호 추가
         try:
@@ -63,7 +63,7 @@ class FinancialjuiceDAO:
             cursor.close()
             return bool(door_announcement)  # 결과값이 있으면 True, 없으면 False 반환
         except mysql.connector.Error as err:
-            self.logger.error(f"NaverNews 주소 조회 오류: {err}")
+            self.logger.error(f"isNewsExists 주소 조회 오류: {err}")
             return False  # 에러가 발생한 경우에도 False 반환
 
     def insertNews(self, news:financialjuiceBody.FinancialjuiceBody):
