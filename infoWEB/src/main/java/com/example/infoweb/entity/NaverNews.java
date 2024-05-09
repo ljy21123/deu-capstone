@@ -57,4 +57,7 @@ public class NaverNews {
     @Column(columnDefinition = "JSON", nullable = false)
     private double[] embedding;
 
+    @Transient
+    private double similarityScore;
+
 }

@@ -1,3 +1,10 @@
+/*
+ *   임베딩 벡터를 생성하고 코사인 유사도를 계산하는 클래스입니다.
+ *
+ *   작성자: 양시현
+ *
+ * */
+
 package com.example.infoweb.embedding;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -11,12 +18,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Scanner;
 
 
 @Slf4j
@@ -43,7 +47,7 @@ public class Embedding {
      *
      *  gradle
      *  implementation 'org.apache.commons:commons-math3:3.6.1'
-     * 코사인거리 계산
+     *  코사인거리 계산
      * */
     public double cosineDistance(double[] vec1, double[] vec2) {
 //        RealVector vectorA = MatrixUtils.createRealVector(vec1);

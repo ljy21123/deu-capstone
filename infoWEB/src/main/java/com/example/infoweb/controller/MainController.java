@@ -7,11 +7,12 @@
 
 package com.example.infoweb.controller;
 
-import com.example.infoweb.embedding.Embedding;
 import com.example.infoweb.entity.NaverNews;
+import com.example.infoweb.entity.NaverRealTimeNews;
 import com.example.infoweb.entity.UserInfo;
 import com.example.infoweb.entity.UserInterests;
 import com.example.infoweb.repository.NaverNewsRepository;
+import com.example.infoweb.repository.RealTimeNewsRepository;
 import com.example.infoweb.repository.UserInterestsRepository;
 import com.example.infoweb.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -21,10 +22,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -38,49 +38,19 @@ public class MainController {
     private UserRepository userRepository;
     @Autowired
     private UserInterestsRepository userInterestsRepository;
+    @Autowired
+    private RealTimeNewsRepository realTimeNewsRepository;
 
-    @GetMapping("/test")
-    public String test() {
-        return "/test";
-    }
-
-    @PostMapping("/search")
-    public String search(@RequestParam("searchKeyword") String searchKeyword, Model model) {
-        log.info("search keyword: " + searchKeyword);
-        Iterable<NaverNews> items = naverNewsRepository
-                .findByCategory("정치")
-                .stream().limit(10)
-                .collect(Collectors.toList());
-
-        Embedding em = new Embedding();
-        Iterator<NaverNews> iterator = items.iterator();
-        NaverNews news = iterator.next();
-        NaverNews news2 = iterator.next();
-
-        double [] search = em.getEmbedding(searchKeyword);
-        log.info("검색어{}", search);
-
-
-        // 값이 높을수록 유사
-        // 먼저 like 연산으로 제목을 검색 후 개수가 부족하면 임베딩 검색을 수행한다....
-        double result = em.cosineDistance(search, news.getEmbedding());
-        double result2 = em.cosineDistance(search, news2.getEmbedding());
-        log.info("검색어와 1번항목: {}", result);
-        log.info("검색어와 2번항목: {}", result2);
-        log.info("{} {}",news.getTitle(), news.getEmbedding());
-        log.info("{} {}",news2.getTitle(), news2.getEmbedding());
-        return "redirect:/test";
-    }
 
     @GetMapping("/main")
-    public String newMainForm(@AuthenticationPrincipal User user, @RequestParam(defaultValue = "정치") String category, Model model) {
+    public String newMainForm(@AuthenticationPrincipal User user, @RequestParam(defaultValue = "종합") String category, Model model) {
         /*
-        *   @AuthenticationPrincipal: 현재 인증된 사용자의 정보를 메서드의 파라미터로 직접 주입할 때 사용
-        *   @RequestParam: HTTP 요청의 파라미터를 컨트롤러 메서드의 파라미터에 바인딩할 때 사용
-        *
-        * */
+         *   @AuthenticationPrincipal: 현재 인증된 사용자의 정보를 메서드의 파라미터로 직접 주입할 때 사용
+         *   @RequestParam: HTTP 요청의 파라미터를 컨트롤러 메서드의 파라미터에 바인딩할 때 사용
+         *
+         * */
 
-        // 로그인 하지 않았을 때
+        // 로그인하지 않았을 때
         UserInterests userInterests = null;
 
         // 로그인되어 있는 유저 정보를 가져옴
@@ -95,15 +65,55 @@ public class MainController {
         model.addAttribute("userInterests", userInterests);
         log.info("사용자 관심분야 가져오기 완료");
 
-        // 카테고리에 따라 필터링된 뉴스 가져오기
-        Iterable<NaverNews> filteredNews = naverNewsRepository.findByCategory(category)
-                                                              .stream()
-                                                              .limit(10)
-                                                              .collect(Collectors.toList());
-        model.addAttribute("naverNewsList", filteredNews);
-        log.info(category + "로 필터링 된 뉴스 데이터 조회");
+        Iterable<NaverNews> filteredNews;
+        Iterable<NaverRealTimeNews> filteredNewsRealtime;
 
-        // 카테고리 선택했을때 불 들어오게
+        // 카테고리가 종합일 경우 랜덤 뉴스 조회
+        if (category.equals("종합")) {
+            // 랜덤으로 메인 뉴스 가져오기
+            filteredNews = naverNewsRepository.findAll()
+                                              .stream()
+                                              .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+                                                  Collections.shuffle(collected);
+                                                  return collected.stream();
+                                              }))
+                                              .limit(6)
+                                              .collect(Collectors.toList());
+            log.info("랜덤 메인 뉴스 가져오기 완료");
+
+            // 랜덤으로 실시간 뉴스 가져오기
+            filteredNewsRealtime = realTimeNewsRepository.findAll()
+                                                         .stream()
+                                                         .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+                                                             Collections.shuffle(collected);
+                                                             return collected.stream();
+                                                         }))
+                                                         .limit(100)
+                                                         .collect(Collectors.toList());
+            log.info("랜덤 실시간 뉴스 가져오기 완료");
+        } else {
+            // 카테고리에 따라 필터링된 메인 뉴스 가져오기
+            filteredNews = naverNewsRepository.findByCategory(category)
+                                              .stream()
+                                              .limit(6)
+                                              .collect(Collectors.toList());
+            log.info("카테고리 별 메인 뉴스 가져오기 완료");
+
+            // 카테고리에 따라 필터링된 실시간 뉴스 가져오기
+            filteredNewsRealtime = realTimeNewsRepository.findByCategory(category)
+                                                         .stream()
+                                                         .limit(100)
+                                                         .collect(Collectors.toList());
+            log.info("카테고리 별 실시간 뉴스 가져오기 완료");
+        }
+
+        model.addAttribute("naverNewsList", filteredNews);
+        log.info(category + "로 필터링된 메인 뉴스 데이터 조회");
+
+        model.addAttribute("realTimeNews", filteredNewsRealtime);
+        log.info(category + "로 필터링된 실시간 뉴스 데이터 조회");
+
+        // 카테고리 선택했을 때 불 들어오게
         model.addAttribute("selectedCategory", category);
 
         return "/main";
