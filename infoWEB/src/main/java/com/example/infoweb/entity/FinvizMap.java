@@ -27,7 +27,7 @@ public class FinvizMap {
     @Column(nullable = false, length = 255)
     private String url;
 
-    @Column(nullable = false)
-    private LocalDateTime created_at = LocalDateTime.now();
+    @Column(nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime created_at;
 
 }
