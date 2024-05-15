@@ -34,7 +34,7 @@ public class UserController {
 
     @GetMapping("/users/signup")
     public String newUserForm() {
-        return "/users/signup";
+        return "/users/SignUp";
     }
 
     @GetMapping("/users/login")
@@ -44,7 +44,7 @@ public class UserController {
             return "/main";
         }
 
-        return "/users/login";
+        return "/users/SignIn";
     }
 
     @PostMapping("/users/create")
@@ -73,6 +73,7 @@ public class UserController {
         userInterests.setLifestyleCulture(true);
         userInterests.setIt(true);
         userInterests.setWorld(true);
+        userInterests.setStock(true);
 
         userInterestsRepository.save(userInterests);    // DB에 저장
         log.info("회원가입시 관심분야 DB 저장 완료");
@@ -106,6 +107,7 @@ public class UserController {
             userInterests.setLifestyleCulture(form.getLifestyleCulture() != null);
             userInterests.setIt(form.getIt() != null);
             userInterests.setWorld(form.getWorld() != null);
+            userInterests.setStock(form.getStock() != null);
 
             // 업데이트 된 엔티티 저장
             userInterestsRepository.save(userInterests);

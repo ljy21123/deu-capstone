@@ -39,6 +39,9 @@ public class UserInterests {
     @Column(nullable = false)
     private Boolean world = false;
 
+    @Column(nullable = false)
+    private Boolean stock = false;
+
     @OneToOne
     @MapsId // UserInterests의 user_id 필드가 UserInfo의 id 필드와 동일한 값을 가지게 함
     @JoinColumn(name = "user_id")

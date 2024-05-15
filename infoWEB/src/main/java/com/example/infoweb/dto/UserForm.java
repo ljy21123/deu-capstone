@@ -34,6 +34,7 @@ public class UserForm {
     private String lifestyleCulture;
     private String it;
     private String world;
+    private String stock;
 
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 

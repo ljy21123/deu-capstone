@@ -7,14 +7,8 @@
 
 package com.example.infoweb.controller;
 
-import com.example.infoweb.entity.NaverNews;
-import com.example.infoweb.entity.NaverRealTimeNews;
-import com.example.infoweb.entity.UserInfo;
-import com.example.infoweb.entity.UserInterests;
-import com.example.infoweb.repository.NaverNewsRepository;
-import com.example.infoweb.repository.RealTimeNewsRepository;
-import com.example.infoweb.repository.UserInterestsRepository;
-import com.example.infoweb.repository.UserRepository;
+import com.example.infoweb.entity.*;
+import com.example.infoweb.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,11 +16,13 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.Collections;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Controller
@@ -40,6 +36,8 @@ public class MainController {
     private UserInterestsRepository userInterestsRepository;
     @Autowired
     private RealTimeNewsRepository realTimeNewsRepository;
+    @Autowired
+    private NounFrequencyRepository nounFrequencyRepository;
 
 
     @GetMapping("/main")
@@ -116,6 +114,19 @@ public class MainController {
         // 카테고리 선택했을 때 불 들어오게
         model.addAttribute("selectedCategory", category);
 
+        /**
+         * 키워드 및 빈도수 이미지
+         * */
+        // 키워드 가져오기
+        Iterable<NounFrequency> nounFrequencies = StreamSupport.stream(nounFrequencyRepository.findAll().spliterator(), false)
+                                                               .limit(15)
+                                                               .collect(Collectors.toList());
+
+        model.addAttribute("nounFrequencies", nounFrequencies);
+        
+        // 빈도수 이미지 불러오기
+        //
+
         return "/main";
     }
 
@@ -147,6 +158,11 @@ public class MainController {
         }
 
         return "/users/mypage";
+    }
+
+    @GetMapping("/investing")
+    public String investingForm() {
+        return "/investing";
     }
 
 }

@@ -40,7 +40,7 @@ public class SearchController {
     private NaverNewsRepository naverNewsRepository;
 
     @GetMapping("/search")
-    public String searchForm(@RequestParam(name = "searchKeyword", required = false) String searchKeyword, Model model) {
+    public String searchForm(@RequestParam(name = "searchKeyword", required = false) String searchKeyword, @RequestParam(defaultValue = "0") int page, Model model) {
 
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
 
@@ -91,10 +91,14 @@ public class SearchController {
 
             // 결과를 모델에 추가
             model.addAttribute("results", finalResults);
+            // 검색 내용
+            model.addAttribute("searchKeyword", searchKeyword);
+
+            log.info("검색 결과 불러오기 완료");
 
         }
 
-        return "search";
+        return "/search";
 
     }
 
