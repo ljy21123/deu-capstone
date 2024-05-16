@@ -24,6 +24,11 @@
                         <span th:text="${passwordError}"></span>
                     </div>
 
+                    <!-- 중복 회원 에러 메시지 출력 -->
+                    <div th:if="${overlapError}" class="alert alert-danger" role="alert">
+                        <span th:text="${overlapError}"></span>
+                    </div>
+
                     <div class="form-group">
                         <label for="id">User ID</label>
                         <input id="id" name="id" required="required" type="text" class="form-control"/>

@@ -71,13 +71,13 @@ class NounFrequencyAnalyzer:
 
     def createImage(self):
         images_dir = os.path.join(os.path.dirname(__file__), '..', 'infoWEB', 'src', 'main', 'resources', 'static', 'images')
+        # images_dir = os.path.join(os.path.dirname(__file__), '..', 'images')
         mask_path = os.path.join(images_dir, 'mask.png')  # 마스크 이미지 경로
         font_file_path = os.path.join(os.path.dirname(__file__), 'font', 'malgun.ttf')
         current_time = datetime.now().strftime("%Y-%m-%d")
         image_filename = f"wordcloud_{current_time}.png"
         self.extract_nouns()
         noun_frequencies = self.calculate_noun_frequency()
-
         self.save_frequencies(noun_frequencies, 10) # 10개 만큼 (단어, 빈도) 저장
         
         # 마스크 이미지 로드 및 변환
