@@ -40,7 +40,7 @@ public class SearchController {
     private NaverNewsRepository naverNewsRepository;
 
     @GetMapping("/search")
-    public String searchForm(@RequestParam(name = "searchKeyword", required = false) String searchKeyword, @RequestParam(defaultValue = "0") int page, Model model) {
+    public String searchForm(@RequestParam(name = "searchKeyword", required = false) String searchKeyword, Model model) {
 
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
 
