@@ -1,8 +1,9 @@
 <!doctype html>
 <html data-bs-theme="auto" lang="en" xmlns:th="http://www.thymeleaf.org">
 <div th:fragment="header">
+
     <nav>
-        <script src="/assets/js/color-modes.js"></script>
+<!--        <script src="/assets/js/color-modes.js"></script>-->
 
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -23,6 +24,7 @@
         <link href="/blog/index.css" rel="stylesheet">
         <link href="/blog/Search.css" rel="stylesheet">
     </nav>
+
     <svg class="d-none" xmlns="http://www.w3.org/2000/svg">
         <symbol id="check2" viewBox="0 0 16 16">
             <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
@@ -39,58 +41,58 @@
         </symbol>
     </svg>
 
-    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
-        <button aria-expanded="false"
-                aria-label="Toggle theme (auto)"
-                class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"
-                data-bs-toggle="dropdown"
-                id="bd-theme"
-                type="button">
-            <svg class="bi my-1 theme-icon-active" height="1em" width="1em">
-                <use href="#circle-half"></use>
-            </svg>
-            <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>
-        </button>
-        <ul aria-labelledby="bd-theme-text" class="dropdown-menu dropdown-menu-end shadow">
-            <li>
-                <button aria-pressed="false" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"
-                        type="button">
-                    <svg class="bi me-2 opacity-50" height="1em" width="1em">
-                        <use href="#sun-fill"></use>
-                    </svg>
-                    Light
-                    <svg class="bi ms-auto d-none" height="1em" width="1em">
-                        <use href="#check2"></use>
-                    </svg>
-                </button>
-            </li>
-            <li>
-                <button aria-pressed="false" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"
-                        type="button">
-                    <svg class="bi me-2 opacity-50" height="1em" width="1em">
-                        <use href="#moon-stars-fill"></use>
-                    </svg>
-                    Dark
-                    <svg class="bi ms-auto d-none" height="1em" width="1em">
-                        <use href="#check2"></use>
-                    </svg>
-                </button>
-            </li>
-            <li>
-                <button aria-pressed="true" class="dropdown-item d-flex align-items-center active"
-                        data-bs-theme-value="auto"
-                        type="button">
-                    <svg class="bi me-2 opacity-50" height="1em" width="1em">
-                        <use href="#circle-half"></use>
-                    </svg>
-                    Auto
-                    <svg class="bi ms-auto d-none" height="1em" width="1em">
-                        <use href="#check2"></use>
-                    </svg>
-                </button>
-            </li>
-        </ul>
-    </div>
+<!--    <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">-->
+<!--        <button aria-expanded="false"-->
+<!--                aria-label="Toggle theme (auto)"-->
+<!--                class="btn btn-bd-primary py-2 dropdown-toggle d-flex align-items-center"-->
+<!--                data-bs-toggle="dropdown"-->
+<!--                id="bd-theme"-->
+<!--                type="button">-->
+<!--            <svg class="bi my-1 theme-icon-active" height="1em" width="1em">-->
+<!--                <use href="#circle-half"></use>-->
+<!--            </svg>-->
+<!--            <span class="visually-hidden" id="bd-theme-text">Toggle theme</span>-->
+<!--        </button>-->
+<!--        <ul aria-labelledby="bd-theme-text" class="dropdown-menu dropdown-menu-end shadow">-->
+<!--            <li>-->
+<!--                <button aria-pressed="false" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light"-->
+<!--                        type="button">-->
+<!--                    <svg class="bi me-2 opacity-50" height="1em" width="1em">-->
+<!--                        <use href="#sun-fill"></use>-->
+<!--                    </svg>-->
+<!--                    Light-->
+<!--                    <svg class="bi ms-auto d-none" height="1em" width="1em">-->
+<!--                        <use href="#check2"></use>-->
+<!--                    </svg>-->
+<!--                </button>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <button aria-pressed="false" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark"-->
+<!--                        type="button">-->
+<!--                    <svg class="bi me-2 opacity-50" height="1em" width="1em">-->
+<!--                        <use href="#moon-stars-fill"></use>-->
+<!--                    </svg>-->
+<!--                    Dark-->
+<!--                    <svg class="bi ms-auto d-none" height="1em" width="1em">-->
+<!--                        <use href="#check2"></use>-->
+<!--                    </svg>-->
+<!--                </button>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <button aria-pressed="true" class="dropdown-item d-flex align-items-center active"-->
+<!--                        data-bs-theme-value="auto"-->
+<!--                        type="button">-->
+<!--                    <svg class="bi me-2 opacity-50" height="1em" width="1em">-->
+<!--                        <use href="#circle-half"></use>-->
+<!--                    </svg>-->
+<!--                    Auto-->
+<!--                    <svg class="bi ms-auto d-none" height="1em" width="1em">-->
+<!--                        <use href="#check2"></use>-->
+<!--                    </svg>-->
+<!--                </button>-->
+<!--            </li>-->
+<!--        </ul>-->
+<!--    </div>-->
 
 
     <svg class="d-none" xmlns="http://www.w3.org/2000/svg">
@@ -206,5 +208,10 @@
         </script>
 
     </div>
+
+    <button id="scrollToTopBtn" title="Go to top">Top</button>
+
+    <script src="/assets/js/script.js"></script>
+
 </div>
 </html>

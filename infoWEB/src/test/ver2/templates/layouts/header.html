@@ -150,55 +150,64 @@
             <form action="/main" class="nav nav-underline justify-content-between" id="categoryForm" method="get">
                 <label class="nav-item nav-link link-body-emphasis"
                        th:classappend="${selectedCategory == '종합'} ? 'active' : ''">
-                    <input class="d-none" name="category" onchange="submitForm();" th:checked="${selectedCategory == '종합'}" type="radio"
+                    <input class="d-none" name="category" onchange="submitForm();"
+                           th:checked="${selectedCategory == '종합'}" type="radio"
                            value="종합">
                     종합
                 </label>
                 <label class="nav-item nav-link link-body-emphasis"
                        th:classappend="${selectedCategory == '정치'} ? 'active' : ''"
                        th:if="${userInterests == null or userInterests.politics}">
-                    <input class="d-none" name="category" onchange="submitForm();" th:checked="${selectedCategory == '정치'}" type="radio"
+                    <input class="d-none" name="category" onchange="submitForm();"
+                           th:checked="${selectedCategory == '정치'}" type="radio"
                            value="정치">
                     정치
                 </label>
                 <label class="nav-item nav-link link-body-emphasis"
                        th:classappend="${selectedCategory == '경제'} ? 'active' : ''"
                        th:if="${userInterests == null or userInterests.economy}">
-                    <input class="d-none" name="category" onchange="submitForm();" th:checked="${selectedCategory == '경제'}" type="radio"
+                    <input class="d-none" name="category" onchange="submitForm();"
+                           th:checked="${selectedCategory == '경제'}" type="radio"
                            value="경제">
                     경제
                 </label>
                 <label class="nav-item nav-link link-body-emphasis"
                        th:classappend="${selectedCategory == '사회'} ? 'active' : ''"
                        th:if="${userInterests == null or userInterests.society}">
-                    <input class="d-none" name="category" onchange="submitForm();" th:checked="${selectedCategory == '사회'}" type="radio"
+                    <input class="d-none" name="category" onchange="submitForm();"
+                           th:checked="${selectedCategory == '사회'}" type="radio"
                            value="사회">
                     사회
                 </label>
                 <label class="nav-item nav-link link-body-emphasis"
                        th:classappend="${selectedCategory == '생활/문화'} ? 'active' : ''"
                        th:if="${userInterests == null or userInterests.lifestyleCulture}">
-                    <input class="d-none" name="category" onchange="submitForm();" th:checked="${selectedCategory == '생활/문화'}" type="radio"
+                    <input class="d-none" name="category" onchange="submitForm();"
+                           th:checked="${selectedCategory == '생활/문화'}" type="radio"
                            value="생활/문화">
                     생활/문화
                 </label>
-                <label class="nav-item nav-link link-body-emphasis" th:classappend="${selectedCategory == 'IT/과학'} ? 'active' : ''"
+                <label class="nav-item nav-link link-body-emphasis"
+                       th:classappend="${selectedCategory == 'IT/과학'} ? 'active' : ''"
                        th:if="${userInterests == null or userInterests.it}">
-                    <input class="d-none" name="category" onchange="submitForm();" th:checked="${selectedCategory == 'IT/과학'}" type="radio"
+                    <input class="d-none" name="category" onchange="submitForm();"
+                           th:checked="${selectedCategory == 'IT/과학'}" type="radio"
                            value="IT/과학">
                     IT/과학
                 </label>
                 <label class="nav-item nav-link link-body-emphasis"
                        th:classappend="${selectedCategory == '세계'} ? 'active' : ''"
                        th:if="${userInterests == null or userInterests.world}">
-                    <input class="d-none" name="category" onchange="submitForm();" th:checked="${selectedCategory == '세계'}" type="radio"
+                    <input class="d-none" name="category" onchange="submitForm();"
+                           th:checked="${selectedCategory == '세계'}" type="radio"
                            value="세계">
                     세계
                 </label>
                 <label class="nav-item nav-link link-body-emphasis"
                        th:classappend="${selectedCategory == '주식'} ? 'active' : ''"
                        th:if="${userInterests == null or userInterests.stock}">
-                    <input class="d-none" name="category" onchange="submitForm();" th:checked="${selectedCategory == '주식'}" type="radio"
+                    <input class="d-none" name="category" onchange="submitForm();"
+                           th:checked="${selectedCategory == '주식'}" type="radio"
                            value="주식">
                     주식
                 </label>

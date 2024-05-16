@@ -147,3 +147,29 @@
     background-color: #495057; /* 호버 상태의 배경색 */
     border-color: #495057; /* 호버 상태의 테두리 색상 */
 }
+
+
+/* Scroll to Top Button */
+#scrollToTopBtn {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed position */
+    bottom: 20px; /* Place the button at the bottom */
+    right: 30px; /* Place the button 30px from the right */
+    z-index: 99; /* Make sure it does not overlap */
+    border: none; /* Remove borders */
+    outline: none; /* Remove outline */
+    background-color: #555; /* Set a background color */
+    color: white; /* Text color */
+    cursor: pointer; /* Add a mouse pointer on hover */
+    padding: 15px 20px; /* Some padding */
+    border-radius: 50px; /* Rounded corners */
+    font-size: 18px; /* Increase font size */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Add a shadow */
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+}
+
+#scrollToTopBtn:hover {
+    background-color: #000; /* Add a dark-grey background on hover */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3); /* Slightly larger shadow on hover */
+    transform: scale(1.1); /* Slightly enlarge the button on hover */
+}
