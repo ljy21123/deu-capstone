@@ -163,7 +163,7 @@ if __name__ == "__main__":
     # systemStart.runNewsBriefbot()
 
     # 일정 시간마다 호출
-    threading.Thread(target=systemStart.runNaverNewsParsing).start()
+    # threading.Thread(target=systemStart.runNaverNewsParsing).start()
     # threading.Thread(target=systemStart.print_queue).start()
     # threading.Thread(target=systemStart.runNaverRealTimeNews).start()
     # threading.Thread(target=systemStart.runFinvizMap).start()

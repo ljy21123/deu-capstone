@@ -7,6 +7,7 @@
 from collections import Counter
 from konlpy.tag import Okt
 from wordcloud import WordCloud
+import matplotlib
 import matplotlib.pyplot as plt
 import naverNewsDAO
 import logging
@@ -91,6 +92,7 @@ class NounFrequencyAnalyzer:
                               mask=mask_image).generate_from_frequencies(dict(noun_frequencies))
         
         # 그림 그리기
+        matplotlib.use('Agg')
         plt.figure(figsize=(25, 14))
         plt.imshow(wordcloud, interpolation='bilinear')
         plt.axis('off')
@@ -98,5 +100,5 @@ class NounFrequencyAnalyzer:
         # 그림 저장
         plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png')
         # plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png', transparent=True)
-    
+        self.logger.info("사진 생성")
 
