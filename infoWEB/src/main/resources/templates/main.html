@@ -57,7 +57,22 @@
 
         <div class="text-center">
             <div class="mx-auto" style="max-width: 500px;">
-                <img alt="Your Image" class="img-fluid rounded" src="/images/wordcloud_2024-05-09.png"/>
+                <img id="dynamicImage" class="img-fluid rounded" alt="Your Image"/>
+                <script>
+                    function getFormattedDate() {
+                        const today = new Date();
+                        const year = today.getFullYear();
+                        const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is zero-indexed
+                        const day = String(today.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    }
+
+                    document.addEventListener("DOMContentLoaded", function() {
+                        const img = document.getElementById('dynamicImage');
+                        const dateStr = getFormattedDate();
+                        img.src = `/images/wordcloud_${dateStr}.png`;
+                    });
+                </script>
             </div>
         </div>
         <br>
