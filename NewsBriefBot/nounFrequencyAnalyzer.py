@@ -70,7 +70,7 @@ class NounFrequencyAnalyzer:
         self.dao.disconnect()
 
     def createImage(self):
-        images_dir = os.path.join(os.path.dirname(__file__), '..', 'images')
+        images_dir = os.path.join(os.path.dirname(__file__), '..', 'infoWEB', 'src', 'main', 'resources', 'static', 'images')
         mask_path = os.path.join(images_dir, 'mask.png')  # 마스크 이미지 경로
         font_file_path = os.path.join(os.path.dirname(__file__), 'font', 'malgun.ttf')
         current_time = datetime.now().strftime("%Y-%m-%d")
