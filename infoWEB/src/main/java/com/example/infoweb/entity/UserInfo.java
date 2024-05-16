@@ -25,14 +25,14 @@ public class UserInfo {
     @Column(nullable = false, length = 64)
     private String pw;
 
-    @Column(length = 8)
-    private String door_id;
-
-    @Column(length = 20)
-    private String door_pw;
-
-    @Column(nullable = false)
-    private Boolean door_alert = false;
+//    @Column(length = 8)
+//    private String door_id;
+//
+//    @Column(length = 20)
+//    private String door_pw;
+//
+//    @Column(nullable = false)
+//    private Boolean door_alert = false;
 
     @Column(length = 10)
     private String name;

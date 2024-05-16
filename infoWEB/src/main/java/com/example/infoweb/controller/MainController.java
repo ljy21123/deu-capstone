@@ -142,8 +142,8 @@ public class MainController {
             model.addAttribute("loginInfo", user.getUsername());
             log.info("마이페이지 로그인 정보" + user.getUsername());
 
-            model.addAttribute("doorLoginInfo", Objects.requireNonNull(userInfo).getDoor_id());
-            log.info("마이페이지 도어 아이디 정보" + userInfo.getDoor_id());
+//            model.addAttribute("doorLoginInfo", Objects.requireNonNull(userInfo).getDoor_id());
+//            log.info("마이페이지 도어 아이디 정보" + userInfo.getDoor_id());
 
             model.addAttribute("nameInfo", Objects.requireNonNull(userInfo).getName());
             log.info("마이페이지 이름 정보" + userInfo.getName());

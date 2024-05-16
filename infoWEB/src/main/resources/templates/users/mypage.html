@@ -18,6 +18,12 @@
             </div>
             <div class="form-content">
                 <form action="/users/update" method="post">
+
+                    <!-- 비밀번호 불일치 에러 메시지 출력 -->
+<!--                    <div th:if="${passwordError}" class="alert alert-danger" role="alert">-->
+<!--                        <span th:text="${passwordError}"></span>-->
+<!--                    </div>-->
+
                     <div class="form-group">
                         <label for="id">User ID</label>
                         <input id="id" name="id" readonly th:value="${loginInfo} ?: '정보 없음'" type="text"/>
@@ -29,6 +35,10 @@
                     <div class="form-group">
                         <label for="pw">Password</label>
                         <input id="pw" name="pw" type="password"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpw">Confirm Password</label>
+                        <input id="cpw" name="cpw" type="password"/>
                     </div>
 
                     <hr>

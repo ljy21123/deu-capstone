@@ -23,9 +23,10 @@ public class UserForm {
 
     private String id;
     private String pw;
-    private String door_id;
-    private String door_pw;
-    private Boolean door_alert;
+    private String cpw;
+//    private String door_id;
+//    private String door_pw;
+//    private Boolean door_alert;
     private String name;
 
     private String politics;
@@ -39,7 +40,7 @@ public class UserForm {
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserInfo toEntity() {
-        return new UserInfo(id, passwordEncoder.encode(pw), door_id, door_pw, false, name);
+        return new UserInfo(id, passwordEncoder.encode(pw), name);
     }
 
 }

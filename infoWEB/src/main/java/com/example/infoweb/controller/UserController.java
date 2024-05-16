@@ -19,8 +19,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.Objects;
 
 @Slf4j  // 로깅 기능을 위한 어노테이션
 @Controller
@@ -48,9 +51,16 @@ public class UserController {
     }
 
     @PostMapping("/users/create")
-    public String createUser(UserForm form) {
+    public String createUser(UserForm form, Model model) {
 
         log.info("회원정보 생성 요청");
+
+        // pw와 cpw 비교 (비밀번호 확인)
+        if (!Objects.equals(form.getCpw(), form.getPw())) {
+            log.info("회원가입 - 비밀번호 confirm 확인");
+            model.addAttribute("passwordError", "비밀번호가 일치하지 않습니다.");
+            return "/users/SignUp";
+        }
 
         // DTO를 엔티티로 변환
         UserInfo userEntity = form.toEntity();
@@ -83,7 +93,7 @@ public class UserController {
     }
 
     @PostMapping("/users/update")
-    public String updateUser(@AuthenticationPrincipal User user, UserForm form) {
+    public String updateUser(@AuthenticationPrincipal User user, UserForm form, Model model) {
 
         log.info("비밀번호 수정 요청");
 
@@ -94,10 +104,10 @@ public class UserController {
         // 정보 업데이트
         if (userEntity != null) {
 
-            // 빈 칸일시 저장 안함
+            // 빈 칸일시 비밀번호 저장 안함
             if (form.getPw() != null && !form.getPw().isEmpty()) {
                 userEntity.setPw(passwordEncoder.encode(form.getPw()));
-                userEntity.setDoor_pw(form.getDoor_pw());
+                // userEntity.setDoor_pw(form.getDoor_pw());
             }
 
             // 체크박스의 체크 유무에 따라 DB에 저장
@@ -114,6 +124,14 @@ public class UserController {
             log.info("관심분야 업데이트 DB에 저장 완료");
             userRepository.save(userEntity);
             log.info("비밀번호 업데이트 DB에 저장 완료");
+
+            // pw와 cpw 비교 (비밀번호 확인)
+            if (!Objects.equals(Objects.requireNonNull(userEntity).getPw(), form.getPw()) ||
+                    !Objects.equals(form.getPw(), form.getCpw())) {
+                log.info("마이페이지 - 비밀번호 confirm 확인");
+                // model.addAttribute("passwordError", "비밀번호가 일치하지 않습니다.");
+                return "redirect:/users/mypage";
+            }
 
         }
 

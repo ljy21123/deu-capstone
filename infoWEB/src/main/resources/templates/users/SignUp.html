@@ -18,6 +18,12 @@
             </div>
             <div class="form-content">
                 <form class="container" action="/users/create" method="post">
+
+                    <!-- 비밀번호 불일치 에러 메시지 출력 -->
+                    <div th:if="${passwordError}" class="alert alert-danger" role="alert">
+                        <span th:text="${passwordError}"></span>
+                    </div>
+
                     <div class="form-group">
                         <label for="id">User ID</label>
                         <input id="id" name="id" required="required" type="text" class="form-control"/>
@@ -26,18 +32,18 @@
                         <label for="pw">Password</label>
                         <input id="pw" name="pw" required="required" type="password" class="form-control"/>
                     </div>
-                    <!--                    <div class="form-group">-->
-                    <!--                        <label for="cpassword">Confirm Password</label>-->
-                    <!--                        <input id="cpassword" name="cpassword" required="required" type="password"/>-->
-                    <!--                    </div>-->
                     <div class="form-group">
-                        <label for="door_id">Door ID</label>
-                        <input id="door_id" name="door_id" required="required" type="text" class="form-control"/>
+                        <label for="cpw">Confirm Password</label>
+                        <input id="cpw" name="cpw" required="required" type="password" class="form-control"/>
                     </div>
-                    <div class="form-group">
-                        <label for="door_pw">Door Password</label>
-                        <input id="door_pw" name="door_pw" required="required" type="password" class="form-control"/>
-                    </div>
+<!--                    <div class="form-group">-->
+<!--                        <label for="door_id">Door ID</label>-->
+<!--                        <input id="door_id" name="door_id" required="required" type="text" class="form-control"/>-->
+<!--                    </div>-->
+<!--                    <div class="form-group">-->
+<!--                        <label for="door_pw">Door Password</label>-->
+<!--                        <input id="door_pw" name="door_pw" required="required" type="password" class="form-control"/>-->
+<!--                    </div>-->
                     <div class="form-group">
                         <label for="name">Name</label>
                         <input id="name" name="name" required="required" type="text" class="form-control"/>
@@ -45,6 +51,7 @@
                     <div class="form-group">
                         <button type="submit" class="btn btn-primary">Sign up</button>
                     </div>
+
                 </form>
             </div>
         </div>
