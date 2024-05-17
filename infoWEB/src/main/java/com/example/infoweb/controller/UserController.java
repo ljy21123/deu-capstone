@@ -20,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -42,11 +43,15 @@ public class UserController {
     }
 
     @GetMapping("/users/login")
-    public String loginUserForm(@AuthenticationPrincipal User user, UserForm form, Model model) {
+    public String loginUserForm(@AuthenticationPrincipal User user, @CookieValue(value = "rememberMe", defaultValue = "") String rememberMe, Model model) {
 
         if (user != null) {
             return "/main";
         }
+
+        // 아이디 기억
+        // @CookieValue: 쿠키 객체를 전달 받을 수 있는 어노테이션
+        model.addAttribute("rememberMe", rememberMe);
 
         return "/users/SignIn";
     }
