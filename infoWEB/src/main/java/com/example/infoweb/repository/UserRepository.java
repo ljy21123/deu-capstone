@@ -21,4 +21,5 @@ public interface UserRepository extends CrudRepository<UserInfo, String> {
     // 사용자 아이디로 UserInfo 엔티티를 조회하는 메소드
     // 조회 결과가 없을 수 있으므로, Optional로 감싸서 반환
     Optional<UserInfo> findByid(String id);
+    Optional<UserInfo> findByPw(String Pw);
 }

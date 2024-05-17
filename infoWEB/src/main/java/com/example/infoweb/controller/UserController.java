@@ -23,7 +23,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,13 +42,37 @@ public class UserController {
     }
 
     @GetMapping("/users/login")
-    public String loginUserForm(@AuthenticationPrincipal User user) {
+    public String loginUserForm(@AuthenticationPrincipal User user, UserForm form, Model model) {
 
         if (user != null) {
             return "/main";
         }
 
         return "/users/SignIn";
+    }
+
+    @PostMapping("/loginError")
+    public String loginError(UserForm form, Model model) {
+
+        // 로그인 정보 확인
+        UserInfo userInfo = form.toEntity();
+        Optional<UserInfo> loginError = userRepository.findByid(userInfo.getId());
+        if (loginError.isEmpty()) {
+            model.addAttribute("loginError", "존재하지 않는 회원입니다.");
+            log.info("로그인 - 존재하지 않는 회원 에러");
+            return "/users/SignIn";
+        }
+
+        // 비밀번호 확인
+        loginError = userRepository.findByPw(userInfo.getId());
+        if (loginError.isEmpty()) {
+            model.addAttribute("pwError", "비밀번호가 일치하지 않습니다.");
+            log.info("로그인 - 비밀번호 에러");
+            return "/users/SignIn";
+        }
+
+        return "/users/SignIn";
+
     }
 
     @PostMapping("/users/create")
@@ -59,8 +82,8 @@ public class UserController {
 
         // pw와 cpw 비교 (비밀번호 확인)
         if (!Objects.equals(form.getCpw(), form.getPw())) {
-            log.info("회원가입 - 비밀번호 confirm 확인");
             model.addAttribute("passwordError", "비밀번호가 일치하지 않습니다.");
+            log.info("회원가입 - 비밀번호 confirm 에러");
             return "/users/SignUp";
         }
 

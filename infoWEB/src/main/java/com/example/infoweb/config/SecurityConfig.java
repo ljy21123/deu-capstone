@@ -47,7 +47,8 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login_process")                           // submit 받을 url
                         .usernameParameter("id")	                                    // submit할 아이디
                         .passwordParameter("pw")	                                    // submit할 비밀번호
-                        .defaultSuccessUrl("/main", true)      // 성공 시 main으로
+                        .defaultSuccessUrl("/main", true)        // 성공 시 main으로
+                        .failureForwardUrl("/loginError")                               // 실패 시 /loginError POST
                         .permitAll()                                                    // 로그인 페이지에 대한 접근 허용
                 )
                 .logout(logout -> logout                                                // 로그아웃은 기본설정으로 (/logout으로 인증해제)
@@ -57,4 +58,5 @@ public class SecurityConfig {
         return http.build();
 
     }
+
 }

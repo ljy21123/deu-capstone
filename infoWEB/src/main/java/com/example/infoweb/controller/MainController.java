@@ -16,11 +16,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -123,9 +121,6 @@ public class MainController {
                                                                .collect(Collectors.toList());
 
         model.addAttribute("nounFrequencies", nounFrequencies);
-        
-        // 빈도수 이미지 불러오기
-        //
 
         return "/main";
     }

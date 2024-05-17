@@ -19,6 +19,16 @@
             </div>
             <div class="form-content">
                 <form action="/login_process" method="post">
+
+                    <!-- 로그인 에러 메시지 출력 -->
+                    <div th:if="${loginError}" class="alert alert-danger" role="alert">
+                        <span th:text="${loginError}"></span>
+                    </div>
+
+                    <div th:if="${pwError}" class="alert alert-danger" role="alert">
+                        <span th:text="${pwError}"></span>
+                    </div>
+
                     <div class="form-group">
                         <label for="id">User ID</label>
                         <input id="id" name="id" required="required" type="text"/>
