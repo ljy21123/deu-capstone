@@ -11,14 +11,18 @@ import com.example.infoweb.entity.*;
 import com.example.infoweb.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import java.util.Collections;
-import java.util.Objects;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -37,6 +41,7 @@ public class MainController {
     @Autowired
     private NounFrequencyRepository nounFrequencyRepository;
 
+    private Set<String> loadedNewsUrls = new HashSet<>();
 
     @GetMapping("/main")
     public String newMainForm(@AuthenticationPrincipal User user, @RequestParam(defaultValue = "종합") String category, Model model) {
@@ -84,7 +89,7 @@ public class MainController {
                                                              Collections.shuffle(collected);
                                                              return collected.stream();
                                                          }))
-                                                         .limit(100)
+                                                         .limit(20)
                                                          .collect(Collectors.toList());
             log.info("랜덤 실시간 뉴스 가져오기 완료");
         } else {
@@ -98,7 +103,7 @@ public class MainController {
             // 카테고리에 따라 필터링된 실시간 뉴스 가져오기
             filteredNewsRealtime = realTimeNewsRepository.findByCategory(category)
                                                          .stream()
-                                                         .limit(100)
+                                                         .limit(10)
                                                          .collect(Collectors.toList());
             log.info("카테고리 별 실시간 뉴스 가져오기 완료");
         }
@@ -158,6 +163,39 @@ public class MainController {
     @GetMapping("/investing")
     public String investingForm() {
         return "/investing";
+    }
+
+    /**
+     * 실시간 뉴스를 추가로 가져오는 API
+     *
+     * @param category 카테고리
+     * @param page     페이지 번호
+     * @return 페이지 단위로 실시간 뉴스 목록 반환
+     */
+    @GetMapping("/api/realtime-news")
+    @ResponseBody
+    public List<NaverRealTimeNews> getMoreRealTimeNews(@RequestParam String category, @RequestParam int page) {
+
+        // 한 번에 불러올 뉴스의 개수
+        int pageSize = 20;
+        // 페이지 설정
+        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        if (category.equals("종합")) {
+            // 종합 카테고리의 경우 모든 뉴스를 랜덤하게 가져오기
+            List<NaverRealTimeNews> allNews = realTimeNewsRepository.findAll();
+            // 뉴스를 랜덤하게 섞기
+            Collections.shuffle(allNews);
+            // 요청된 페이지에 해당하는 뉴스 목록을 반환
+            log.info("종합 실시간 뉴스 추가 로드");
+            return allNews.stream()
+                    .skip((long) page * pageSize)   // 이미 불러온 뉴스 건너뛰기
+                    .limit(pageSize)                   // 페이지 크기만큼 가져오기
+                    .collect(Collectors.toList());
+        } else {
+            // 특정 카테고리의 뉴스를 페이징하여 가져오기
+            return realTimeNewsRepository.findByCategory(category, pageable).getContent();
+        }
     }
 
 }

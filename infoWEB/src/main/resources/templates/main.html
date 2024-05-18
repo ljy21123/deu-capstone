@@ -26,8 +26,11 @@
                             <li>
                                 <a class="d-flex flex-row gap-3 align-items-center py-3 link-body-emphasis text-decoration-none border-top"
                                    th:href="@{${naverNewsList.news_url}}">
-                                    <img class="bd-placeholder-img" style="width: 120px; height: 96px; object-fit: cover;"
-                                         alt="뉴스 이미지" th:src="${naverNewsList.image_url}" onerror="this.onerror=null; this.src='/blog/cat.jpg';" />
+                                    <img alt="뉴스 이미지"
+                                         class="bd-placeholder-img"
+                                         onerror="this.onerror=null; this.src='/blog/cat.jpg';"
+                                         style="width: 120px; height: 96px; object-fit: cover;"
+                                         th:src="${naverNewsList.image_url}"/>
                                     <div class="col-8">
                                         <h6 class="mb-0 font-malgun" th:text="${naverNewsList.title}">뉴스 제목</h6>
                                     </div>
@@ -41,8 +44,8 @@
 
         <h3 class="pb-0 mb-3 text-center">
             <nav aria-label="Pagination" class="blog-pagination">
-                <a th:each="nounFrequency : ${nounFrequencies}"
-                   class="btn btn-outline-primary rounded-pill mx-1"
+                <a class="btn btn-outline-primary rounded-pill mx-1"
+                   th:each="nounFrequency : ${nounFrequencies}"
                    th:href="@{'/search?searchKeyword=' + ${nounFrequency.noun}}">
                     <span th:text="'#' + ${nounFrequency.noun}">#키워드</span>
                 </a>
@@ -57,7 +60,7 @@
 
         <div class="text-center">
             <div class="mx-auto" style="max-width: 500px;">
-                <img id="dynamicImage" class="img-fluid rounded" alt="Your Image"/>
+                <img alt="Your Image" class="img-fluid rounded" id="dynamicImage"/>
                 <script>
                     function getFormattedDate() {
                         const today = new Date();
@@ -67,7 +70,7 @@
                         return `${year}-${month}-${day}`;
                     }
 
-                    document.addEventListener("DOMContentLoaded", function() {
+                    document.addEventListener("DOMContentLoaded", function () {
                         const img = document.getElementById('dynamicImage');
                         const dateStr = getFormattedDate();
                         img.src = `/images/wordcloud_${dateStr}.png`;
@@ -90,37 +93,106 @@
         </div>
 
         <!-- 실시간 뉴스 -->
-        <div class="row mb-2">
-            <div th:each="realTimeNews : ${realTimeNews}" class="col-md-6">
+        <div class="row mb-2" id="realTimeNewsContainer">
+            <div class="col-md-6" th:each="realTimeNews : ${realTimeNews}">
                 <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
                     <div class="col p-4 d-flex flex-column position-static">
-                        <strong class="d-inline-block mb-2 text-primary-emphasis" th:text="${realTimeNews.category}">
-                            카테고리
-                        </strong>
-                        <h5 class="mb-0 font-malgun" th:text="${realTimeNews.title}">
-                            뉴스 제목
-                        </h5>
+                        <strong class="d-inline-block mb-2 text-primary-emphasis" th:text="${realTimeNews.category}">카테고리</strong>
+                        <h5 class="mb-0 font-malgun" th:text="${realTimeNews.title}">뉴스 제목</h5>
                         <br>
-                        <div class="mb-1 text-body-secondary" th:text="${realTimeNews.created_at}">
-                            날짜
-                        </div>
-                        <p class="card-text mb-auto" th:text="${realTimeNews.publisher}">
-                            퍼블리셔
-                        </p>
-                        <a class="icon-link gap-1 icon-link-hover stretched-link" th:href="@{${realTimeNews.news_url}}">
-                            Continue reading
+                        <div class="mb-1 text-body-secondary" th:text="${realTimeNews.created_at}">날짜</div>
+                        <p class="card-text mb-auto" th:text="${realTimeNews.publisher}">퍼블리셔</p>
+                        <a class="icon-link gap-1 icon-link-hover stretched-link" th:href="@{${realTimeNews.news_url}}">Continue
+                            reading
                             <svg class="bi">
                                 <use xlink:href="#chevron-right"/>
                             </svg>
                         </a>
                     </div>
                     <div class="col-auto d-none d-lg-block">
-                        <img class="bd-placeholder-img" style="width: 200px; height: 250px; object-fit: cover;"
-                             alt="뉴스 이미지" th:src="${realTimeNews.image_url}" onerror="this.onerror=null; this.src='/blog/cat.jpg';" />
+                        <img alt="뉴스 이미지" class="bd-placeholder-img"
+                             onerror="this.onerror=null; this.src='/blog/cat.jpg';"
+                             style="width: 200px; height: 250px; object-fit: cover;"
+                             th:src="${realTimeNews.image_url}"/>
                     </div>
                 </div>
             </div>
         </div>
+
+        <script>
+            // 현재 페이지 번호를 저장
+            let page = 0;
+            // 현재 데이터 로딩 상태를 저장
+            let loading = false;
+
+            /**
+             * 실시간 뉴스를 추가로 불러오는 함수
+             * 새로운 페이지 번호를 기반으로 서버에 데이터를 요청하고, 응답받은 데이터를 DOM에 추가
+             */
+            function loadMoreNews() {
+                // 이미 로딩 중이라면 함수를 종료
+                if (loading) return;
+                loading = true;
+                page++;
+
+                // 서버에 GET 요청을 보내 추가 뉴스를 불러옴
+                fetch(`/api/realtime-news?category=종합&page=${page}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // 더 이상 불러올 뉴스가 없을 경우 스크롤 이벤트 리스너 제거
+                        if (data.length === 0) {
+                            window.removeEventListener('scroll', handleScroll);
+                            return;
+                        }
+
+                        // 뉴스 아이템들을 추가할 컨테이너 요소를 선택
+                        const container = document.querySelector('.row.mb-2');
+                        // 불러온 뉴스를 DOM에 추가
+                        data.forEach(news => {
+                            const newsHtml = `
+                            <div class="col-md-6">
+                                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                                    <div class="col p-4 d-flex flex-column position-static">
+                                        <strong class="d-inline-block mb-2 text-primary-emphasis">${news.category}</strong>
+                                        <h5 class="mb-0 font-malgun">${news.title}</h5>
+                                        <br>
+                                        <div class="mb-1 text-body-secondary">${news.created_at}</div>
+                                        <p class="card-text mb-auto">${news.publisher}</p>
+                                        <a class="icon-link gap-1 icon-link-hover stretched-link" href="${news.news_url}">Continue reading
+                                            <svg class="bi"><use xlink:href="#chevron-right"/></svg>
+                                        </a>
+                                    </div>
+                                    <div class="col-auto d-none d-lg-block">
+                                        <img class="bd-placeholder-img" style="width: 200px; height: 250px; object-fit: cover;"
+                                             src="${news.image_url}" alt="뉴스 이미지" onerror="this.onerror=null; this.src='/blog/cat.jpg';" />
+                                    </div>
+                                </div>
+                            </div>`;
+                            // 새로운 뉴스 HTML을 컨테이너의 끝에 삽입
+                            container.insertAdjacentHTML('beforeend', newsHtml);
+                        });
+
+                        // 로딩 상태를 false로 변경
+                        loading = false;
+                    });
+            }
+
+            /**
+             * 스크롤 이벤트 핸들러 함수
+             * 스크롤이 페이지 하단에 도달했을 때 추가 뉴스 로드
+             */
+            function handleScroll() {
+                // 스크롤이 페이지 하단 근처에 도달했는지 확인
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+                    loadMoreNews();
+                }
+            }
+
+            // 페이지 로드 시 종합 카테고리가 선택된 경우 스크롤 이벤트 리스너 추가
+            if (document.querySelector('input[name="category"][value="종합"]').checked) {
+                window.addEventListener('scroll', handleScroll);
+            }
+        </script>
         <!-- 실시간 뉴스 끝 -->
 
     </main>

@@ -25,6 +25,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
@@ -39,67 +40,31 @@ public class SearchController {
     @Autowired  // 의존성 주입
     private NaverNewsRepository naverNewsRepository;
 
+    /**
+     * 검색 페이지 폼을 처리하는 메서드
+     *
+     * @param searchKeyword 검색 키워드
+     * @param model         뷰에 데이터를 전달하기 위한 모델
+     * @return 검색 결과 페이지 뷰 이름
+     */
     @GetMapping("/search")
     public String searchForm(@RequestParam(name = "searchKeyword", required = false) String searchKeyword, Model model) {
 
+        // 검색 키워드가 null이 아니고 공백이 아닐 때만 검색 수행
         if (searchKeyword != null && !searchKeyword.trim().isEmpty()) {
-
             log.info("검색 키워드: " + searchKeyword);
 
-            // Like 연산으로 검색 수행
-            List<NaverNews> keywordResults = naverNewsRepository
-                                            .findByTitleContainingIgnoreCase(searchKeyword)
-                                            .stream()
-                                            .limit(50)
-                                            .toList();
-
-            // 코사인 유사도 검색 수행
-            Embedding em = new Embedding();
-            // 임베딩 계산
-            double[] searchEmbedding = em.getEmbedding(searchKeyword);
-
-            // 모든 뉴스 조회
-            List<NaverNews> allNews = naverNewsRepository.findAll();
-            List<NaverNews> cosineResults = new ArrayList<>();
-
-            // 모든 뉴스에 대해 유사도 계산
-            for (NaverNews news : allNews) {
-                // 유사도 계산
-                double similarity = em.cosineDistance(searchEmbedding, news.getEmbedding());
-                // 유사도 점수를 객체에 저장
-                news.setSimilarityScore(similarity);
-                // 결과 리스트에 추가
-                cosineResults.add(news);
-            }
-
-            // 유사도 점수가 높은 순서대로 정렬
-            List<NaverNews> topResults = cosineResults.stream()
-                                        .sorted(Comparator.comparingDouble(NaverNews::getSimilarityScore).reversed())
-                                        .limit(50)
-                                        .toList();
-
-            // Like 연산 결과와 유사도 검색 결과 합치기
-            List<NaverNews> combinedResults = new ArrayList<>(keywordResults);
-            combinedResults.addAll(topResults);
-
-            // 중복 제거 및 최종 결과 정렬
-            List<NaverNews> finalResults = combinedResults.stream()
-                                          .distinct() // 중복 제거
-                                          .sorted(Comparator.comparingDouble(NaverNews::getSimilarityScore).reversed())
-                                          .limit(100)
-                                          .collect(Collectors.toList());
-
-            // 결과를 모델에 추가
+            // 검색 결과를 가져와서 finalResults 리스트에 저장
+            List<NaverNews> finalResults = getSearchResults(searchKeyword, 0);
+            // 모델에 검색 결과 리스트 추가
             model.addAttribute("results", finalResults);
-            // 검색 내용
+            // 모델에 검색 키워드 추가
             model.addAttribute("searchKeyword", searchKeyword);
 
             log.info("검색 결과 불러오기 완료");
-
         }
 
         return "/search";
-
     }
 
     /**
@@ -117,6 +82,65 @@ public class SearchController {
         // GET 요청으로 리다이렉트
         return "redirect:/search";
 
+    }
+
+    /**
+     * 검색 결과를 페이지 단위로 반환하는 API
+     * @param searchKeyword 검색 키워드
+     * @param page 페이지 번호
+     * @return 검색 결과 리스트
+     */
+    @GetMapping("/api/search")
+    @ResponseBody
+    public List<NaverNews> getSearchResults(@RequestParam("searchKeyword") String searchKeyword, @RequestParam("page") int page) {
+
+        int pageSize = 20;
+        // 코사인 유사도 검색 수행
+        Embedding em = new Embedding();
+        // 임베딩 계산
+        double[] searchEmbedding = em.getEmbedding(searchKeyword);
+
+        // Like 연산으로 검색 수행
+        List<NaverNews> keywordResults = naverNewsRepository
+                                        .findByTitleContainingIgnoreCase(searchKeyword)
+                                        .stream()
+                                        .toList();
+
+        // 모든 뉴스 조회
+        List<NaverNews> allNews = naverNewsRepository.findAll();
+        List<NaverNews> cosineResults = new ArrayList<>();
+
+        // 모든 뉴스에 대해 유사도 계산
+        for (NaverNews news : allNews) {
+            // 유사도 계산
+            double similarity = em.cosineDistance(searchEmbedding, news.getEmbedding());
+            // 유사도 점수를 객체에 저장
+            news.setSimilarityScore(similarity);
+            // 결과 리스트에 추가
+            cosineResults.add(news);
+        }
+
+        // 유사도 점수가 높은 순서대로 정렬
+        List<NaverNews> topResults = cosineResults.stream()
+                                    .sorted(Comparator.comparingDouble(NaverNews::getSimilarityScore).reversed())
+                                    .toList();
+
+        // Like 연산 결과와 유사도 검색 결과 합치기
+        List<NaverNews> combinedResults = new ArrayList<>(keywordResults);
+        combinedResults.addAll(topResults);
+
+        // 중복 제거 및 최종 결과 정렬
+        List<NaverNews> finalResults = combinedResults.stream()
+                .distinct()
+                .sorted(Comparator.comparingDouble(NaverNews::getSimilarityScore).reversed())
+                .skip((long) page * pageSize)
+                .limit(pageSize)
+                .collect(Collectors.toList());
+        
+        log.info("getSearchResults 함수 수행 완료");
+
+        // finalResults을 리턴
+        return finalResults;
     }
 
 }
