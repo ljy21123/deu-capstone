@@ -119,79 +119,74 @@
             </div>
         </div>
 
-        <script>
-            // 현재 페이지 번호를 저장
-            let page = 0;
-            // 현재 데이터 로딩 상태를 저장
-            let loading = false;
+        <script th:inline="javascript">
+            // 페이지 로드 후 실행되는 함수
+            document.addEventListener("DOMContentLoaded", function() {
+                let offset = 0;     // 뉴스 로드 시작 위치
+                const limit = 20;   // 한 번에 로드할 뉴스 개수
+                const category = /*[[${selectedCategory}]]*/ '종합';
 
-            /**
-             * 실시간 뉴스를 추가로 불러오는 함수
-             * 새로운 페이지 번호를 기반으로 서버에 데이터를 요청하고, 응답받은 데이터를 DOM에 추가
-             */
-            function loadMoreNews() {
-                // 이미 로딩 중이라면 함수를 종료
-                if (loading) return;
-                loading = true;
-                page++;
+                // 더 많은 뉴스를 로드하는 함수
+                async function loadMoreNews() {
+                    try {
+                        const response = await fetch(`/real_time_news?category=${category}&offset=${offset}&limit=${limit}`);
+                        const newsList = await response.json();
 
-                // 서버에 GET 요청을 보내 추가 뉴스를 불러옴
-                fetch(`/api/realtime-news?category=종합&page=${page}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // 더 이상 불러올 뉴스가 없을 경우 스크롤 이벤트 리스너 제거
-                        if (data.length === 0) {
+                        // 더 이상 로드할 뉴스가 없으면 스크롤 이벤트 제거
+                        if (newsList.length === 0) {
                             window.removeEventListener('scroll', handleScroll);
                             return;
                         }
 
-                        // 뉴스 아이템들을 추가할 컨테이너 요소를 선택
-                        const container = document.querySelector('.row.mb-2');
-                        // 불러온 뉴스를 DOM에 추가
-                        data.forEach(news => {
-                            const newsHtml = `
-                            <div class="col-md-6">
-                                <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
-                                    <div class="col p-4 d-flex flex-column position-static">
-                                        <strong class="d-inline-block mb-2 text-primary-emphasis">${news.category}</strong>
-                                        <h5 class="mb-0 font-malgun">${news.title}</h5>
-                                        <br>
-                                        <div class="mb-1 text-body-secondary">${news.created_at}</div>
-                                        <p class="card-text mb-auto">${news.publisher}</p>
-                                        <a class="icon-link gap-1 icon-link-hover stretched-link" href="${news.news_url}">Continue reading
-                                            <svg class="bi"><use xlink:href="#chevron-right"/></svg>
-                                        </a>
-                                    </div>
-                                    <div class="col-auto d-none d-lg-block">
-                                        <img class="bd-placeholder-img" style="width: 200px; height: 250px; object-fit: cover;"
-                                             src="${news.image_url}" alt="뉴스 이미지" onerror="this.onerror=null; this.src='/blog/cat.jpg';" />
-                                    </div>
-                                </div>
-                            </div>`;
-                            // 새로운 뉴스 HTML을 컨테이너의 끝에 삽입
-                            container.insertAdjacentHTML('beforeend', newsHtml);
-                        });
-
-                        // 로딩 상태를 false로 변경
-                        loading = false;
-                    });
-            }
-
-            /**
-             * 스크롤 이벤트 핸들러 함수
-             * 스크롤이 페이지 하단에 도달했을 때 추가 뉴스 로드
-             */
-            function handleScroll() {
-                // 스크롤이 페이지 하단 근처에 도달했는지 확인
-                if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-                    loadMoreNews();
+                        offset += limit;
+                        // 로드된 뉴스를 화면에 추가
+                        appendNews(newsList);
+                    } catch (error) {
+                        console.error('Error loading more news:', error);
+                    }
                 }
-            }
 
-            // 페이지 로드 시 종합 카테고리가 선택된 경우 스크롤 이벤트 리스너 추가
-            if (document.querySelector('input[name="category"][value="종합"]').checked) {
+                // 로드된 뉴스를 화면에 추가하는 함수
+                function appendNews(newsList) {
+                    const newsContainer = document.querySelector('#realTimeNewsContainer');
+                    newsList.forEach(news => {
+                        const newsElement = document.createElement('div');
+                        newsElement.classList.add('col-md-6');
+                        newsElement.innerHTML = `
+                            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                                <div class="col p-4 d-flex flex-column position-static">
+                                    <strong class="d-inline-block mb-2 text-primary-emphasis">${news.category}</strong>
+                                    <h5 class="mb-0 font-malgun">${news.title}</h5>
+                                    <br>
+                                    <div class="mb-1 text-body-secondary">${news.created_at}</div>
+                                    <p class="card-text mb-auto">${news.publisher}</p>
+                                    <a class="icon-link gap-1 icon-link-hover stretched-link" href="${news.news_url}">Continue reading
+                                        <svg class="bi"><use xlink:href="#chevron-right"/></svg>
+                                    </a>
+                                </div>
+                                <div class="col-auto d-none d-lg-block">
+                                    <img class="bd-placeholder-img" style="width: 200px; height: 250px; object-fit: cover;" alt="뉴스 이미지" src="${news.image_url}" onerror="this.onerror=null; this.src='/blog/cat.jpg';" />
+                                </div>
+                            </div>
+                        `;
+                        // 뉴스 요소를 컨테이너에 추가
+                        newsContainer.appendChild(newsElement);
+                    });
+                }
+
+                // 스크롤 이벤트 핸들러
+                function handleScroll() {
+                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                        // 스크롤이 페이지 끝에 도달하면 뉴스 로드
+                        loadMoreNews();
+                    }
+                }
+
+                // 스크롤 이벤트 등록
                 window.addEventListener('scroll', handleScroll);
-            }
+                // 초기 뉴스 로드
+                loadMoreNews();
+            });
         </script>
         <!-- 실시간 뉴스 끝 -->
 

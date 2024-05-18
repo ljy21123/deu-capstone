@@ -11,9 +11,6 @@ import com.example.infoweb.entity.*;
 import com.example.infoweb.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
@@ -41,7 +38,9 @@ public class MainController {
     @Autowired
     private NounFrequencyRepository nounFrequencyRepository;
 
+    // 이미 로드된 뉴스 URL을 저장하는 Set
     private Set<String> loadedNewsUrls = new HashSet<>();
+
 
     @GetMapping("/main")
     public String newMainForm(@AuthenticationPrincipal User user, @RequestParam(defaultValue = "종합") String category, Model model) {
@@ -67,52 +66,52 @@ public class MainController {
         log.info("사용자 관심분야 가져오기 완료");
 
         Iterable<NaverNews> filteredNews;
-        Iterable<NaverRealTimeNews> filteredNewsRealtime;
+//        Iterable<NaverRealTimeNews> filteredNewsRealtime;
 
         // 카테고리가 종합일 경우 랜덤 뉴스 조회
         if (category.equals("종합")) {
             // 랜덤으로 메인 뉴스 가져오기
             filteredNews = naverNewsRepository.findAll()
-                                              .stream()
-                                              .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
-                                                  Collections.shuffle(collected);
-                                                  return collected.stream();
-                                              }))
-                                              .limit(6)
-                                              .collect(Collectors.toList());
+                    .stream()
+                    .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+                        Collections.shuffle(collected);
+                        return collected.stream();
+                    }))
+                    .limit(6)
+                    .collect(Collectors.toList());
             log.info("랜덤 메인 뉴스 가져오기 완료");
 
-            // 랜덤으로 실시간 뉴스 가져오기
-            filteredNewsRealtime = realTimeNewsRepository.findAll()
-                                                         .stream()
-                                                         .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
-                                                             Collections.shuffle(collected);
-                                                             return collected.stream();
-                                                         }))
-                                                         .limit(20)
-                                                         .collect(Collectors.toList());
-            log.info("랜덤 실시간 뉴스 가져오기 완료");
+//            // 랜덤으로 종합 실시간 뉴스 가져오기
+//            filteredNewsRealtime = realTimeNewsRepository.findAll()
+//                    .stream()
+//                    .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+//                        Collections.shuffle(collected);
+//                        return collected.stream();
+//                    }))
+//                    .limit(20)
+//                    .collect(Collectors.toList());
+//            log.info("랜덤 실시간 뉴스 가져오기 완료");
         } else {
             // 카테고리에 따라 필터링된 메인 뉴스 가져오기
             filteredNews = naverNewsRepository.findByCategory(category)
-                                              .stream()
-                                              .limit(6)
-                                              .collect(Collectors.toList());
+                    .stream()
+                    .limit(6)
+                    .collect(Collectors.toList());
             log.info("카테고리 별 메인 뉴스 가져오기 완료");
 
-            // 카테고리에 따라 필터링된 실시간 뉴스 가져오기
-            filteredNewsRealtime = realTimeNewsRepository.findByCategory(category)
-                                                         .stream()
-                                                         .limit(10)
-                                                         .collect(Collectors.toList());
-            log.info("카테고리 별 실시간 뉴스 가져오기 완료");
+//            // 카테고리에 따라 필터링된 실시간 뉴스 가져오기
+//            filteredNewsRealtime = realTimeNewsRepository.findByCategory(category)
+//                    .stream()
+//                    .limit(20)
+//                    .collect(Collectors.toList());
+//            log.info("카테고리 별 실시간 뉴스 가져오기 완료");
         }
 
         model.addAttribute("naverNewsList", filteredNews);
         log.info(category + "로 필터링된 메인 뉴스 데이터 조회");
 
-        model.addAttribute("realTimeNews", filteredNewsRealtime);
-        log.info(category + "로 필터링된 실시간 뉴스 데이터 조회");
+//        model.addAttribute("realTimeNews", filteredNewsRealtime);
+//        log.info(category + "로 필터링된 실시간 뉴스 데이터 조회");
 
         // 카테고리 선택했을 때 불 들어오게
         model.addAttribute("selectedCategory", category);
@@ -122,8 +121,8 @@ public class MainController {
          * */
         // 키워드 가져오기
         Iterable<NounFrequency> nounFrequencies = StreamSupport.stream(nounFrequencyRepository.findAll().spliterator(), false)
-                                                               .limit(15)
-                                                               .collect(Collectors.toList());
+                .limit(15)
+                .collect(Collectors.toList());
 
         model.addAttribute("nounFrequencies", nounFrequencies);
 
@@ -166,35 +165,39 @@ public class MainController {
     }
 
     /**
-     * 실시간 뉴스를 추가로 가져오는 API
-     *
-     * @param category 카테고리
-     * @param page     페이지 번호
-     * @return 페이지 단위로 실시간 뉴스 목록 반환
+     * 실시간 뉴스를 추가로 로드하는 API
      */
-    @GetMapping("/api/realtime-news")
+    @GetMapping("/real_time_news")
     @ResponseBody
-    public List<NaverRealTimeNews> getMoreRealTimeNews(@RequestParam String category, @RequestParam int page) {
-
-        // 한 번에 불러올 뉴스의 개수
-        int pageSize = 20;
-        // 페이지 설정
-        Pageable pageable = PageRequest.of(page, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-
+    public List<NaverRealTimeNews> loadMoreRealTimeNews(@RequestParam String category, @RequestParam int offset, @RequestParam int limit) {
         if (category.equals("종합")) {
-            // 종합 카테고리의 경우 모든 뉴스를 랜덤하게 가져오기
+            // 모든 실시간 뉴스를 가져옴
             List<NaverRealTimeNews> allNews = realTimeNewsRepository.findAll();
-            // 뉴스를 랜덤하게 섞기
-            Collections.shuffle(allNews);
-            // 요청된 페이지에 해당하는 뉴스 목록을 반환
-            log.info("종합 실시간 뉴스 추가 로드");
-            return allNews.stream()
-                    .skip((long) page * pageSize)   // 이미 불러온 뉴스 건너뛰기
-                    .limit(pageSize)                   // 페이지 크기만큼 가져오기
-                    .collect(Collectors.toList());
+            // 이미 로드된 뉴스 URL을 제외하고 랜덤으로 뉴스를 선택
+            List<NaverRealTimeNews> randomNews = allNews.stream()
+                                                .filter(news -> !loadedNewsUrls.contains(news.getNews_url()))
+                                                // 이미 로드된 뉴스 제외
+                                                .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+                                                    // 리스트를 셔플하여 무작위 순서로 정렬
+                                                    Collections.shuffle(collected);
+                                                    return collected.stream();
+                                                }))
+                                                // 지정된 수만큼 뉴스를 선택
+                                                .limit(limit)
+                                                .collect(Collectors.toList());
+            // 로드된 뉴스 URL을 Set에 추가하여 중복 로드를 방지
+            loadedNewsUrls.addAll(randomNews.stream().map(NaverRealTimeNews::getNews_url).toList());
+            log.info("종합 랜덤 실시간 뉴스 가져오기 완료");
+            // 선택된 뉴스를 리턴
+            return randomNews;
         } else {
-            // 특정 카테고리의 뉴스를 페이징하여 가져오기
-            return realTimeNewsRepository.findByCategory(category, pageable).getContent();
+            log.info("카테고리 별 실시간 뉴스 가져오기 완료");
+            // 해당 카테고리의 뉴스를 페이징하여 가져옴
+            return realTimeNewsRepository.findByCategory(category)
+                                         .stream()
+                                         .skip(offset)  // 오프셋부터 시작
+                                         .limit(limit)  // 지정된 수만큼 뉴스를 가져옴
+                                         .collect(Collectors.toList());
         }
     }
 
