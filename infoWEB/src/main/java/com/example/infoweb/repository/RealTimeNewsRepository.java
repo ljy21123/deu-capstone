@@ -9,14 +9,9 @@
 package com.example.infoweb.repository;
 
 import com.example.infoweb.entity.NaverRealTimeNews;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public interface RealTimeNewsRepository extends CrudRepository<NaverRealTimeNews, String> {
 
