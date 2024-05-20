@@ -136,14 +136,6 @@ public class UserController {
 
         log.info("비밀번호 수정 요청");
 
-        // pw와 cpw 비교 (비밀번호 확인)
-//        if (!Objects.equals(Objects.requireNonNull(userEntity).getPw(), form.getPw()) ||
-//                !Objects.equals(form.getPw(), form.getCpw())) {
-//            log.info("마이페이지 - 비밀번호 confirm 확인");
-//            // model.addAttribute("passwordError", "비밀번호가 일치하지 않습니다.");
-//            return "redirect:/users/mypage";
-//        }
-
         // 로그인 정보 가져오기
         UserInfo userEntity = userRepository.findByid(user.getUsername()).orElse(null);
         UserInterests userInterests = userInterestsRepository.findById(user.getUsername()).orElse(new UserInterests());
@@ -151,11 +143,22 @@ public class UserController {
         // 정보 업데이트
         if (userEntity != null) {
 
-            // 빈 칸일시 비밀번호 저장 안함
-            if (form.getPw() != null && !form.getPw().isEmpty()) {
-                userEntity.setPw(passwordEncoder.encode(form.getPw()));
-                // userEntity.setDoor_pw(form.getDoor_pw());
+            // 비밀번호 확인
+            if (form.getPw() != null && form.getMpw() != null & form.getCpw() != null) {
+                if (userEntity.getPw().equals(form.getPw()) && form.getMpw().equals(form.getCpw())) {
+                    userEntity.setPw(passwordEncoder.encode(form.getMpw()));
+                } else {
+                    log.info("마이페이지 - 비밀번호 confirm 확인");
+                    model.addAttribute("passwordError", "비밀번호가 일치하지 않습니다.");
+                    return "/users/mypage";
+                }
             }
+
+//            // 현재 비밀번호가 빈칸이 아니면 값 저장
+//            if (form.getPw() != null && !form.getPw().isEmpty()) {
+//                userEntity.setPw(passwordEncoder.encode(form.getMpw()));
+//                // userEntity.setDoor_pw(form.getDoor_pw());
+//            }
 
             // 체크박스의 체크 유무에 따라 DB에 저장
             userInterests.setPolitics(form.getPolitics() != null);

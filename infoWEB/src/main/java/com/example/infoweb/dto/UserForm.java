@@ -23,7 +23,8 @@ public class UserForm {
 
     private String id;
     private String pw;
-    private String cpw;
+    private String mpw; // 수정할 비밀번호
+    private String cpw; // 수정할 비밀번호 확인
 //    private String door_id;
 //    private String door_pw;
 //    private Boolean door_alert;

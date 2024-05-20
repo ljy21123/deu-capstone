@@ -41,7 +41,6 @@ public class MainController {
     // 이미 로드된 뉴스 URL을 저장하는 Set
     private Set<String> loadedNewsUrls = new HashSet<>();
 
-
     @GetMapping("/main")
     public String newMainForm(@AuthenticationPrincipal User user, @RequestParam(defaultValue = "종합") String category, Model model) {
         /*
@@ -49,6 +48,9 @@ public class MainController {
          *   @RequestParam: HTTP 요청의 파라미터를 컨트롤러 메서드의 파라미터에 바인딩할 때 사용
          *
          * */
+        
+        // 중복 저장 초기화
+        loadedNewsUrls = new HashSet<>();
 
         // 로그인하지 않았을 때
         UserInterests userInterests = null;
@@ -116,9 +118,6 @@ public class MainController {
         // 카테고리 선택했을 때 불 들어오게
         model.addAttribute("selectedCategory", category);
 
-        /**
-         * 키워드 및 빈도수 이미지
-         * */
         // 키워드 가져오기
         Iterable<NounFrequency> nounFrequencies = StreamSupport.stream(nounFrequencyRepository.findAll().spliterator(), false)
                 .limit(15)
@@ -170,6 +169,7 @@ public class MainController {
     @GetMapping("/real_time_news")
     @ResponseBody
     public List<NaverRealTimeNews> loadMoreRealTimeNews(@RequestParam String category, @RequestParam int offset, @RequestParam int limit) {
+        
         if (category.equals("종합")) {
             // 모든 실시간 뉴스를 가져옴
             List<NaverRealTimeNews> allNews = realTimeNewsRepository.findAll();
