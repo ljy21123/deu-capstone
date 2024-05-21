@@ -206,8 +206,8 @@ public class UserController {
         log.info("UserInterests 삭제 대상 가져오기 완료");
 
         // 대상 엔티티 삭제
-        userInterestsRepository.delete(userInterests);
-        userRepository.delete(userEntity);
+        userInterestsRepository.delete(Objects.requireNonNull(userInterests));
+        userRepository.delete(Objects.requireNonNull(userEntity));
 
         return "redirect:/logout";
     }
