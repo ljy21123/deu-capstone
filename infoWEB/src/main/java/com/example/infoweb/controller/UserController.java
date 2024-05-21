@@ -1,9 +1,9 @@
 /*
-*   유저 데이터 관리를 위한 컨트롤러입니다.
-*
-*   작성자: 이준영
-*
-* */
+ *   유저 데이터 관리를 위한 컨트롤러입니다.
+ *
+ *   작성자: 이준영
+ *
+ * */
 
 package com.example.infoweb.controller;
 
@@ -114,7 +114,8 @@ public class UserController {
 
         // UserInterests 테이블에도 id 저장
         UserInterests userInterests = new UserInterests();
-        userInterests.setUserInfo(saved);               // 연관 관계 설정 (UserInterests의 user_id 필드가 UserInfo의 id 필드와 동일한 값을 가지게 함)
+        // 연관 관계 설정 (UserInterests의 user_id 필드가 UserInfo의 id 필드와 동일한 값을 가지게 함)
+        userInterests.setUserInfo(saved);
 
         userInterests.setPolitics(true);                // 회원가입시 모든 분야 true
         userInterests.setEconomy(true);
@@ -126,7 +127,7 @@ public class UserController {
 
         userInterestsRepository.save(userInterests);    // DB에 저장
         log.info("회원가입시 관심분야 DB 저장 완료");
-        
+
         // 성공적으로 회원가입이 끝나면 로그인 페이지로 리다이렉트
         return "redirect:/users/login";
     }
@@ -140,43 +141,54 @@ public class UserController {
         UserInfo userEntity = userRepository.findByid(user.getUsername()).orElse(null);
         UserInterests userInterests = userInterestsRepository.findById(user.getUsername()).orElse(new UserInterests());
 
-        // 정보 업데이트
-        if (userEntity != null) {
-
-            // 비밀번호 확인
-            if (form.getPw() != null && form.getMpw() != null & form.getCpw() != null) {
-                if (userEntity.getPw().equals(form.getPw()) && form.getMpw().equals(form.getCpw())) {
-                    userEntity.setPw(passwordEncoder.encode(form.getMpw()));
-                } else {
-                    log.info("마이페이지 - 비밀번호 confirm 확인");
-                    model.addAttribute("passwordError", "비밀번호가 일치하지 않습니다.");
-                    return "/users/mypage";
-                }
-            }
-
-//            // 현재 비밀번호가 빈칸이 아니면 값 저장
-//            if (form.getPw() != null && !form.getPw().isEmpty()) {
-//                userEntity.setPw(passwordEncoder.encode(form.getMpw()));
-//                // userEntity.setDoor_pw(form.getDoor_pw());
-//            }
-
-            // 체크박스의 체크 유무에 따라 DB에 저장
-            userInterests.setPolitics(form.getPolitics() != null);
-            userInterests.setEconomy(form.getEconomy() != null);
-            userInterests.setSociety(form.getSociety() != null);
-            userInterests.setLifestyleCulture(form.getLifestyleCulture() != null);
-            userInterests.setIt(form.getIt() != null);
-            userInterests.setWorld(form.getWorld() != null);
-            userInterests.setStock(form.getStock() != null);
-
-            // 업데이트 된 엔티티 저장
-            userInterestsRepository.save(userInterests);
-            log.info("관심분야 업데이트 DB에 저장 완료");
-
-            userRepository.save(userEntity);
-            log.info("비밀번호 업데이트 DB에 저장 완료");
-
+        if (userEntity == null) {
+            log.info("로그인 정보가 유효하지 않습니다.");
+            return "redirect:/users/login";
         }
+
+        // 비밀번호 확인
+        boolean passwordError = false;
+        if (form.getPw() != null && !form.getPw().isEmpty() && form.getMpw() != null && form.getCpw() != null) {
+            if (passwordEncoder.matches(form.getPw(), userEntity.getPw())) {
+                if (form.getMpw().equals(form.getCpw())) {
+                    userEntity.setPw(passwordEncoder.encode(form.getMpw()));
+                    log.info("비밀번호 변경 완료");
+                } else {
+                    passwordError = true;
+                    model.addAttribute("passwordError", "새 비밀번호가 일치하지 않습니다.");
+                    log.info("새 비밀번호 불일치 에러");
+                }
+            } else {
+                passwordError = true;
+                model.addAttribute("passwordError", "현재 비밀번호가 일치하지 않습니다.");
+                log.info("현재 비밀번호 불일치 에러");
+            }
+        }
+
+        // 비밀번호 에러가 났을때 마이페이지를 리턴하는데, 사용자 정보를 다시 넣어놓지 않으면 null 오류가 난다
+        if (passwordError) {
+            model.addAttribute("loginInfo", userEntity.getId());
+            model.addAttribute("nameInfo", userEntity.getName());
+            model.addAttribute("userInterests", userInterests);
+            log.info("비밀번호 에러 - /users/mypage 리턴");
+            return "/users/mypage";
+        }
+
+        // 체크박스의 체크 유무에 따라 DB에 저장
+        userInterests.setPolitics(form.getPolitics() != null);
+        userInterests.setEconomy(form.getEconomy() != null);
+        userInterests.setSociety(form.getSociety() != null);
+        userInterests.setLifestyleCulture(form.getLifestyleCulture() != null);
+        userInterests.setIt(form.getIt() != null);
+        userInterests.setWorld(form.getWorld() != null);
+        userInterests.setStock(form.getStock() != null);
+
+        // 업데이트 된 엔티티 저장
+        userInterestsRepository.save(userInterests);
+        log.info("관심분야 업데이트 DB에 저장 완료");
+
+        userRepository.save(userEntity);
+        log.info("비밀번호 업데이트 DB에 저장 완료");
 
         return "redirect:/main";
 
@@ -192,7 +204,7 @@ public class UserController {
         log.info("UserInfo 삭제 대상 가져오기 완료");
         UserInterests userInterests = userInterestsRepository.findById(user.getUsername()).orElse(null);
         log.info("UserInterests 삭제 대상 가져오기 완료");
-        
+
         // 대상 엔티티 삭제
         userInterestsRepository.delete(userInterests);
         userRepository.delete(userEntity);
