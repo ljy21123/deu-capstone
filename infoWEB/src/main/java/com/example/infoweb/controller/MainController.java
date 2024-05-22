@@ -37,6 +37,12 @@ public class MainController {
     private RealTimeNewsRepository realTimeNewsRepository;
     @Autowired
     private NounFrequencyRepository nounFrequencyRepository;
+    @Autowired
+    private FinvizMapRepository finvizMapRepository;
+    @Autowired
+    private FinancialjuiceRepository financialjuiceRepository;
+    @Autowired
+    private InvestingRealTimeRepository investingRealTimeRepository;
 
     // 이미 로드된 뉴스 URL을 저장하는 Set
     private Set<String> loadedNewsUrls = new HashSet<>();
@@ -144,11 +150,6 @@ public class MainController {
         return "/users/mypage";
     }
 
-    @GetMapping("/investing")
-    public String investingForm() {
-        return "/investing";
-    }
-
     /**
      * 실시간 뉴스를 추가로 로드하는 API
      */
@@ -244,6 +245,30 @@ public class MainController {
 
         return "/article";
 
+    }
+
+    /**
+     * 주식 카테고리 폼
+     * */
+    @GetMapping("/investing")
+    public String investingForm(Model model) {
+
+        // FinvizMap url 레코드 가져옴
+        FinvizMap finvizMapUrl = finvizMapRepository.findLatestEntry();
+        model.addAttribute("finvizMapUrl", finvizMapUrl);
+        log.info("주식 - url 레코드 가져옴");
+
+        // InvestingRealTime 엔티티 가져옴
+        Iterable<InvestingRealTimeEvents> investingRealTimeEvents = investingRealTimeRepository.findAllDescLimit();
+        model.addAttribute("investingRealTime", investingRealTimeEvents);
+        log.info("주식 - InvestingRealTime 엔티티 가져옴");
+
+        // FinancialjuiceEvents 엔티티 가져옴
+        Iterable<FinancialjuiceEvents> financialjuiceEvents = financialjuiceRepository.findAllDescLimit();
+        model.addAttribute("financialjuice", financialjuiceEvents);
+        log.info("주식 - FinancialjuiceEvents 엔티티 가져옴");
+
+        return "/investing";
     }
 
 }

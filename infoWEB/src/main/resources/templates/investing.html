@@ -9,22 +9,38 @@
 <div layout:fragment="content">
     <main class="main-container">
         <div class="p-4  mb-4 rounded text-body-emphasis bg-body-secondary d-flex justify-content-between flex-wrap">
+
+            <!-- 왼쪽 시작 -->
             <div style="width: 19%;">
                 <div style="text-align: center;">
-                    <p1 style="font-family: 'spoqaB', sans-serif; color: white;">0월 00일 (요) 00:00<br>속보 요약<br><br></p1>
+                    <p style="font-family: 'spoqaB', sans-serif; " id="dateDisplay">날짜</p>
                 </div>
-                <p1 style="font-family: 'spoqaR', sans-serif; color: white;">01:05 - 연준의 메스터: 연준이 올해 말에 금리를 인하할 수 있다고
-                    예상한다.<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif; color: white;">01:07 - 연준의 메스터: 이전의 2.5%에 비해 3%로 더 긴 런 펀드
-                    금리를 본다.<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif; color: white;">01:07 - 연준의 메스터: 성장 전망 수정, 올해 2%를 약간 웃도는
-                    활동.<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif; color: white;">01:45 - 연준의 메스터: 고용 증가 둔화 예상 실업률 '약간
-                    상승'<br></p1>
+
+                <div th:each="event : ${investingRealTime}">
+                <p style="font-family: 'spoqaR', sans-serif; font-size: 14px;"
+                   th:attr="data-event-time=${event.event_time}, data-event-description=${event.event_description}">01:00 FOMC 멤버 Williams가 연설</p><hr>
+                </div>
             </div>
+
+            <script>
+                function getCurrentDate() {
+                    const date = new Date();
+                    const year = date.getFullYear();
+                    const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더해줍니다.
+                    const day = date.getDate();
+                    const weekDays = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+                    const weekDay = weekDays[date.getDay()];
+
+                    return `${year}년 ${month}월 ${day}일 ${weekDay}`;
+                }
+
+                document.getElementById('dateDisplay').innerHTML = `${getCurrentDate()}<br>경제 주요 일정<br>`;
+            </script>
+            <!-- 왼쪽 끝 -->
+
             <div style="width: 1%"></div>
             <div style="width: 30%;">
-                <!-- 왼쪽 컨텐츠 -->
+                <!-- 왼쪽 위젯 -->
                 <!-- TradingView Widget BEGIN -->
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
@@ -32,7 +48,8 @@
                                                                  rel="noopener nofollow" target="_blank"><span
                             class="blue-text">Track all markets on TradingView</span></a></div>
                     <script async
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                            type="text/javascript">
                         {
                             "width"
                         :
@@ -89,7 +106,8 @@
                                                                  rel="noopener nofollow" target="_blank"><span
                             class="blue-text">Track all markets on TradingView</span></a></div>
                     <script async
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                            type="text/javascript">
                         {
                             "width"
                         :
@@ -145,7 +163,8 @@
                                                                  rel="noopener nofollow" target="_blank"><span
                             class="blue-text">Track all markets on TradingView</span></a></div>
                     <script async
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                            type="text/javascript">
                         {
                             "width"
                         :
@@ -201,7 +220,8 @@
                                                                  rel="noopener nofollow" target="_blank"><span
                             class="blue-text">Track all markets on TradingView</span></a></div>
                     <script async
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                            type="text/javascript">
                         {
                             "width"
                         :
@@ -252,7 +272,7 @@
 
             </div>
             <div style="width: 30%;">
-                <!-- 오른쪽 컨텐츠 -->
+                <!-- 오른쪽 위젯 -->
                 <!-- TradingView Widget BEGIN -->
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
@@ -260,7 +280,8 @@
                                                                  rel="noopener nofollow" target="_blank"><span
                             class="blue-text">Track all markets on TradingView</span></a></div>
                     <script async
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                            type="text/javascript">
                         {
                             "width"
                         :
@@ -317,7 +338,8 @@
                                                                  rel="noopener nofollow" target="_blank"><span
                             class="blue-text">Track all markets on TradingView</span></a></div>
                     <script async
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                            type="text/javascript">
                         {
                             "width"
                         :
@@ -373,7 +395,8 @@
                                                                  rel="noopener nofollow" target="_blank"><span
                             class="blue-text">Track all markets on TradingView</span></a></div>
                     <script async
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                            type="text/javascript">
                         {
                             "width"
                         :
@@ -429,7 +452,8 @@
                                                                  rel="noopener nofollow" target="_blank"><span
                             class="blue-text">Track all markets on TradingView</span></a></div>
                     <script async
-                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" type="text/javascript">
+                            src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js"
+                            type="text/javascript">
                         {
                             "width"
                         :
@@ -480,33 +504,55 @@
 
             </div>
             <div style="width: 1%"></div>
+
+            <!-- 오른쪽 시작 -->
             <div style="width: 19%;">
                 <div style="text-align: center;">
-                    <p1 style="font-family: 'spoqaB', sans-serif; ">2024년 0월 00일 0요일<br>경제 주요 일정<br><br></p1>
+                    <p style="font-family: 'spoqaB', sans-serif; color: white;" id="dateDisplay2">오늘자 속보 요약<br></p>
                 </div>
-                <p1 style="font-family: 'spoqaR', sans-serif;">01:00 FOMC 멤버 Williams가 연설<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif;">01:05 연방공개시장위원회 위원 메스터 연설<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif;">05:30 미국석유협회 주간 원유 재고<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif;">18:15 OPEC 회의<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif;">20:00 모기지은행협회 30년 모기지금리<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif;">20:00 MBA 구매지수<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif;">20:00 모기지 재융자지수<br></p1>
-                <p1 style="font-family: 'spoqaR', sans-serif;">21:15 ADP 비농업부문 고용 변화<br></p1>
+                <div th:each="event : ${financialjuice}">
+                    <p class="spoqaR" style="color: white; font-size: 14px;"
+                       th:attr="data-event-time=${event.event_time}, data-event-description=${event.event_description}"></p>
+                    <hr>
+                </div>
             </div>
+
+            <!-- 시간 포맷 -->
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const eventElements = document.querySelectorAll('[data-event-time]');
+                    eventElements.forEach(element => {
+                        const eventTime = element.getAttribute('data-event-time');
+                        const eventDescription = element.getAttribute('data-event-description');
+
+                        if (eventTime) {
+                            // event_time에서 시간 부분만 추출 (HH:mm 형식)
+                            const timePart = eventTime.split('T')[1].substring(0, 5);
+                            // 시간을 별도의 <span> 요소로 감싸고 스타일 적용
+                            const timeSpan = `<span style="color: Cyan;">${timePart}</span>`;
+                            element.innerHTML = `${timeSpan} ${eventDescription}`;
+                        } else {
+                            console.error('event_time is undefined for element:', element);
+                        }
+                    });
+                });
+            </script>
+
+            <!-- 오른쪽 끝 -->
+
         </div>
     </main>
     <main class="container">
         <div class="p-4 p-md-4 mb-4 rounded text-body-emphasis bg-body-secondary d-flex justify-content-between flex-wrap">
-            <img alt="섬네일" src="https://publish.finviz.com/041724/sec_d1_150971262.png" style="width: 100%;">
+            <img alt="썸네일" th:src="${finvizMapUrl.url}" style="width: 100%;">
         </div>
     </main>
-
-
-    <footer class="py-5 text-center text-body-secondary bg-body-tertiary">
-        <p class="mb-0">
-            <a href="#">Back to top</a>
-        </p>
-    </footer>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
     <script src="/assets/dist/js/bootstrap.bundle.min.js"></script>
 </div>
 </html>
