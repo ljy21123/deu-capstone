@@ -97,9 +97,6 @@ public class UserController {
         log.info("UserInfo 엔티티 변환 완료");
 
         // 중복 회원 검증
-        // validateDuplicateMember(userEntity);
-
-        // 중복 회원 검증
         // isPresent(): Optional 객체가 값을 가지고 있다면 true, 값이 없다면 false 리턴
         Optional<UserInfo> validate = userRepository.findByid(userEntity.getId());
         if (validate.isPresent()) {
@@ -211,14 +208,5 @@ public class UserController {
 
         return "redirect:/logout";
     }
-
-//    private void validateDuplicateMember(UserInfo userInfo) {
-//        // 사용자 ID를 통해 이미 등록된 회원이 있는지 검사
-//        userRepository.findByid(userInfo.getId())
-//                .ifPresent(m -> {
-//                    // 이미 존재하는 회원이라면 예외처리
-//                    throw new IllegalStateException("이미 존재하는 회원입니다.");
-//                });
-//    }
 
 }

@@ -131,11 +131,11 @@ public class SearchController {
 
         // 중복 제거 및 최종 결과 정렬
         List<NaverNews> finalResults = combinedResults.stream()
-                .distinct()
-                .sorted(Comparator.comparingDouble(NaverNews::getSimilarityScore).reversed())
-                .skip((long) page * pageSize)
-                .limit(pageSize)
-                .collect(Collectors.toList());
+                                      .distinct()
+                                      .sorted(Comparator.comparingDouble(NaverNews::getSimilarityScore).reversed())
+                                      .skip((long) page * pageSize)
+                                      .limit(pageSize)
+                                      .collect(Collectors.toList());
         
         log.info("getSearchResults 함수 수행 완료");
 
