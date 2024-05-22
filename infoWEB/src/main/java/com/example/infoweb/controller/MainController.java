@@ -40,6 +40,8 @@ public class MainController {
 
     // 이미 로드된 뉴스 URL을 저장하는 Set
     private Set<String> loadedNewsUrls = new HashSet<>();
+    // 카테고리에 따라 필터링 된 메인 뉴스를 전역 변수로
+    Iterable<NaverNews> filteredNews;
 
     /**
      * 메인 페이지 폼
@@ -70,28 +72,25 @@ public class MainController {
         model.addAttribute("userInterests", userInterests);
         log.info("사용자 관심분야 가져오기 완료");
 
-        Iterable<NaverNews> filteredNews;
-//        Iterable<NaverRealTimeNews> filteredNewsRealtime;
-
         // 카테고리가 종합일 경우 랜덤 뉴스 조회
         if (category.equals("종합")) {
             // 랜덤으로 메인 뉴스 가져오기
             filteredNews = naverNewsRepository.findAll()
-                    .stream()
-                    .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
-                        Collections.shuffle(collected);
-                        return collected.stream();
-                    }))
-                    .limit(6)
-                    .collect(Collectors.toList());
+                                              .stream()
+                                              .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+                                                  Collections.shuffle(collected);
+                                                  return collected.stream();
+                                              }))
+                                              .limit(6)
+                                              .collect(Collectors.toList());
             log.info("랜덤 메인 뉴스 가져오기 완료");
 
         } else {
             // 카테고리에 따라 필터링된 메인 뉴스 가져오기
             filteredNews = naverNewsRepository.findByCategory(category)
-                    .stream()
-                    .limit(6)
-                    .collect(Collectors.toList());
+                                              .stream()
+                                              .limit(6)
+                                              .collect(Collectors.toList());
             log.info("카테고리 별 메인 뉴스 가져오기 완료");
 
         }
@@ -199,42 +198,49 @@ public class MainController {
 
         // 뉴스가 존재하지 않으면 404 페이지로 이동
         if (newsInfo.isEmpty()) {
-            log.info("해당 뉴스가 존재하지 않습니다.");
+            log.info("article - 해당 뉴스가 존재하지 않습니다.");
             return "404";
         }
 
         NaverNews articleNews = newsInfo.get();
         model.addAttribute("articleNews", articleNews);
-        log.info("해당 뉴스 요약 불러오기 완료");
+        log.info("article - 해당 뉴스 요약 불러오기 완료");
 
-        Iterable<NaverNews> recentNewsList;
+        // article 페이지에 접속할 때, 전역 변수인 filteredNews를 사용하여 조회할 뉴스를 제외한 나머지 메인 뉴스들을 최근 뉴스 리스트로 가져옴
+        model.addAttribute("recentNewsList", ((List<NaverNews>) filteredNews).stream()
+                                                                                         // 현재 뉴스 제외
+                                                                                         .filter(n -> !n.getId().equals(articleNews.getId()))
+                                                                                         .collect(Collectors.toList()));
+        log.info("article - 최근 뉴스 리스트 불러오기 완료");
 
-        if (articleNews.getCategory().equals("종합")) {
-            // 랜덤으로 최근 뉴스 목록 가져오기
-            recentNewsList = naverNewsRepository.findAll()
-                                                .stream()
-                                                // 현재 뉴스 제외
-                                                .filter(n -> !n.getId().equals(articleNews.getId()))
-                                                .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
-                                                    Collections.shuffle(collected);
-                                                    return collected.stream();
-                                                }))
-                                                .limit(5)
-                                                .collect(Collectors.toList());
-            log.info("종합-랜덤-최근-메인 뉴스 가져오기 완료");
-        } else {
-            // 선택되어 있는 카테고리의 최근 뉴스 목록을 가져옴
-            recentNewsList = naverNewsRepository.findByCategory(articleNews.getCategory())
-                                                .stream()
-                                                // 현재 뉴스 제외
-                                                .filter(n -> !n.getId().equals(articleNews.getId()))
-                                                .limit(5)
-                                                .collect(Collectors.toList());
-            log.info("최근 뉴스 목록 가져오기 완료");
-        }
-
-        model.addAttribute("selectedCategory", articleNews.getCategory());
-        model.addAttribute("recentNewsList", recentNewsList);
+//        Iterable<NaverNews> recentNewsList;
+//
+//        if (articleNews.getCategory().equals("종합")) {
+//            // 랜덤으로 최근 뉴스 목록 가져오기
+//            recentNewsList = naverNewsRepository.findAll()
+//                                                .stream()
+//                                                // 현재 뉴스 제외
+//                                                .filter(n -> !n.getId().equals(articleNews.getId()))
+//                                                .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
+//                                                    Collections.shuffle(collected);
+//                                                    return collected.stream();
+//                                                }))
+//                                                .limit(5)
+//                                                .collect(Collectors.toList());
+//            log.info("종합-랜덤-최근-메인 뉴스 가져오기 완료");
+//        } else {
+//            // 선택되어 있는 카테고리의 최근 뉴스 목록을 가져옴
+//            recentNewsList = naverNewsRepository.findByCategory(articleNews.getCategory())
+//                                                .stream()
+//                                                // 현재 뉴스 제외
+//                                                .filter(n -> !n.getId().equals(articleNews.getId()))
+//                                                .limit(5)
+//                                                .collect(Collectors.toList());
+//            log.info("최근 뉴스 목록 가져오기 완료");
+//        }
+//
+//        model.addAttribute("selectedCategory", articleNews.getCategory());
+//        model.addAttribute("recentNewsList", recentNewsList);
 
         return "/article";
 
