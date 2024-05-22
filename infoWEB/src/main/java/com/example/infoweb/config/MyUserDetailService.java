@@ -26,6 +26,7 @@ public class MyUserDetailService implements UserDetailsService {
 
     private final UserService userService;
 
+    // Spring Security의 인증 과정에서 자동 호출
     @Override
     public UserDetails loadUserByUsername(String insertedUserId) throws UsernameNotFoundException {
 
@@ -37,9 +38,9 @@ public class MyUserDetailService implements UserDetailsService {
 
         // 조회된 사용자 정보를 바탕으로 UserDetails 객체를 생성하여 반환
         return User.builder()
-                .username(userInfo.getId())
-                .password(userInfo.getPw())
-                .build();
+                   .username(userInfo.getId())
+                   .password(userInfo.getPw())
+                   .build();
 
     }
 

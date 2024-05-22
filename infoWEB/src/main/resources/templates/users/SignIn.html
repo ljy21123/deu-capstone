@@ -38,39 +38,14 @@
                         <input id="pw" name="pw" required="required" type="password"/>
                     </div>
 
-                    <!-- 아이디 기억 체크박스 -->
+                    <!-- 자동 로그인 체크박스 -->
                     <div class="form-group">
                         <label class="form-remember">
-                            <input type="checkbox" id="rememberMe" onclick="setRememberMe()" th:checked="${rememberMe != ''}">Remember Me
+                            <input type="checkbox" id="rememberMe" name="remember-me">Remember Me
                         </label>
                         <a class="form-recovery" href="/users/signup">Register Account</a>
                     </div>
-
-                    <script>
-                        function setRememberMe() {
-                            const checkbox = document.getElementById('rememberMe');
-                            const id = document.getElementById('id').value;
-
-                            if (checkbox.checked) {
-                                document.cookie = "rememberMe=" + id + "; path=/; max-age=" + (30 * 24 * 60 * 60) + ";";
-                            } else {
-                                document.cookie = "rememberMe=; path=/; max-age=0;";
-                            }
-                        }
-
-                        window.onload = function() {
-                            const cookies = document.cookie.split("; ");
-                            for (let i = 0; i < cookies.length; i++) {
-                                const cookie = cookies[i].split("=");
-                                if (cookie[0] === "rememberMe") {
-                                    document.getElementById('id').value = cookie[1];
-                                    document.getElementById('rememberMe').checked = true;
-                                    break;
-                                }
-                            }
-                        }
-                    </script>
-                    <!-- 아이디 기억 체크박스 끝 -->
+                    <!-- 자동 로그인 체크박스 끝 -->
 
                     <div class="form-group">
                         <button type="submit">Sign In</button>
