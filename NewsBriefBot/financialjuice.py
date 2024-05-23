@@ -48,7 +48,7 @@ class Financialjuice:
         # 크롬 브라우저를 실행하고 WebDriver 객체 생성
         if os.name == 'posix':  # 리눅스용
             self.logger.info('리눅스 환경입니다.')
-            service = Service(executable_path='/root/chrome/chromedriver-linux64/chromedriver')
+            service = Service(executable_path='/home/deu-capstone/chrome/chromedriver-linux64/chromedriver')
             self.driver = webdriver.Chrome(service=service, options=self.chrome_options)
         elif os.name == 'nt':  # 윈도우용
             self.logger.info('윈도우 환경입니다.')
