@@ -44,6 +44,12 @@ class NounFrequencyAnalyzer:
         self.dao.connect()
         news_data = self.dao.select_news()
         self.dao.disconnect()
+
+        if news_data is None:
+            self.logger.info("DB에 저장된 항목이 존재하지 않아 대기상태로 전환합니다.")
+            import time
+            time.sleep(300) 
+
         for news in news_data:
             temp = news['original']
             nouns = self.okt.nouns(temp)
@@ -71,6 +77,7 @@ class NounFrequencyAnalyzer:
         self.dao.disconnect()
 
     def createImage(self):
+        self.logger.info("이미지 생성을 시작합니다.")
         images_dir = os.path.join(os.path.dirname(__file__), '..', 'infoWEB', 'src', 'main', 'resources', 'static', 'images')
         # images_dir = os.path.join(os.path.dirname(__file__), '..', 'images')
         mask_path = os.path.join(images_dir, 'mask.png')  # 마스크 이미지 경로

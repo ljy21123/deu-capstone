@@ -20,7 +20,7 @@ import financialjuiceDAO
 class Financialjuice:
     def __init__(self):
         self.logger = None
-        self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102"}
+        self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/125.0.6422.76"}
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setupLogger("Financialjuice", os.path.join(log_dir, "Financialjuice.log")) # logger 설정
         self.logger = logging.getLogger("Financialjuice")
@@ -32,7 +32,8 @@ class Financialjuice:
         self.chrome_options.add_argument("--log-level=3") # 로그 제거
         self.chrome_options.add_argument("--no-sandbox")
         self.chrome_options.add_argument("--disable-dev-shm-usage")
-        self.chrome_options.add_argument("User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102")
+        self.chrome_options.add_argument(f"user-agent={self.headers}")
+        # self.chrome_options.add_argument("User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102")
         
     def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -56,9 +57,9 @@ class Financialjuice:
 
         # 웹 페이지로 이동
         self.driver.get(url)
-        wait = WebDriverWait(self.driver, 10)
+        wait = WebDriverWait(self.driver, 180)
         wait.until(EC.presence_of_element_located((By.CLASS_NAME, "headline-title")))
-
+            
         # with open("output.html", "w", encoding="utf-8") as html_file:
         #      html_file.write(str(driver.page_source))
 

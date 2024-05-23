@@ -22,7 +22,7 @@ class FinvizMap:
         self.driver = None       
         self.dao = finvizMapDAO.FinvizMapDAO()
         self.logger = None
-        self.headers = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102"
+        self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/125.0.6422.76"}
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setupLogger("FinvizMap", os.path.join(log_dir, "FinvizMap.log")) # logger 설정
         self.logger = logging.getLogger("FinvizMap")
