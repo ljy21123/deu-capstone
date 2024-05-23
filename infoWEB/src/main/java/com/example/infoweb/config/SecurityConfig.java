@@ -17,13 +17,21 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
+
+    private final DataSource dataSource;
+
+    public SecurityConfig(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
     @Bean
     PasswordEncoder passwordEncoder() {
@@ -63,15 +71,20 @@ public class SecurityConfig {
     }
 
     /**
-     * InMemoryTokenRepositoryImpl 클래스는 자동 로그인 기능을 위한 토큰을 메모리에 저장하는 기본 구현입니다.
-     * 이 클래스는 Spring Security가 제공하는 기본 구현 중 하나로, 실제 운영 환경에서는 데이터베이스 기반의 구현을 사용하는 것이 더 안전합니다.
-     * 여기서는 예제를 간단하게 유지하기 위해 인메모리 토큰 저장소를 사용합니다.
-     * 주의: 애플리케이션이 종료되면 메모리에 저장된 모든 토큰 정보는 사라집니다.
+     * 자동 로그인 기능을 구현하기 위해 Remember-Me 토큰을 저장하는 메소드
      * */
     @Bean
     public PersistentTokenRepository persistentTokenRepository() {
-        // 인메모리 토큰 저장소 구현
-        return new InMemoryTokenRepositoryImpl();
+
+        // JdbcTokenRepositoryImpl 클래스는 PersistentLogins 엔티티를 사용하여 데이터베이스와 상호작용합니다.
+        // 이 클래스는 Remember-Me 토큰을 저장, 조회, 삭제하는 기능을 제공합니다.
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+
+        // DataSource를 설정을 통해 tokenRepository는 데이터베이스와 상호작용하여 토큰을 저장 및 조회합니다.
+        tokenRepository.setDataSource(dataSource);
+
+        return tokenRepository;
+
     }
 
 }
