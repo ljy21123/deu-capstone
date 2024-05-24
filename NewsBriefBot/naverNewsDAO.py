@@ -107,16 +107,44 @@ class NaverNewsDAO:
         except mysql.connector.Error as err:
             self.logger.error(f"NaverNews 삭제 오류: {err}")
         
+    def isNounExistsOnDate(self, noun, date):
+        query = """
+                SELECT COUNT(*)
+                FROM NounFrequency 
+                WHERE date = %s AND noun = %s
+                """
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(query, (date, noun))
+            result = cursor.fetchone()
+            count = result[0]
+            if count > 0:
+                return True
+            else:
+                return False
+        except mysql.connector.Error as err:
+            self.logger.error(f"isNounExists: {err}")
+
     def insert_frequency(self, date, frequencies, count):
         for idx, (word, freq) in enumerate(frequencies):
             if idx >= count:
                 break
+            
+            # True인 경우 이미 DB에 값이 존재하기 때문에 빈도수만 수정
+            # False인 경우 저장
+            if self.isNounExistsOnDate(word, date):
+                query = """
+                UPDATE NounFrequency 
+                SET frequency = %s
+                WHERE noun = %s AND date = %s
+                """
+            else:
+                query = """
+                INSERT INTO NounFrequency (frequency, noun, date)
+                VALUES (%s, %s, %s)
+                """
 
-            query = """
-            INSERT INTO NounFrequency (date, noun, frequency)
-            VALUES (%s, %s, %s)
-            """
-            args = (date, word, freq)
+            args = (freq, word, date)
             try:
                 cursor = self.conn.cursor()
                 cursor.execute(query, args)

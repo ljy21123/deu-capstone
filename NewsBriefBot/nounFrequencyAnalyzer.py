@@ -29,7 +29,7 @@ class NounFrequencyAnalyzer:
         self.setup_logger("nounFrequencyAnalyzer", os.path.join(log_dir, "nounFrequencyAnalyzer.log")) # logger 설정
         self.logger = logging.getLogger("system")
         self.stopwords = set(['것', '명', '감', '중', '몇', '곳', '데', '등', '기',
-                              '및', '조', '고', '이', '전', '수', '며', '위'])  # 불용어 목록
+                              '및', '조', '고', '이', '전', '수', '며', '위', '윤'])  # 불용어 목록
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -107,5 +107,5 @@ class NounFrequencyAnalyzer:
         # 그림 저장
         plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png')
         # plt.savefig(os.path.join(images_dir, image_filename), bbox_inches='tight', format='png', transparent=True)
-        self.logger.info("사진 생성")
+        self.logger.info("사진 생성 완료")
 
