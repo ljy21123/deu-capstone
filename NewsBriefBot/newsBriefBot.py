@@ -4,6 +4,7 @@
 # - 2024-02-04: 초기버전 생성
 # - 2024-03-23: 클래스로 리팩토링
 # - 2024-04-30: embeddings 추가, apiKey 변수 추가
+# - 2024-05-26: 가독성을 위해 ".", ". "을 줄바꿈(.\n)으로 변경
 
 import queue
 import threading
@@ -11,6 +12,7 @@ import time
 import logging
 import os
 from openai import OpenAI # pip install openai
+import re
 
 from article import Article
 import naverNewsDAO
@@ -115,6 +117,10 @@ class NewsBriefBot:
 				self.logger.debug('큐에서 작업 획득 완료 요청 수행')
 				# 뉴스 요약
 				SummarizedNews = self.brief(ids, self.formattingNews(news))    
+				
+				# "."과 ". "을 구별하지 못하여 제거
+				# SummarizedNews = SummarizedNews.replace(".", ".\n")
+				SummarizedNews = re.sub(r'\.\s*', '.\n', SummarizedNews)
 				news.setSummarizedNews(SummarizedNews)
 				# 임베딩 생성
 				news.setEmbedding(embeddingModel.getEmbedding(news.title))
@@ -123,6 +129,7 @@ class NewsBriefBot:
 				self.dao.disconnect()
 				self.logger.debug('요약 요청 완료')
 				self.logger.debug("제목:"+news.title+"\n"+SummarizedNews)
+				return
 			else:
 				self.logger.info('대기중인 작업이 없어 대기로 전환')
 				queue_event.clear() # 대기상태로 전환
