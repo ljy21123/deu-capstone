@@ -109,7 +109,7 @@ public class MainController {
 
         // 키워드 가져오기
         Iterable<NounFrequency> nounFrequencies = StreamSupport.stream(nounFrequencyRepository.findAll().spliterator(), false)
-                .limit(15)
+                .limit(14)
                 .collect(Collectors.toList());
 
         model.addAttribute("nounFrequencies", nounFrequencies);
