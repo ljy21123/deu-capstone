@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -207,41 +208,18 @@ public class MainController {
         model.addAttribute("articleNews", articleNews);
         log.info("article - 해당 뉴스 요약 불러오기 완료");
 
+        // 날짜 포맷
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm");
+        String formattedDate = articleNews.getCreated_at().format(formatter);
+        model.addAttribute("formattedDate", formattedDate);
+        log.info("article - 날짜 포맷 완료");
+
         // article 페이지에 접속할 때, 전역 변수인 filteredNews를 사용하여 조회할 뉴스를 제외한 나머지 메인 뉴스들을 최근 뉴스 리스트로 가져옴
         model.addAttribute("recentNewsList", ((List<NaverNews>) filteredNews).stream()
                                                                                          // 현재 뉴스 제외
                                                                                          .filter(n -> !n.getId().equals(articleNews.getId()))
                                                                                          .collect(Collectors.toList()));
         log.info("article - 최근 뉴스 리스트 불러오기 완료");
-
-//        Iterable<NaverNews> recentNewsList;
-//
-//        if (articleNews.getCategory().equals("종합")) {
-//            // 랜덤으로 최근 뉴스 목록 가져오기
-//            recentNewsList = naverNewsRepository.findAll()
-//                                                .stream()
-//                                                // 현재 뉴스 제외
-//                                                .filter(n -> !n.getId().equals(articleNews.getId()))
-//                                                .collect(Collectors.collectingAndThen(Collectors.toList(), collected -> {
-//                                                    Collections.shuffle(collected);
-//                                                    return collected.stream();
-//                                                }))
-//                                                .limit(5)
-//                                                .collect(Collectors.toList());
-//            log.info("종합-랜덤-최근-메인 뉴스 가져오기 완료");
-//        } else {
-//            // 선택되어 있는 카테고리의 최근 뉴스 목록을 가져옴
-//            recentNewsList = naverNewsRepository.findByCategory(articleNews.getCategory())
-//                                                .stream()
-//                                                // 현재 뉴스 제외
-//                                                .filter(n -> !n.getId().equals(articleNews.getId()))
-//                                                .limit(5)
-//                                                .collect(Collectors.toList());
-//            log.info("최근 뉴스 목록 가져오기 완료");
-//        }
-//
-//        model.addAttribute("selectedCategory", articleNews.getCategory());
-//        model.addAttribute("recentNewsList", recentNewsList);
 
         return "/article";
 

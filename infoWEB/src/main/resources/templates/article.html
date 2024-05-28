@@ -17,8 +17,9 @@
                 <!-- 포스트 시작 -->
                 <article class="blog-post">
                     <h3 class="display-6 link-body-emphasis mb-1 font-malgun" th:text="${articleNews.title}" style="font-weight: bold; font-size: 1.9rem;">제목</h3>
-                    <p class="blog-post-meta" th:text="${articleNews.created_at}">날짜</p>
-                    <img th:src="${articleNews.image_url}" alt="뉴스 이미지" class="img-fluid" style="max-width: 80%; height: auto;"/>
+                    <p class="blog-post-meta" th:text="${formattedDate}">날짜</p>
+                    <img th:if="${articleNews.image_url}" th:src="${articleNews.image_url}" alt="뉴스 이미지"
+                         class="img-fluid" style="max-width: 80%; height: auto;"/>
                     <hr>
                     <p th:text="${articleNews.summary}" style="font-size: 1.1rem;">요약 내용</p>
                     <hr>
