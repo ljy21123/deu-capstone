@@ -96,6 +96,11 @@ public class Embedding {
             // 응답 상태 코드 확인
             int statusCode = response.getStatusLine().getStatusCode();
 
+            if (statusCode != 200) {
+                log.error("임베딩을 가져오지 못했습니다. 상태 코드: {}", statusCode);
+                return new double[0];
+            }
+
             // 응답 내용 출력
             HttpEntity responseEntity = response.getEntity();
             String responseBody = EntityUtils.toString(responseEntity);
@@ -106,14 +111,26 @@ public class Embedding {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode jsonNode = mapper.readTree(responseBody);
             // "data" 배열의 첫 번째 요소 선택
-            JsonNode dataNode = jsonNode.get("data").get(0);
-            // embedding 필드의 값을 double 배열로 추출
-            JsonNode embeddingNode = dataNode.get("embedding");
+            JsonNode dataNode = jsonNode.get("data");
 
+            if (dataNode == null || !dataNode.isArray() || dataNode.size() == 0) {
+                log.error("잘못된 응답 구조: 'data' 필드가 없거나 비어 있습니다.");
+                return new double[0];
+            }
+
+            // embedding 필드의 값을 double 배열로 추출
+            JsonNode embeddingNode = dataNode.get(0).get("embedding");
+
+            if (embeddingNode == null || !embeddingNode.isArray()) {
+                log.error("잘못된 응답 구조: 'embedding' 필드가 없거나 배열이 없습니다.");
+                return new double[0];
+            }
 
             return mapper.convertValue(embeddingNode, double[].class);
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.error("임베딩을 가져오는 동안 예외 발생", e);
+            return new double[0];
         }
     }
 }
