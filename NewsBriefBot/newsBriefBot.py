@@ -129,7 +129,6 @@ class NewsBriefBot:
 				self.dao.disconnect()
 				self.logger.debug('요약 요청 완료')
 				self.logger.debug("제목:"+news.title+"\n"+SummarizedNews)
-				return
 			else:
 				self.logger.info('대기중인 작업이 없어 대기로 전환')
 				queue_event.clear() # 대기상태로 전환

@@ -76,7 +76,7 @@ class FinvizMapDAO:
             cursor.close()
             self.logger.debug("새로운 S&P 500 Map이 추가되었습니다.")
         except mysql.connector.Error as err:
-            self.logger.error(f"NaverNews 삽입 오류: {err}")
+            self.logger.error(f"FinvizMap 삽입 오류: {err}")
         
     def deleteMap(self, id):
         try:
