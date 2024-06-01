@@ -70,6 +70,7 @@
                         return `${year}-${month}-${day}`;
                     }
 
+                    // HTML 문서가 로드된 후 실행되는 함수
                     document.addEventListener("DOMContentLoaded", function () {
                         const img = document.getElementById('dynamicImage');
                         const dateStr = getFormattedDate();
@@ -120,8 +121,8 @@
         </div>
 
         <script th:inline="javascript">
-            // 페이지 로드 후 실행되는 함수
-            document.addEventListener("DOMContentLoaded", function() {
+            // 모든 리소스가 완전히 로드된 후 실행되는 함수
+            window.addEventListener("load", function() {
                 let offset = 0;     // 뉴스 로드 시작 위치
                 const limit = 20;   // 한 번에 로드할 뉴스 개수
                 const category = /*[[${selectedCategory}]]*/ '종합';
@@ -130,6 +131,9 @@
                 async function loadMoreNews() {
                     try {
                         const response = await fetch(`/real_time_news?category=${category}&offset=${offset}&limit=${limit}`);
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
                         const newsList = await response.json();
 
                         // 더 이상 로드할 뉴스가 없으면 스크롤 이벤트 제거
@@ -176,8 +180,7 @@
 
                 // 스크롤 이벤트 핸들러
                 function handleScroll() {
-                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                        // 스크롤이 페이지 끝에 도달하면 뉴스 로드
+                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) { // 여유를 주기 위해 약간의 마진을 추가
                         loadMoreNews();
                     }
                 }
