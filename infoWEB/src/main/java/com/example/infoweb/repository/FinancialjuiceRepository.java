@@ -15,7 +15,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface FinancialjuiceRepository extends CrudRepository<FinancialjuiceEvents, Long> {
 
     // event_time 필드를 기준으로 가장 빠른 날짜의 값을 가져오는 쿼리
-    @Query(value = "SELECT * FROM financialjuiceevents ORDER BY event_time DESC LIMIT 8", nativeQuery = true)
+    @Query(value = "SELECT * FROM FinancialjuiceEvents ORDER BY event_time DESC LIMIT 8", nativeQuery = true)
     Iterable<FinancialjuiceEvents> findAllDescLimit();
 
 }

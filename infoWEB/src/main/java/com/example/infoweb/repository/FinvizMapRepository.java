@@ -15,7 +15,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface FinvizMapRepository extends CrudRepository<FinvizMap, Long> {
 
     // created_at 필드를 기준으로 가장 빠른 날짜의 값을 가져오는 쿼리
-    @Query(value = "SELECT * FROM finvizmap ORDER BY created_at DESC LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM FinvizMap ORDER BY created_at DESC LIMIT 1", nativeQuery = true)
     FinvizMap findLatestEntry();
 
 }
