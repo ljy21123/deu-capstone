@@ -34,7 +34,7 @@
                                     <h4 class="mb-0 font-malgun" th:text="${news.title}">뉴스 제목</h4>
                                     <br>
                                     <div class="mb-1 text-body-secondary" th:text="${news.created_at}">날짜</div>
-                                    <small class="text-body-secondary">유사도: <span th:text="${#numbers.formatDecimal(news.similarityScore, 1, 2)}"></span></small>
+<!--                                    <small class="text-body-secondary">유사도: <span th:text="${#numbers.formatDecimal(news.similarityScore, 1, 2)}"></span></small>-->
                                     <a class="icon-link gap-1 icon-link-hover stretched-link" th:href="@{${news.news_url}}">
                                         Continue reading
                                         <svg class="bi">

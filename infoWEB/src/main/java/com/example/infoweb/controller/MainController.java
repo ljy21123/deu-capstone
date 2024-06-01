@@ -7,6 +7,8 @@
 
 package com.example.infoweb.controller;
 
+import com.example.infoweb.dto.NaverNewsDTO;
+import com.example.infoweb.dto.NaverRealTimeNewsDTO;
 import com.example.infoweb.entity.*;
 import com.example.infoweb.repository.*;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +51,8 @@ public class MainController {
     private Set<String> loadedNewsUrls = new HashSet<>();
     // 카테고리에 따라 필터링 된 메인 뉴스를 전역 변수로
     Iterable<NaverNews> filteredNews;
+    // 날짜 포맷터
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm");
 
     /**
      * 메인 페이지 폼
@@ -133,9 +137,6 @@ public class MainController {
             model.addAttribute("loginInfo", user.getUsername());
             log.info("마이페이지 로그인 정보" + user.getUsername());
 
-//            model.addAttribute("doorLoginInfo", Objects.requireNonNull(userInfo).getDoor_id());
-//            log.info("마이페이지 도어 아이디 정보" + userInfo.getDoor_id());
-
             model.addAttribute("nameInfo", Objects.requireNonNull(userInfo).getName());
             log.info("마이페이지 이름 정보" + userInfo.getName());
 
@@ -156,11 +157,12 @@ public class MainController {
      */
     @GetMapping("/real_time_news")
     @ResponseBody
-    public List<NaverRealTimeNews> loadMoreRealTimeNews(@RequestParam String category, @RequestParam int offset, @RequestParam int limit) {
-        
+    public List<NaverRealTimeNewsDTO> loadMoreRealTimeNews(@RequestParam String category, @RequestParam int offset, @RequestParam int limit) {
+
         if (category.equals("종합")) {
             // 모든 실시간 뉴스를 가져옴
             List<NaverRealTimeNews> allNews = realTimeNewsRepository.findAll();
+
             // 이미 로드된 뉴스 URL을 제외하고 랜덤으로 뉴스를 선택
             List<NaverRealTimeNews> randomNews = allNews.stream()
                                                 .filter(news -> !loadedNewsUrls.contains(news.getNews_url()))
@@ -176,8 +178,10 @@ public class MainController {
             // 로드된 뉴스 URL을 Set에 추가하여 중복 로드를 방지
             loadedNewsUrls.addAll(randomNews.stream().map(NaverRealTimeNews::getNews_url).toList());
             log.info("종합 랜덤 실시간 뉴스 가져오기 완료");
-            // 선택된 뉴스를 리턴
-            return randomNews;
+            // 선택된 뉴스를 포맷팅하여 리턴
+            return randomNews.stream()
+                    .map(news -> new NaverRealTimeNewsDTO(news, formatter))
+                    .collect(Collectors.toList());
         } else {
             log.info("카테고리 별 실시간 뉴스 가져오기 완료");
             // 해당 카테고리의 뉴스를 페이징하여 가져옴
@@ -185,6 +189,7 @@ public class MainController {
                                          .stream()
                                          .skip(offset)  // 오프셋부터 시작
                                          .limit(limit)  // 지정된 수만큼 뉴스를 가져옴
+                                         .map(news -> new NaverRealTimeNewsDTO(news, formatter))  // 날짜 포맷팅
                                          .collect(Collectors.toList());
         }
     }
@@ -209,13 +214,14 @@ public class MainController {
         log.info("article - 해당 뉴스 요약 불러오기 완료");
 
         // 날짜 포맷
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm");
         String formattedDate = articleNews.getCreated_at().format(formatter);
         model.addAttribute("formattedDate", formattedDate);
         log.info("article - 날짜 포맷 완료");
 
         // article 페이지에 접속할 때, 전역 변수인 filteredNews를 사용하여 조회할 뉴스를 제외한 나머지 메인 뉴스들을 최근 뉴스 리스트로 가져옴
         model.addAttribute("recentNewsList", ((List<NaverNews>) filteredNews).stream()
+                                                                                         // 날짜 포맷팅
+                                                                                         .map(news -> new NaverNewsDTO(news, formatter))
                                                                                          // 현재 뉴스 제외
                                                                                          .filter(n -> !n.getId().equals(articleNews.getId()))
                                                                                          .collect(Collectors.toList()));
