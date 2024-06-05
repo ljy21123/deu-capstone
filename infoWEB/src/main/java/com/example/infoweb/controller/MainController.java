@@ -92,7 +92,7 @@ public class MainController {
                                                   Collections.shuffle(collected);
                                                   return collected.stream();
                                               }))
-                                              .limit(6)
+                                              .limit(8)
                                               .collect(Collectors.toList());
             log.info("랜덤 메인 뉴스 가져오기 완료");
 
@@ -100,7 +100,7 @@ public class MainController {
             // 카테고리에 따라 필터링된 메인 뉴스 가져오기
             filteredNews = naverNewsRepository.findByCategory(category)
                                               .stream()
-                                              .limit(6)
+                                              .limit(8)
                                               .collect(Collectors.toList());
             log.info("카테고리 별 메인 뉴스 가져오기 완료");
 
@@ -114,7 +114,7 @@ public class MainController {
 
         // 키워드 가져오기
         Iterable<NounFrequency> nounFrequencies = StreamSupport.stream(nounFrequencyRepository.findAll().spliterator(), false)
-                .limit(14)
+                .limit(16)
                 .collect(Collectors.toList());
 
         model.addAttribute("nounFrequencies", nounFrequencies);

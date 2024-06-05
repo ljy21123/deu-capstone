@@ -174,3 +174,20 @@
     transform: scale(1.1); /* Slightly enlarge the button on hover */
 }
 
+
+
+
+
+.list-unstyled li {
+    margin-bottom: 10px; /* 리스트 항목 사이의 간격 */
+    border-radius: 5px; /* 모서리를 둥글게 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+}
+.list-unstyled li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none; /* 링크 밑줄 제거 */
+    color: inherit; /* 부모의 글자색 상속 */
+    padding: 10px; /* 패딩 추가 */
+}
+
