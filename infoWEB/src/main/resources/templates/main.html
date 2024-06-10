@@ -77,7 +77,8 @@
                     document.addEventListener("DOMContentLoaded", function () {
                         const img = document.getElementById('dynamicImage');
                         const dateStr = getFormattedDate();
-                        img.src = `/images/wordcloud_${dateStr}.png`;
+                        const timestamp = new Date().getTime(); // 타임스탬프 추가
+                        img.src = `/images/wordcloud_${dateStr}.png?timestamp=${timestamp}`;
                     });
                 </script>
             </div>
