@@ -21,7 +21,7 @@
                     <img th:if="${articleNews.image_url}" th:src="${articleNews.image_url}" alt="뉴스 이미지"
                          class="img-fluid" style="max-width: 80%; height: auto;"/>
                     <hr>
-                    <p th:text="${articleNews.summary}" style="font-size: 1.1rem;">요약 내용</p>
+                    <p th:utext="${articleNews.summary}" style="font-size: 1.1rem;">요약 내용</p>
                     <hr>
                     <a th:href="@{${articleNews.news_url}}">본문 기사 링크</a>
                     <br>
