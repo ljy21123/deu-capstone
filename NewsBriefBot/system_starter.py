@@ -48,7 +48,7 @@ class System_starter:
 
         # 콘솔에도 로그 출력
         console = logging.StreamHandler()
-        console.setLevel(logging.DEBUG)
+        console.setLevel(logging.INFO)
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
         console.setFormatter(formatter)
         logging.getLogger('').addHandler(console)
@@ -145,7 +145,7 @@ class System_starter:
         threading.Timer(6000, self.runFinancialjuice).start()
 
     def print_queue(self):
-        print("현재 큐의 사이즈:", self.global_task_queue.qsize())
+        self.logger.info("현재 큐의 사이즈:", self.global_task_queue.qsize())
         threading.Timer(20, self.print_queue).start()
 
 if __name__ == "__main__":
@@ -160,14 +160,14 @@ if __name__ == "__main__":
     systemStart.logger.info('시스템 시작')
     
     # 가동시켜 놓으면 queue가 비어있으면 자동 대기상태로 들어감
-    # systemStart.runNewsBriefbot()
+    systemStart.runNewsBriefbot()
 
     # 일정 시간마다 호출
-    # threading.Thread(target=systemStart.runNaverNewsParsing).start()
-    # threading.Thread(target=systemStart.print_queue).start()
-    # threading.Thread(target=systemStart.runNaverRealTimeNews).start()
-    # threading.Thread(target=systemStart.runFinvizMap).start()
+    threading.Thread(target=systemStart.runNaverNewsParsing).start()
+    threading.Thread(target=systemStart.print_queue).start()
+    threading.Thread(target=systemStart.runNaverRealTimeNews).start()
+    threading.Thread(target=systemStart.runFinvizMap).start()
     threading.Thread(target=systemStart.runInvestingCalendar).start()
-    # threading.Thread(target=systemStart.runFinancialjuice).start()
-    # threading.Thread(target=systemStart.runNounFrequencyAnalyzer).start()
+    threading.Thread(target=systemStart.runFinancialjuice).start()
+    threading.Thread(target=systemStart.runNounFrequencyAnalyzer).start()
     # threading.Thread(target=systemStart.runDoorNotification).start()
