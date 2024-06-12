@@ -72,8 +72,8 @@ class NaverRealTimeNews:
         selectedHtml = html.select('#newsct > div.section_latest > div > div.section_latest_article._CONTENT_LIST._PERSIST_META')
         divs = selectedHtml[0].find_all('li', class_='sa_item _LAZY_LOADING_WRAP')
         
-        with open("output.html", "w", encoding="utf-8") as html_file:
-            html_file.write(str(divs))
+        # with open("output.html", "w", encoding="utf-8") as html_file:
+        #     html_file.write(str(divs))
         
         # 실시간 뉴스의 주소를 가져와 배열로 저장
         urls = [div.a.get('href') for div in divs]
@@ -98,7 +98,7 @@ class NaverRealTimeNews:
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setupLogger("naverRealTimeNews", os.path.join(log_dir, "naverRealTimeNews.log"))  # Sub logger 설정
         self.logger = logging.getLogger("naverRealTimeNews")
-        self.logger.debug('네이버 실시간 뉴스 크롤링 시작')
+        self.logger.info('네이버 실시간 뉴스 크롤링 시작')
 
         category_urls = self.makeUrl()
         self.logger.debug('링크 생성 완료')

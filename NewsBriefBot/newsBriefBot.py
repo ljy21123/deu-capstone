@@ -100,7 +100,7 @@ class NewsBriefBot:
 		log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
 		self.setupLogger("newsBriefBot", os.path.join(log_dir, "newsBriefBot.log")) # logger 설정
 		self.logger = logging.getLogger("newsBriefBot")
-		self.logger.debug('브리핑 봇 시작')
+		self.logger.info('브리핑 봇 시작')
 
 		# 임베딩 모델 생성
 		embeddingModel = embeddings.Embedding(self.apiKey)
@@ -109,12 +109,11 @@ class NewsBriefBot:
 			queue_event.wait() # 이벤트 대기
 
 			if not global_task_queue.empty():
-				self.logger.debug('뉴스 요약 수행')
 				news: Article = global_task_queue.get()
 				news_thread = self.client.beta.threads.create()
 				ids = {'assistant_id': 'asst_3twHpxsoqsCeqUzu4QwJ6SYK', 'thread_id': f'{news_thread.id}'}
 				# print(ids)
-				self.logger.debug('큐에서 작업 획득 완료 요청 수행')
+				self.logger.info('큐에서 작업 획득 완료 요청 수행')
 				# 뉴스 요약
 				SummarizedNews = self.brief(ids, self.formattingNews(news))    
 				
@@ -127,7 +126,7 @@ class NewsBriefBot:
 				self.dao.connect()
 				self.dao.insert_news(news)
 				self.dao.disconnect()
-				self.logger.debug('요약 요청 완료')
+				self.logger.info('요약 완료')
 				self.logger.debug("제목:"+news.title+"\n"+SummarizedNews)
 			else:
 				self.logger.info('대기중인 작업이 없어 대기로 전환')

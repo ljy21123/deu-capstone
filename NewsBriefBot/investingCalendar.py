@@ -8,6 +8,12 @@ import requests # pip install requests requests
 import logging
 import os
 from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 import investingDAO
 import investingInfoBody
@@ -17,11 +23,11 @@ class InvestingCalendar:
     def __init__(self):
         self.dao = investingDAO.InvestingDAO()
         self.logger = None
-        self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/98.0.4758.102"}
+        self.headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/125.0.6422.76 Safari/53.36"}
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setupLogger("InvestingCalendar", os.path.join(log_dir, "InvestingCalendar.log")) # logger 설정
         self.logger = logging.getLogger("InvestingCalendar")
-        self.logger.debug('InvestingCalendar 파싱시작')
+        self.logger.info('InvestingCalendar 파싱시작')
         
     def setupLogger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
@@ -35,10 +41,40 @@ class InvestingCalendar:
     def runCrawling(self):
         self.logger.debug('이벤트 파싱 시작')
         url = 'https://kr.investing.com/economic-calendar/'
+
+        # 옵션 설정
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")  # headless 모드 설정
+        chrome_options.add_argument("--log-level=3") # 로그 제거
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        chrome_options.add_argument(f"user-agent={self.headers}")
+        # 크롬 브라우저를 실행하고 WebDriver 객체 생성
+        if os.name == 'posix':  # 리눅스용
+            self.logger.info('리눅스 환경입니다.')
+            service = Service(executable_path='/home/deu-capstone/chrome/chromedriver-linux64/chromedriver')
+            self.driver = webdriver.Chrome(service=service, options=chrome_options)
+        elif os.name == 'nt':  # 윈도우용
+            self.logger.info('윈도우 환경입니다.')
+            self.driver = webdriver.Chrome(options=chrome_options)
+
+        try:
+            self.driver.set_page_load_timeout(5)
+            self.driver.get(url)
+            page_source = self.driver.page_source
+        except TimeoutException:
+            page_source = self.driver.page_source
+
+        # 페이지 소스 가져오기
+        # page_source = self.driver.page_source
         # 페이지 가져오기
-        original_html = requests.get(url, headers=self.headers)
+        # original_html = requests.get(url, headers=self.headers)
         # BeautifulSoup 객체로 변환
-        html = BeautifulSoup(original_html.text, "html.parser")
+        # html = BeautifulSoup(original_html.text, "html.parser")
+        html = BeautifulSoup(page_source, "html.parser")
+
+        # with open("output.html", "w", encoding="utf-8") as file:
+        #     file.write(html.prettify())
 
         # 테이블 가져오기
         table = html.find_all('tr', class_='js-event-item')

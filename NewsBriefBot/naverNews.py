@@ -155,7 +155,7 @@ class NaverNews:
         log_dir = os.path.join(os.path.dirname(__file__), '..', 'logs')
         self.setup_logger("naverNews", os.path.join(log_dir, "naverNews.log"))  # Sub logger 설정
         self.logger = logging.getLogger("naverNews")
-        self.logger.debug('네이버 뉴스 크롤링 시작')
+        self.logger.info('네이버 뉴스 크롤링 시작')
 
         category_urls = self.make_url()
         self.logger.debug('분야별 링크 생성 완료')
@@ -171,4 +171,4 @@ class NaverNews:
                 # 대기중인 브리핑 봇을 깨움
                 queue_event.set()
         self.dao.disconnect()
-        self.logger.info('대기전환')
+        self.logger.info('네이버 뉴스 크롤링 완료')

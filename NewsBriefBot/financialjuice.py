@@ -102,7 +102,7 @@ class Financialjuice:
 
         # for a in newsList:
         #     print(a.news, a.date, a.link)
-        self.logger.info('이벤트 크롤링 완료')
+        self.logger.info('Financialjuice 크롤링 완료')
 
         self.dao.connect()
         for news in newsList:
