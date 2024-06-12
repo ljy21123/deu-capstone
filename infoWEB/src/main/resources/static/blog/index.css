@@ -191,26 +191,15 @@
     padding: 10px; /* 패딩 추가 */
 }
 
-/* 기본 스타일 */
-.button-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-}
-
-.button-container a {
-    margin: 0.5em 0.5em;
-}
-
-/* 모바일에서 버튼들이 한 줄에 표시되도록 */
+/* 모바일 */
 @media (max-width: 768px) {
-    .button-container {
-        justify-content: center;
+
+    /* 버튼 */
+    .btn.btn-sm {
+        font-size: 10px;
+    }
+    .btn-custom-margin {
+        margin-bottom: 5px;
     }
 
-    .button-container a {
-        flex: 1 1 auto;
-        margin: 0.5em;
-        white-space: nowrap;
-    }
 }
