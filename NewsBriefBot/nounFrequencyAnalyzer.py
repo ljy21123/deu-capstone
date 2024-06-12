@@ -29,7 +29,7 @@ class NounFrequencyAnalyzer:
         self.setup_logger("nounFrequencyAnalyzer", os.path.join(log_dir, "nounFrequencyAnalyzer.log")) # logger 설정
         self.logger = logging.getLogger("system")
         self.stopwords = set(['것', '명', '감', '중', '몇', '곳', '데', '등', '기',
-                              '및', '조', '고', '이', '전', '수', '며', '위', '윤', '말', '룰', '를', '관련'])  # 불용어 목록
+                              '및', '조', '고', '이', '전', '수', '며', '위', '윤', '말', '룰', '를', '관련', '도'])  # 불용어 목록
 
     def setup_logger(self, name, log_file, level=logging.INFO):
         formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(message)s')
