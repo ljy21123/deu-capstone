@@ -145,7 +145,7 @@ class System_starter:
         threading.Timer(6000, self.runFinancialjuice).start()
 
     def print_queue(self):
-        self.logger.info("현재 큐의 사이즈:", self.global_task_queue.qsize())
+        self.logger.info("현재 큐의 사이즈: " + str(self.global_task_queue.qsize()))
         threading.Timer(20, self.print_queue).start()
 
 if __name__ == "__main__":
