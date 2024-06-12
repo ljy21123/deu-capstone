@@ -9,6 +9,7 @@
 package com.example.infoweb.repository;
 
 import com.example.infoweb.entity.NaverNews;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.ArrayList;
@@ -18,7 +19,8 @@ public interface NaverNewsRepository extends CrudRepository<NaverNews, String> {
     @Override
     ArrayList<NaverNews> findAll();
 
-    // category 문자열과 일치하는 모든 NaverNews 엔티티 인스턴스를 반환
+    // category 문자열과 일치하는 모든 NaverNews 엔티티 인스턴스를 내림차순으로 반환
+    @Query("SELECT n FROM NaverNews n WHERE n.category = :category ORDER BY n.id DESC")
     ArrayList<NaverNews> findByCategory(String category);
 
     /**
