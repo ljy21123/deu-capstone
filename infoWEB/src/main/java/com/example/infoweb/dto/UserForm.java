@@ -25,9 +25,6 @@ public class UserForm {
     private String pw;
     private String mpw; // 수정할 비밀번호
     private String cpw; // 수정할 비밀번호 확인
-//    private String door_id;
-//    private String door_pw;
-//    private Boolean door_alert;
     private String name;
 
     private String politics;

@@ -15,7 +15,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface InvestingRealTimeRepository extends CrudRepository<InvestingRealTimeEvents, String> {
 
     // event_time 필드를 기준으로 가장 빠른 날짜의 값을 가져오는 쿼리
-    @Query(value = "SELECT * FROM investingrealtimeevents WHERE country = '미국' ORDER BY event_time LIMIT 12", nativeQuery = true)
+    @Query(value = "SELECT * FROM InvestingRealTimeEvents WHERE country = '미국' ORDER BY event_time LIMIT 12", nativeQuery = true)
     Iterable<InvestingRealTimeEvents> findAllDescLimit();
 
 }

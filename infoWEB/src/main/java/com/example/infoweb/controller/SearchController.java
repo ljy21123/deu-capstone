@@ -15,6 +15,7 @@
 
 package com.example.infoweb.controller;
 
+import com.example.infoweb.dto.NaverNewsDTO;
 import com.example.infoweb.embedding.Embedding;
 import com.example.infoweb.entity.NaverNews;
 import com.example.infoweb.repository.NaverNewsRepository;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -39,6 +41,8 @@ public class SearchController {
 
     @Autowired  // 의존성 주입
     private NaverNewsRepository naverNewsRepository;
+    // 날짜 포맷터
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd a hh:mm");
 
     /**
      * 검색 페이지 폼을 처리하는 메서드
@@ -55,7 +59,7 @@ public class SearchController {
             log.info("검색 키워드: " + searchKeyword);
 
             // 검색 결과를 가져와서 finalResults 리스트에 저장
-            List<NaverNews> finalResults = getSearchResults(searchKeyword, 0);
+            List<NaverNewsDTO> finalResults = getSearchResults(searchKeyword, 0);
             // 모델에 검색 결과 리스트 추가
             model.addAttribute("results", finalResults);
             // 모델에 검색 키워드 추가
@@ -92,7 +96,7 @@ public class SearchController {
      */
     @GetMapping("/api/search")
     @ResponseBody
-    public List<NaverNews> getSearchResults(@RequestParam("searchKeyword") String searchKeyword, @RequestParam("page") int page) {
+    public List<NaverNewsDTO> getSearchResults(@RequestParam("searchKeyword") String searchKeyword, @RequestParam("page") int page) {
 
         int pageSize = 20;
         // 코사인 유사도 검색 수행
@@ -140,7 +144,10 @@ public class SearchController {
         log.info("getSearchResults 함수 수행 완료");
 
         // finalResults을 리턴
-        return finalResults;
+        return finalResults.stream()
+                            // 날짜 포맷팅
+                           .map(news -> new NaverNewsDTO(news, formatter))
+                           .collect(Collectors.toList());
     }
 
 }

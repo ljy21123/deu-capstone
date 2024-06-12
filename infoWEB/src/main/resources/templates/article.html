@@ -40,7 +40,7 @@
                 <div class="position-sticky" style="top: 2rem;">
                     <div>
                         <h4 class="fst-italic">Recent posts</h4>
-                        <ul class="list-unstyled">
+                        <ul style="list-style-type: none;">
                             <li th:each="recentNews : ${recentNewsList}">
                                 <a class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center py-3 link-body-emphasis text-decoration-none border-top"
                                    th:href="@{/article(id=${recentNews.id})}">
@@ -56,6 +56,7 @@
                                 </a>
                             </li>
                         </ul>
+                        <br>
                     </div>
                 </div>
             </div>
