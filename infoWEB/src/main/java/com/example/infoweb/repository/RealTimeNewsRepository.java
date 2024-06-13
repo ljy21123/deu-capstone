@@ -17,10 +17,11 @@ import java.util.ArrayList;
 public interface RealTimeNewsRepository extends CrudRepository<NaverRealTimeNews, String> {
 
     @Override
+    @Query("SELECT n FROM NaverRealTimeNews n WHERE FUNCTION('DATE', n.created_at) = CURRENT_DATE")
     ArrayList<NaverRealTimeNews> findAll();
 
-    // category 문자열과 일치하는 모든 NaverRealTimeNews 엔티티 인스턴스를 내림차순으로 반환
-    @Query("SELECT n FROM NaverRealTimeNews n WHERE n.category = :category ORDER BY n.id DESC")
+    // category 문자열과 일치하는 오늘 날짜 NaverRealTimeNews 엔티티 인스턴스를 내림차순으로 반환
+    @Query("SELECT n FROM NaverNews n WHERE n.category = :category AND DATE(n.created_at) = CURRENT_DATE ORDER BY n.id DESC")
     ArrayList<NaverRealTimeNews> findByCategory(String category);
 
 }
