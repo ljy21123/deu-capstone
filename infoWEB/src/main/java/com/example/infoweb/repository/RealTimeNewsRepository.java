@@ -17,11 +17,18 @@ import java.util.ArrayList;
 public interface RealTimeNewsRepository extends CrudRepository<NaverRealTimeNews, String> {
 
     @Override
-    @Query("SELECT n FROM NaverRealTimeNews n WHERE FUNCTION('DATE', n.created_at) = CURRENT_DATE")
+    // 오늘 날짜의 데이터가 없으면 가장 최근 날짜 조회
+    @Query("SELECT n FROM NaverRealTimeNews n WHERE DATE(n.created_at) = " +
+            "(SELECT COALESCE((SELECT DATE(nn.created_at) FROM NaverRealTimeNews nn WHERE DATE(nn.created_at) = CURRENT_DATE), " +
+            "(SELECT MAX(DATE(nn.created_at)) FROM NaverRealTimeNews nn)))")
     ArrayList<NaverRealTimeNews> findAll();
 
     // category 문자열과 일치하는 오늘 날짜 NaverRealTimeNews 엔티티 인스턴스를 내림차순으로 반환
-    @Query("SELECT n FROM NaverNews n WHERE n.category = :category AND DATE(n.created_at) = CURRENT_DATE ORDER BY n.id DESC")
+    // 오늘 날짜의 데이터가 없으면 가장 최근 날짜 조회
+    @Query("SELECT n FROM NaverRealTimeNews n WHERE n.category = :category AND DATE(n.created_at) = " +
+            "(SELECT COALESCE((SELECT DATE(nn.created_at) FROM NaverRealTimeNews nn WHERE nn.category = :category AND DATE(nn.created_at) = CURRENT_DATE), " +
+            "(SELECT MAX(DATE(nn.created_at)) FROM NaverRealTimeNews nn WHERE nn.category = :category))) " +
+            "ORDER BY n.id DESC")
     ArrayList<NaverRealTimeNews> findByCategory(String category);
 
 }
