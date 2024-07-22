@@ -20,7 +20,7 @@ import embeddings
 
 class NewsBriefBot:
 	def __init__(self) -> None:
-		self.apiKey = "sk-proj-Lae2ewjpQ3iY5KPYKutuT3BlbkFJJx42Vup9eDs8EG4ORiub"
+		self.apiKey = ""
 		self.client = OpenAI(api_key=self.apiKey)
 		self.logger = None
 		self.dao = naverNewsDAO.NaverNewsDAO()
