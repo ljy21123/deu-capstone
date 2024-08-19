@@ -12,23 +12,53 @@ import com.example.infoweb.entity.NaverRealTimeNews;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public interface RealTimeNewsRepository extends CrudRepository<NaverRealTimeNews, String> {
 
-    @Override
-    // 오늘 날짜의 데이터가 없으면 가장 최근 날짜 조회
-    @Query("SELECT n FROM NaverRealTimeNews n WHERE DATE(n.created_at) = " +
-            "(SELECT COALESCE((SELECT DATE(nn.created_at) FROM NaverRealTimeNews nn WHERE DATE(nn.created_at) = CURRENT_DATE), " +
-            "(SELECT MAX(DATE(nn.created_at)) FROM NaverRealTimeNews nn)))")
-    ArrayList<NaverRealTimeNews> findAll();
+    // (종합) 오늘 날짜 뉴스를 반환
+    @Query("SELECT n FROM NaverRealTimeNews n WHERE DATE(n.created_at) = :targetDate")
+    List<NaverRealTimeNews> findLatestNews(LocalDate targetDate);
 
     // category 문자열과 일치하는 오늘 날짜 NaverRealTimeNews 엔티티 인스턴스를 내림차순으로 반환
-    // 오늘 날짜의 데이터가 없으면 가장 최근 날짜 조회
-    @Query("SELECT n FROM NaverRealTimeNews n WHERE n.category = :category AND DATE(n.created_at) = " +
-            "(SELECT COALESCE((SELECT DATE(nn.created_at) FROM NaverRealTimeNews nn WHERE nn.category = :category AND DATE(nn.created_at) = CURRENT_DATE), " +
-            "(SELECT MAX(DATE(nn.created_at)) FROM NaverRealTimeNews nn WHERE nn.category = :category))) " +
-            "ORDER BY n.id DESC")
-    ArrayList<NaverRealTimeNews> findByCategory(String category);
+    @Query("SELECT n FROM NaverRealTimeNews n WHERE n.category = :category AND DATE(n.created_at) = :targetDate ORDER BY n.id DESC")
+    List<NaverRealTimeNews> findByCategoryAndDate(String category, LocalDate targetDate);
+
+    // (종합) 가장 최근 날짜 뉴스를 반환
+    @Query("SELECT MAX(DATE(n.created_at)) FROM NaverRealTimeNews n")
+    LocalDate findMaxDate();
+
+    // (카테고리별) 가장 최근 날짜 뉴스를 반환
+    @Query("SELECT MAX(DATE(n.created_at)) FROM NaverRealTimeNews n WHERE n.category = :category")
+    LocalDate findMaxDateByCategory(String category);
+
+    @Override
+    default List<NaverRealTimeNews> findAll() {
+        LocalDate today = LocalDate.now();
+        List<NaverRealTimeNews> newsList = findLatestNews(today);
+        if (newsList.isEmpty()) {
+            // 오늘 데이터가 없는 경우 가장 최근 데이터를 조회
+            LocalDate latestDate = findMaxDate();
+            if (latestDate != null) {
+                newsList = findLatestNews(latestDate);
+            }
+        }
+        return newsList;
+    }
+
+    default List<NaverRealTimeNews> findByCategory(String category) {
+        LocalDate today = LocalDate.now();
+        List<NaverRealTimeNews> newsList = findByCategoryAndDate(category, today);
+        if (newsList.isEmpty()) {
+            // 오늘 데이터가 없는 경우 해당 카테고리의 가장 최근 데이터를 조회
+            LocalDate latestDate = findMaxDateByCategory(category);
+            if (latestDate != null) {
+                newsList = findByCategoryAndDate(category, latestDate);
+            }
+        }
+        return newsList;
+    }
 
 }

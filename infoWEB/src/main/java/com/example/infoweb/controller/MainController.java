@@ -114,7 +114,7 @@ public class MainController {
 
         // 키워드 가져오기
         Iterable<NounFrequency> nounFrequencies = StreamSupport.stream(nounFrequencyRepository.findAll().spliterator(), false)
-                .limit(16)
+                .limit(14)
                 .collect(Collectors.toList());
 
         model.addAttribute("nounFrequencies", nounFrequencies);
@@ -180,8 +180,8 @@ public class MainController {
             log.info("종합 랜덤 실시간 뉴스 가져오기 완료");
             // 선택된 뉴스를 포맷팅하여 리턴
             return randomNews.stream()
-                    .map(news -> new NaverRealTimeNewsDTO(news, formatter))
-                    .collect(Collectors.toList());
+                             .map(news -> new NaverRealTimeNewsDTO(news, formatter))
+                             .collect(Collectors.toList());
         } else {
             log.info("카테고리 별 실시간 뉴스 가져오기 완료");
             // 해당 카테고리의 뉴스를 페이징하여 가져옴
