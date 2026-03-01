@@ -140,7 +140,7 @@ public class SearchController {
                                       .skip((long) page * pageSize)
                                       .limit(pageSize)
                                       .collect(Collectors.toList());
-        
+
         log.info("getSearchResults 함수 수행 완료");
 
         // finalResults을 리턴
