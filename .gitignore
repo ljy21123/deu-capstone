@@ -1,11 +1,11 @@
 ### IntelliJ ###
-.idea/
-*.iml
-out/
+infoWEB/.idea/
+infoWEB/*.iml
+infoWEB/out/
 
 ### Gradle ###
-.gradle/
-build/
+infoWEB/build/
+infoWEB/.gradle/
 
 ### Logs ###
 *.log
